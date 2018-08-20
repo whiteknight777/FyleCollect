@@ -5,93 +5,93 @@
   
         <v-layout row wrap style="margin-bottom:10px">
           <!--  Stat bar -->
-          <v-flex xs3>
+          <v-flex xs6 md3 lg3>
+            <v-card>
+              <div class="card-icon-block deep-orange darken-2" dark>
+                <v-icon dark>supervised_user_circle</v-icon>
+              </div>
+              <v-card-title style="padding-top: 50px;padding-bottom:0">
+                <div style="text-align: right;width:100%">
+                  <span class="number-card" style="color:#e64a2b !important">22000</span><br>
+                  <span style="font-size:13px;text-transform:uppercase">Nombre Total de votant</span>
+                  <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
+                </div>
+              </v-card-title>
+              <v-card-actions>
+                <v-progress-linear color="deep-orange darken-2" height="4" value="90"></v-progress-linear>
+              </v-card-actions>
+            </v-card>
+          </v-flex>
+          <!-- Fin stat bar -->
+  
+          <!--  Stat bar -->
+          <v-flex xs6 md3 lg3>
             <v-card>
               <div class="card-icon-block warning" dark>
-                <v-icon dark>sort</v-icon>
+                <v-icon dark>stars</v-icon>
               </div>
               <v-card-title style="padding-top: 50px;padding-bottom:0">
                 <div style="text-align: right;width:100%">
-                  <span class="number-card">900</span><br>
-                  <span style="font-size:16px">Total de votes acquis</span>
+                  <span class="number-card" style="color:#FFAB00 !important">12000</span><br>
+                  <span style="font-size:13px;text-transform:uppercase">Total de votes acquis</span>
                   <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
                 </div>
               </v-card-title>
               <v-card-actions>
-                <v-progress-linear color="success" height="4" value="15"></v-progress-linear>
+                <v-progress-linear color="warning" height="4" value="60"></v-progress-linear>
               </v-card-actions>
             </v-card>
           </v-flex>
           <!-- Fin stat bar -->
   
           <!--  Stat bar -->
-          <v-flex xs3>
+          <v-flex xs6 md3 lg3>
             <v-card>
-              <div class="card-icon-block info" dark>
-                <v-icon dark>sort</v-icon>
-              </div>
-              <v-card-title style="padding-top: 50px;padding-bottom:0">
-                <div style="text-align: right;width:100%">
-                  <span class="number-card">900</span><br>
-                  <span style="font-size:16px">Total de votes acquis</span>
-                  <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
-                </div>
-              </v-card-title>
-              <v-card-actions>
-                <v-progress-linear color="success" height="4" value="15"></v-progress-linear>
-              </v-card-actions>
-            </v-card>
-          </v-flex>
-          <!-- Fin stat bar -->
-  
-          <!--  Stat bar -->
-          <v-flex xs3>
-           <v-card>
               <div class="card-icon-block success" dark>
-                <v-icon dark>sort</v-icon>
+                <v-icon dark>voice_over_off</v-icon>
               </div>
               <v-card-title style="padding-top: 50px;padding-bottom:0">
                 <div style="text-align: right;width:100%">
-                  <span class="number-card">900</span><br>
-                  <span style="font-size:16px">Total de votes acquis</span>
+                  <span class="number-card" style="color:#53af50 !important">40%</span><br>
+                  <span style="font-size:13px;text-transform:uppercase">Taux d'abstention</span>
                   <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
                 </div>
               </v-card-title>
               <v-card-actions>
-                <v-progress-linear color="success" height="4" value="15"></v-progress-linear>
+                <v-progress-linear color="success" height="4" value="40"></v-progress-linear>
               </v-card-actions>
             </v-card>
           </v-flex>
           <!-- Fin stat bar -->
   
           <!--  Stat bar -->
-          <v-flex xs3>
-             <v-card>
+          <v-flex xs6 md3 lg3>
+            <v-card>
               <div class="card-icon-block primary">
-                <v-icon dark>sort</v-icon>
+                <v-icon dark>how_to_vote</v-icon>
               </div>
               <v-card-title style="padding-top: 50px;padding-bottom:0">
                 <div style="text-align: right;width:100%">
-                  <span class="number-card">900</span><br>
-                  <span style="font-size:16px">Total de votes acquis</span>
+                  <span class="number-card" style="color:#3c76d2 !important">60%</span><br>
+                  <span style="font-size:13px;text-transform:uppercase ">Taux de participation</span>
                   <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
                 </div>
               </v-card-title>
               <v-card-actions>
-                <v-progress-linear color="success" height="4" value="15"></v-progress-linear>
+                <v-progress-linear color="primary" height="4" value="60"></v-progress-linear>
               </v-card-actions>
             </v-card>
           </v-flex>
           <!-- Fin stat bar -->
   
         </v-layout>
-
-        <v-layout row wrap>
+  
+        <v-layout row wrap style="margin-bottom:10px">
+  
           <!--  Graphique -->
-          <v-flex xs9>
+          <v-flex xs12 md9 lg9>
             <v-card>
-              <charts :data="chartData.data" :type="chartData.type" :options="chartData.options" :legend="chartData.legend" :width="400"
-              style="height:440px">
+              <charts :data="chartData.data" :id="chartData.id" :type="chartData.type" :options="chartData.options" :legend="chartData.legend" :width="400" style="height:440px">
               </charts>
   
             </v-card>
@@ -99,7 +99,7 @@
           <!-- Fin Graphique -->
   
           <!-- Classement candidat -->
-          <v-flex xs3>
+          <v-flex xs12 md3 lg3>
             <v-card>
   
               <v-list subheader>
@@ -113,6 +113,12 @@
                   <v-list-tile-content>
                     <v-list-tile-title v-html="item.title"></v-list-tile-title>
                   </v-list-tile-content>
+
+                  <v-list-tile-action>
+                    <v-chip :color="parseInt(item.ranking) < 3 ? 'green lighten-1' : 'yellow darken-1'" text-color="white" style="font-size:12px">
+                      N°{{item.ranking}}
+                    </v-chip>
+                  </v-list-tile-action>
                 </v-list-tile>
               </v-list>
   
@@ -129,7 +135,12 @@
                   </v-list-tile-content>
   
                   <v-list-tile-action>
-                    <v-icon :color="item.active ? 'teal' : 'grey'">chat_bubble</v-icon>
+                    <!-- <v-icon :color="item.active ? 'teal' : 'grey'">chat_bubble</v-icon> -->
+                    <v-chip :color="parseInt(item.ranking) < 4 ? 'green lighten-1' : 'yellow darken-1'" text-color="white" style="font-size:12px">
+                      <!-- <v-icon dark v-if="parseInt(item.ranking) < 0" style="font-size:16px">arrow_downward</v-icon>
+                      <v-icon dark v-if="parseInt(item.ranking) > 0" style="font-size:16px">arrow_upward</v-icon> -->
+                      N°{{item.ranking}}
+                    </v-chip>
                   </v-list-tile-action>
                 </v-list-tile>
   
@@ -138,7 +149,7 @@
             </v-card>
           </v-flex>
           <!-- Fin Classement candidat -->
-  
+
         </v-layout>
   
       </v-container>
@@ -149,11 +160,13 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
 import charts from "./Charts.vue";
+// import dataTable from "./DataTable.vue";
 
 export default {
   name: "Home",
   components: {
     charts
+    // dataTable
   },
   data() {
     return {
@@ -161,29 +174,35 @@ export default {
         {
           active: true,
           title: "Jason Oner",
+          ranking: "3",
           avatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg"
         },
         {
           active: true,
           title: "Ranee Carlson",
+          ranking: "4",
           avatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg"
         },
         {
           title: "Cindy Baker",
+          ranking: "2",
           avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg"
         },
         {
           title: "Ali Connors",
+          ranking: "6",
           avatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg"
         }
       ],
       items2: [
         {
           title: "Travis Howard",
+          ranking: "1",
           avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg"
         }
       ],
       chartData: {
+        id: 1,
         legend: "Graphique des votes par bureau de vote",
         type: "line",
         data: {
@@ -203,16 +222,16 @@ export default {
               label: "Vous",
               data: [4.8, 12.1, 12.7, 6.7, 139.8, 116.4, 50.7, 49.2],
               backgroundColor: [
-                "rgba(71, 183,132,.5)", // Green
-                "rgba(71, 183,132,.5)", // Green
-                "rgba(71, 183,132,.5)", // Green
-                "rgba(71, 183,132,.5)", // Green
-                "rgba(71, 183,132,.5)", // Green
-                "rgba(71, 183,132,.5)", // Green
-                "rgba(71, 183,132,.5)", // Green
-                "rgba(71, 183,132,.5)" // Green
+                "rgba(230, 74, 25, 0.78)", // Green
+                "rgba(230, 74, 25, 0.78)", // Green
+                "rgba(230, 74, 25, 0.78)", // Green
+                "rgba(230, 74, 25, 0.78)", // Green
+                "rgba(230, 74, 25, 0.78)", // Green
+                "rgba(230, 74, 25, 0.78)", // Green
+                "rgba(230, 74, 25, 0.78)", // Green
+                "rgba(230, 74, 25, 0.78)" // Green
               ],
-              borderColor: ["#47b784"],
+              borderColor: ["#B3E5FC"],
               borderWidth: 3
             }
           ]
@@ -234,7 +253,8 @@ export default {
         }
       }
     };
-  }
+  },
+  methods: {}
 };
 </script>
 
