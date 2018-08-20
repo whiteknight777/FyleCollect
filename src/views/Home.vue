@@ -1,175 +1,352 @@
 <template>
-  <v-container fluid grid-list-md>
-    <v-slide-y-transition mode="out-in">
-      <v-container grid-list-md text-xs-center>
-  
-        <v-layout row wrap style="margin-bottom:10px">
-          <!--  Stat bar -->
-          <v-flex xs6 md3 lg3>
-            <v-card>
-              <div class="card-icon-block deep-orange darken-2" dark>
-                <v-icon dark>supervised_user_circle</v-icon>
-              </div>
-              <v-card-title style="padding-top: 50px;padding-bottom:0">
-                <div style="text-align: right;width:100%">
-                  <span class="number-card" style="color:#e64a2b !important">22000</span><br>
-                  <span style="font-size:13px;text-transform:uppercase">Nombre Total de votant</span>
-                  <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
-                </div>
-              </v-card-title>
-              <v-card-actions>
-                <v-progress-linear color="deep-orange darken-2" height="4" value="90"></v-progress-linear>
-              </v-card-actions>
-            </v-card>
-          </v-flex>
-          <!-- Fin stat bar -->
-  
-          <!--  Stat bar -->
-          <v-flex xs6 md3 lg3>
-            <v-card>
-              <div class="card-icon-block warning" dark>
-                <v-icon dark>stars</v-icon>
-              </div>
-              <v-card-title style="padding-top: 50px;padding-bottom:0">
-                <div style="text-align: right;width:100%">
-                  <span class="number-card" style="color:#FFAB00 !important">12000</span><br>
-                  <span style="font-size:13px;text-transform:uppercase">Total de votes acquis</span>
-                  <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
-                </div>
-              </v-card-title>
-              <v-card-actions>
-                <v-progress-linear color="warning" height="4" value="60"></v-progress-linear>
-              </v-card-actions>
-            </v-card>
-          </v-flex>
-          <!-- Fin stat bar -->
-  
-          <!--  Stat bar -->
-          <v-flex xs6 md3 lg3>
-            <v-card>
-              <div class="card-icon-block success" dark>
-                <v-icon dark>voice_over_off</v-icon>
-              </div>
-              <v-card-title style="padding-top: 50px;padding-bottom:0">
-                <div style="text-align: right;width:100%">
-                  <span class="number-card" style="color:#53af50 !important">40%</span><br>
-                  <span style="font-size:13px;text-transform:uppercase">Taux d'abstention</span>
-                  <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
-                </div>
-              </v-card-title>
-              <v-card-actions>
-                <v-progress-linear color="success" height="4" value="40"></v-progress-linear>
-              </v-card-actions>
-            </v-card>
-          </v-flex>
-          <!-- Fin stat bar -->
-  
-          <!--  Stat bar -->
-          <v-flex xs6 md3 lg3>
-            <v-card>
-              <div class="card-icon-block primary">
-                <v-icon dark>how_to_vote</v-icon>
-              </div>
-              <v-card-title style="padding-top: 50px;padding-bottom:0">
-                <div style="text-align: right;width:100%">
-                  <span class="number-card" style="color:#3c76d2 !important">60%</span><br>
-                  <span style="font-size:13px;text-transform:uppercase ">Taux de participation</span>
-                  <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
-                </div>
-              </v-card-title>
-              <v-card-actions>
-                <v-progress-linear color="primary" height="4" value="60"></v-progress-linear>
-              </v-card-actions>
-            </v-card>
-          </v-flex>
-          <!-- Fin stat bar -->
-  
-        </v-layout>
-  
-        <v-layout row wrap style="margin-bottom:10px">
-  
-          <!--  Graphique -->
-          <v-flex xs12 md9 lg9>
-            <v-card>
-              <charts :data="chartData.data" :id="chartData.id" :type="chartData.type" :options="chartData.options" :legend="chartData.legend" :width="400" style="height:440px">
-              </charts>
-  
-            </v-card>
-          </v-flex>
-          <!-- Fin Graphique -->
-  
-          <!-- Classement candidat -->
-          <v-flex xs12 md3 lg3>
-            <v-card>
-  
-              <v-list subheader>
-                <v-subheader>Candidat en tête</v-subheader>
-  
-                <v-list-tile v-for="item in items2" :key="item.title" avatar @click="">
-                  <v-list-tile-avatar>
-                    <img :src="item.avatar">
-                  </v-list-tile-avatar>
-  
-                  <v-list-tile-content>
-                    <v-list-tile-title v-html="item.title"></v-list-tile-title>
-                  </v-list-tile-content>
+<div>
+      <!-- LEFT SIDEBAR  -->
+    <v-navigation-drawer persistent :mini-variant="miniVariant" :clipped="clipped" v-model="drawer" enable-resize-watcher fixed app width=230>
+      <!-- <v-jumbotron :gradient="gradient" dark src="https://cdn.vuetifyjs.com/images/parallax/material2.jpg" style="height: 100%;"> -->
 
-                  <v-list-tile-action>
-                    <v-chip :color="parseInt(item.ranking) < 3 ? 'green lighten-1' : 'yellow darken-1'" text-color="white" style="font-size:12px">
-                      N°{{item.ranking}}
-                    </v-chip>
-                  </v-list-tile-action>
-                </v-list-tile>
-              </v-list>
+        <!-- LOGO -->
+        <v-list style="padding-bottom: 0;">
+          
+          <v-list-tile avatar>
+            <v-list-tile-avatar>
+              <img src="../assets/logo.png">
+            </v-list-tile-avatar>
   
-              <v-divider></v-divider>
-              <v-list subheader>
-                <v-subheader>Liste des candidats</v-subheader>
-                <v-list-tile v-for="item in items" :key="item.title" avatar @click="">
-                  <v-list-tile-avatar>
-                    <img :src="item.avatar">
-                  </v-list-tile-avatar>
+            <v-list-tile-content>
+              <v-list-tile-title style="padding-left:12px;font-size:16px"><b> WEB APP </b></v-list-tile-title>
+            </v-list-tile-content>
   
-                  <v-list-tile-content>
-                    <v-list-tile-title v-html="item.title"></v-list-tile-title>
-                  </v-list-tile-content>
-  
-                  <v-list-tile-action>
-                    <!-- <v-icon :color="item.active ? 'teal' : 'grey'">chat_bubble</v-icon> -->
-                    <v-chip :color="parseInt(item.ranking) < 4 ? 'green lighten-1' : 'yellow darken-1'" text-color="white" style="font-size:12px">
-                      <!-- <v-icon dark v-if="parseInt(item.ranking) < 0" style="font-size:16px">arrow_downward</v-icon>
-                      <v-icon dark v-if="parseInt(item.ranking) > 0" style="font-size:16px">arrow_upward</v-icon> -->
-                      N°{{item.ranking}}
-                    </v-chip>
-                  </v-list-tile-action>
-                </v-list-tile>
-  
-                <v-subheader>Voir tout le classement</v-subheader>
-              </v-list>
-            </v-card>
-          </v-flex>
-          <!-- Fin Classement candidat -->
+          </v-list-tile>
+        </v-list>
+        <!-- FIN LOGO -->
 
-        </v-layout>
+        <hr class="hr-nav">
+
+        <!-- USER CONNECTED -->
+        <v-list class="">
+          <v-list-tile avatar>
+            <v-list-tile-avatar class="user-div">
+              <div data-v-7ba5bd90="" class="v-avatar" style="width: 80px;">
+                 <img src="https://randomuser.me/api/portraits/men/85.jpg" style="width:80px">
+                 
+              </div>
+            </v-list-tile-avatar>
+           
+            <!-- <v-list-tile-content>
+              <v-list-tile-title>John Leider</v-list-tile-title>
+            </v-list-tile-content> -->
   
-      </v-container>
-    </v-slide-y-transition>
-  </v-container>
+          </v-list-tile>
+        </v-list>
+         <p class="p-user"> 
+           Bienvenue <br>
+         <span style="font-size:18px"><b> John Doe </b></span>
+        </p>
+        <!-- FIN USER CONNECTED -->
+  
+  
+        <!-- LEFT MENU -->
+        <v-list class="pa-0">
+           <v-list-tile @click="" class="active-item">
+            <v-list-tile-action>
+                <v-icon>dashboard</v-icon>
+            </v-list-tile-action>
+
+            <v-list-tile-content @click="">
+              <v-list-tile-title>Tableau de bord</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list>
+
+        <v-list class="pa-0">
+          <v-list-group
+            no-action
+          >
+          
+            <v-list-tile slot="activator">
+              <v-list-tile-action>
+                <v-icon>how_to_vote</v-icon>
+              </v-list-tile-action>
+
+              <v-list-tile-content>
+                <v-list-tile-title>Bureau de votes</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+
+            <v-list-tile @click="">
+              <v-list-tile-content>
+                <v-list-tile-title>Liste bureaux</v-list-tile-title>
+              </v-list-tile-content>
+
+            </v-list-tile>
+
+            <v-list-tile
+              @click=""
+            >
+              <v-list-tile-content>
+                <v-list-tile-title>Ajouter Bureau</v-list-tile-title>
+              </v-list-tile-content>
+
+            </v-list-tile>
+          </v-list-group>
+        </v-list>
+
+         <v-list class="pa-0">
+          <v-list-group
+            no-action
+          >
+          
+            <v-list-tile slot="activator">
+              <v-list-tile-action>
+                <v-icon>group</v-icon>
+              </v-list-tile-action>
+
+              <v-list-tile-content>
+                <v-list-tile-title>Représentants</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+
+            <v-list-tile
+              @click=""
+            >
+              <v-list-tile-content>
+                <v-list-tile-title>Liste Représentants</v-list-tile-title>
+              </v-list-tile-content>
+
+            </v-list-tile>
+
+            <v-list-tile
+              @click=""
+            >
+              <v-list-tile-content>
+                <v-list-tile-title>Ajouter Réprésentant</v-list-tile-title>
+              </v-list-tile-content>
+
+            </v-list-tile>
+          </v-list-group>
+        </v-list>
+
+        <v-list class="pa-0">
+          <v-list-group
+            no-action
+          >
+          
+            <v-list-tile slot="activator">
+              <v-list-tile-action>
+                <v-icon>contacts</v-icon>
+              </v-list-tile-action>
+
+              <v-list-tile-content>
+                <v-list-tile-title>Candidats</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+
+            <v-list-tile
+              @click=""
+            >
+              <v-list-tile-content>
+                <v-list-tile-title>Liste Candidats</v-list-tile-title>
+              </v-list-tile-content>
+
+            </v-list-tile>
+
+            <v-list-tile
+              @click=""
+            >
+              <v-list-tile-content>
+                <v-list-tile-title>Ajouter Candidat</v-list-tile-title>
+              </v-list-tile-content>
+
+            </v-list-tile>
+          </v-list-group>
+        </v-list>
+
+        <v-list class="pa-0">
+          <v-list-tile avatar @click="">
+            <v-list-tile-action>
+              <v-icon> notes </v-icon>
+            </v-list-tile-action>
+  
+            <v-list-tile-content>
+              <v-list-tile-title>Classement</v-list-tile-title>
+            </v-list-tile-content>
+  
+          </v-list-tile>
+        </v-list>
+        
+        <v-list class="pa-0">
+          <v-list-tile avatar @click="">
+            <v-list-tile-action>
+              <v-icon> settings </v-icon>
+            </v-list-tile-action>
+  
+            <v-list-tile-content>
+              <v-list-tile-title>Paramêtres</v-list-tile-title>
+            </v-list-tile-content>
+  
+          </v-list-tile>
+        </v-list>
+        <!-- FIN LEFT MENU -->
+
+    </v-navigation-drawer>
+    <!-- END LEFT SIDEBAR  -->
+  
+    <!-- TOPBAR  -->
+    <v-toolbar app :clipped-left="clipped" class="light-blue darken-2" dark>
+  
+      <!-- <v-btn icon @click.stop="miniVariant = !miniVariant">
+        <v-icon v-html="miniVariant ? 'chevron_right' : 'chevron_left'"></v-icon>
+      </v-btn> -->
+  
+      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+  
+  
+      <v-spacer></v-spacer>
+
+      <v-btn icon @click.stop="">
+        <v-icon>notifications</v-icon>
+      </v-btn>
+
+      <v-btn icon @click.stop="rightDrawer = !rightDrawer">
+        <v-icon>sort</v-icon>
+      </v-btn>
+
+      <v-btn icon @click.stop="">
+        <v-icon>settings_power</v-icon>
+      </v-btn>
+
+    </v-toolbar>
+    <!-- END TOPBAR -->
+  
+    <!-- CONTENT  -->
+    <v-content>
+      <userInterface></userInterface>
+    </v-content>
+    <!-- END CONTENT  -->
+  
+    <!-- RIGHT MODAL  -->
+    <v-navigation-drawer temporary :right="right" v-model="rightDrawer" fixed app width=250>
+
+      <v-list
+          subheader
+          three-line
+        >
+          <v-subheader>User Controls</v-subheader>
+
+          <v-list-tile>
+            <v-list-tile-content>
+              <v-list-tile-title>Content filtering</v-list-tile-title>
+              <v-list-tile-sub-title>Set the content filtering level to restrict appts that can be downloaded</v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
+          <v-list-tile>
+            <v-list-tile-content>
+              <v-list-tile-title>Password</v-list-tile-title>
+              <v-list-tile-sub-title>Require password for purchase or use password to restrict purchase</v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list>
+
+        <v-divider></v-divider>
+
+        <v-list
+          subheader
+          three-line
+        >
+          <v-subheader>General</v-subheader>
+          <v-list-tile @click="">
+            <v-list-tile-action>
+              <v-checkbox
+                v-model="notifications"
+              ></v-checkbox>
+            </v-list-tile-action>
+
+            <v-list-tile-content @click.prevent="notifications = !notifications">
+              <v-list-tile-title>Notifications</v-list-tile-title>
+              <v-list-tile-sub-title>Notify me about updates to apps or games that I downloaded</v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
+          <v-list-tile @click="">
+            <v-list-tile-action>
+              <v-checkbox
+                v-model="sound"
+              ></v-checkbox>
+            </v-list-tile-action>
+
+            <v-list-tile-content @click.prevent="sound = !sound">
+              <v-list-tile-title>Sound</v-list-tile-title>
+              <v-list-tile-sub-title>Auto-update apps at any time. Data charges may apply</v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
+          <v-list-tile @click="">
+            <v-list-tile-action>
+              <v-checkbox
+                v-model="widgets"
+              ></v-checkbox>
+            </v-list-tile-action>
+
+            <v-list-tile-content @click.prevent="widgets = !widgets">
+              <v-list-tile-title>Auto-add widgets</v-list-tile-title>
+              <v-list-tile-sub-title>Automatically add home screen widgets</v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list>
+
+    
+    </v-navigation-drawer>
+    <!-- END RIGTH MODAL  -->
+    <v-snackbar
+      v-model="snackbar"
+      :bottom="y === 'bottom'"
+      :left="x === 'left'"
+      :multi-line="mode === 'multi-line'"
+      :right="x === 'right'"
+      :timeout="timeout"
+      :top="y === 'top'"
+      :vertical="mode === 'vertical'"
+    >
+      {{ text }}
+      <v-btn
+        color="pink"
+        flat
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
+</div>    
 </template>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
 import charts from "./Charts.vue";
-// import dataTable from "./DataTable.vue";
+import userInterface from "./UserInterface.vue";
 
 export default {
   name: "Home",
   components: {
-    charts
-    // dataTable
+    charts,
+    userInterface
   },
   data() {
     return {
+      notifications: false,
+      sound: true,
+      widgets: false,
+      clipped: false,
+      drawer: true,
+      miniVariant: false,
+      right: true,
+      rightDrawer: false,
+      snackbar: true,
+      y: "bottom",
+      x: null,
+      mode: "",
+      timeout: 6000,
+      text: "Bienvenue dans votre interface!",
       items: [
         {
           active: true,
@@ -200,84 +377,67 @@ export default {
           ranking: "1",
           avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg"
         }
-      ],
-      chartData: {
-        id: 1,
-        legend: "Graphique des votes par bureau de vote",
-        type: "line",
-        data: {
-          labels: [
-            "Bureau 1",
-            "Bureau 2",
-            "Bureau 3",
-            "Bureau 4",
-            "Bureau 5",
-            "Bureau 6",
-            "Bureau 7",
-            "Bureau 8"
-          ],
-          datasets: [
-            {
-              // another line graph
-              label: "Vous",
-              data: [4.8, 12.1, 12.7, 6.7, 139.8, 116.4, 50.7, 49.2],
-              backgroundColor: [
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)" // Green
-              ],
-              borderColor: ["#B3E5FC"],
-              borderWidth: 3
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          lineTension: 1,
-          maintainAspectRatio: false,
-          scales: {
-            yAxes: [
-              {
-                ticks: {
-                  beginAtZero: true,
-                  padding: 26
-                }
-              }
-            ]
-          }
-        }
-      }
+      ]
     };
   },
   methods: {}
 };
 </script>
 
-<style scoped>
-h1,
-h2 {
-  font-weight: normal;
+<style>
+.jumbotron__wrapper {
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  -webkit-transition: inherit;
+  transition: inherit;
+  width: 100%;
 }
-
-ul {
-  list-style-type: none;
-  padding: 0;
+.hr-nav {
+  margin: 5px 12px;
+  border: 0.5px solid #e64a2b;
 }
-
-li {
+.user-div {
+  border: 14px solid #e64a2b;
+  padding: 8px;
   display: inline-block;
-  margin: 0 10px;
+  border-radius: 90px;
+  margin-top: 28px;
+  margin-left: 60px;
 }
-
-a {
-  color: #42b983;
+.p-user {
+  margin-top: 30px;
+  text-align: center;
+  margin-left: 5px;
 }
-
+.active-item {
+  background: #e64a19;
+  color: white;
+  box-shadow: 1px 1px 1px 1px #bdbdbd;
+}
+.v-list__group__header .v-list__group__header__append-icon,
+.v-list__group__header .v-list__group__header__prepend-icon {
+  padding: 0 5px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  right: 0;
+}
+::-webkit-scrollbar {
+  /* Scrollbars */
+  width: 7px;
+  background: #b7b7b7;
+  -webkit-box-shadow: inset 1px 1px 0 0 rgb(137, 131, 117),
+    inset -1px -1px 0 0 rgb(224, 220, 210);
+}
+::-webkit-scrollbar-thumb:hover {
+  /* Barre */
+  -webkit-box-shadow: inset 0 0 0 1px rgb(90, 90, 90),
+    inset 0 0 0 6px rgb(110, 110, 110);
+  border-radius: 3px;
+}
 .card-icon-block {
   position: absolute;
   left: 15px;
