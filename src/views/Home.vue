@@ -199,9 +199,19 @@
       </v-btn> -->
   
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-  
+      <v-btn icon @click="fullscreen()">
+        <v-icon>fullscreen</v-icon>
+      </v-btn>
   
       <v-spacer></v-spacer>
+
+      <v-form v-model="valid">
+        <v-text-field
+          v-model="name"
+          label="Recherche..."
+          style="width: 200px;margin-top: 12px;"
+        ></v-text-field>
+      </v-form>
 
       <v-btn icon @click.stop="">
         <v-icon>notifications</v-icon>
@@ -380,7 +390,40 @@ export default {
       ]
     };
   },
-  methods: {}
+  methods: {
+    fullscreen() {
+      let elem = document.body;
+      if (
+        (document.fullScreenElement !== undefined &&
+          document.fullScreenElement === null) ||
+        (document.msFullscreenElement !== undefined &&
+          document.msFullscreenElement === null) ||
+        (document.mozFullScreen !== undefined && !document.mozFullScreen) ||
+        (document.webkitIsFullScreen !== undefined &&
+          !document.webkitIsFullScreen)
+      ) {
+        if (elem.requestFullScreen) {
+          elem.requestFullScreen();
+        } else if (elem.mozRequestFullScreen) {
+          elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullScreen) {
+          elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+        } else if (elem.msRequestFullscreen) {
+          elem.msRequestFullscreen();
+        }
+      } else {
+        if (document.cancelFullScreen) {
+          document.cancelFullScreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitCancelFullScreen) {
+          document.webkitCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+      }
+    }
+  }
 };
 </script>
 
@@ -450,5 +493,13 @@ export default {
   color: #4caf50 !important;
   font-size: 30px;
   font-weight: 600;
+}
+.container {
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 100%;
+  flex: 1 1 100%;
+  margin: auto;
+  padding: 24px;
+  width: 101%;
 }
 </style>

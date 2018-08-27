@@ -73,20 +73,29 @@
     
     
                         <v-layout align-center justify-center column fill-height>
+                            <v-alert
+                              v-model="error"
+                              dismissible
+                              type="error"
+                              color="error"
+                              style="margin-bottom: 30px;margin-left: 0px;width: 100%;margin-right: 0;"
+                            >
+                            Erreur Utilisateur inconnue...
+                            </v-alert>
     
-                            <v-form ref="form" v-model="valid" lazy-validation style="width:100%">
+                            <v-form id="login" ref="form" style="width:100%">
     
-                                <v-text-field v-model="username" :rules="nameRules" :counter="10" label="Username" required></v-text-field>
+                                <v-text-field v-model="username" :rules="nameRules" :counter="12" label="Username" required></v-text-field>
     
-                                <v-text-field v-model="email" :rules="emailRules" label="E-mail" required></v-text-field>
+                                <v-text-field v-model="password" type="password" label="Password" required></v-text-field>
     
                                 <!-- <v-select v-model="select" :items="items" :rules="[v => !!v || 'Item is required']" label="Item" required></v-select> -->
     
-                                <v-checkbox v-model="checkbox" label="Mémoriser" required></v-checkbox>
+                                <v-checkbox v-model="checkbox" label="Mémoriser"></v-checkbox>
     
     
                                 <!-- <v-flex xs12 md12 lg12> -->
-                                    <v-btn block @click="submit" class="blue accent-2" dark>
+                                    <v-btn block @click.prevent="submit" class="blue accent-2" dark>
                                         Connexion
                                     </v-btn>
                                 <!-- </v-flex> -->
@@ -125,17 +134,13 @@ export default {
   data() {
     return {
       Bg: Bg1,
-      valid: true,
+      error: false,
       username: "",
       nameRules: [
         v => !!v || "Username requis",
-        v => (v && v.length <= 10) || "username must be less than 10 characters"
+        v => (v && v.length <= 12) || "username must be less than 12 characters"
       ],
-      email: "",
-      emailRules: [
-        v => !!v || "E-mail requis",
-        v => /.+@.+/.test(v) || "E-mail non valide"
-      ],
+      password: "",
       select: null,
       //   items: ["Item 1", "Item 2", "Item 3", "Item 4"],
       checkbox: false
@@ -145,12 +150,24 @@ export default {
     submit() {
       if (this.$refs.form.validate()) {
         // Native form submission is not yet supported
-        axios.post("/api/submit", {
-          username: this.username,
-          email: this.email,
-          select: this.select,
-          checkbox: this.checkbox
-        });
+        let form = document.getElementById("login");
+        // let data = new FormData(form);
+        let data = [username => this.username, password => this.password];
+        // console.log(form);
+        this.axios
+          .post("http://localhost:8000/api/checkuser", data, {
+            headers: {
+              "Content-type": "application/x-www-form-urlencoded"
+            }
+          })
+          .then(response => {
+            // if (response.data.length > 0) {
+            //   console.log("user:", response.data);
+            // } else {
+            //   this.error = true;
+            // }
+            console.log(response.data);
+          });
       }
     }
   }
