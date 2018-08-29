@@ -12,11 +12,13 @@ export default new Router({
   routes: [{
       path: '/',
       name: 'login',
+      // beforeEnter: checkUser,
       component: Login
     },
     {
       path: '/dashboard',
       name: 'home',
+      // beforeEnter: checkUser,
       component: Home
     },
     {
@@ -27,14 +29,17 @@ export default new Router({
     {
       path: '/*',
       redirect: '/404'
-    },
-    // {
-    //   path: '/about',
-    //   name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    // component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
-    // }
+    }
   ]
 })
+
+// function checkUser() {
+// //   let current_route = router.history.current.path
+//   let userSession = JSON.parse(sessionStorage.getItem("userConnected"))
+//   if (userSession === null) {
+//     console.log('erreur')
+//     // this.router.push("/");
+//   } else {
+//     console.log(userSession)
+//   }
+// }

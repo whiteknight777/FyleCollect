@@ -80,12 +80,12 @@
                               color="error"
                               style="margin-bottom: 30px;margin-left: 0px;width: 100%;margin-right: 0;"
                             >
-                            Erreur Utilisateur inconnue...
+                            {{errorMsg}}
                             </v-alert>
     
                             <v-form id="login" ref="form" style="width:100%">
     
-                                <v-text-field v-model="username" :rules="nameRules" :counter="12" label="Username" required></v-text-field>
+                                <v-text-field v-model="username" :rules="nameRules" :counter="15" label="Username" required></v-text-field>
     
                                 <v-text-field v-model="password" type="password" label="Password" required></v-text-field>
     
@@ -122,7 +122,25 @@
         </v-flex>
     
     
-    
+    <v-snackbar
+      v-model="snackbar"
+      :bottom="y === 'bottom'"
+      :left="x === 'left'"
+      :multi-line="mode === 'multi-line'"
+      :right="x === 'right'"
+      :timeout="timeout"
+      :top="y === 'top'"
+      :vertical="mode === 'vertical'"
+    >
+      {{ text }}
+      <v-btn
+        color="pink"
+        flat
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
     </v-layout>
 </template>
 <script>
@@ -135,15 +153,22 @@ export default {
     return {
       Bg: Bg1,
       error: false,
-      username: "",
+      errorMsg: "Erreur Utilisateur inconnue...",
+      username: "desire.arra",
       nameRules: [
         v => !!v || "Username requis",
-        v => (v && v.length <= 12) || "username must be less than 12 characters"
+        v => (v && v.length <= 15) || "username must be less than 12 characters"
       ],
-      password: "",
+      password: "1234",
       select: null,
       //   items: ["Item 1", "Item 2", "Item 3", "Item 4"],
-      checkbox: false
+      checkbox: false,
+      snackbar: false,
+      y: "top",
+      x: "right",
+      mode: "",
+      timeout: 6000,
+      text: ""
     };
   },
   methods: {
@@ -151,8 +176,10 @@ export default {
       if (this.$refs.form.validate()) {
         // Native form submission is not yet supported
         let form = document.getElementById("login");
-        // let data = new FormData(form);
-        let data = [username => this.username, password => this.password];
+        let data = new FormData(form);
+        data.append("username", this.username);
+        data.append("password", this.password);
+        // let data = [username => this.username, password => this.password];
         // console.log(form);
         this.axios
           .post("http://localhost:8000/api/checkuser", data, {
@@ -161,12 +188,30 @@ export default {
             }
           })
           .then(response => {
-            // if (response.data.length > 0) {
-            //   console.log("user:", response.data);
-            // } else {
-            //   this.error = true;
-            // }
-            console.log(response.data);
+            // console.log(this.$router.history.current.path);
+            if (response.data.username != undefined) {
+              // Récupération des données récupérée
+              data = JSON.stringify(response.data);
+
+              // Sauvegarde des données récupérée dans la séssion
+              sessionStorage.setItem("userConnected", data);
+              let user = JSON.parse(sessionStorage.getItem("userConnected"));
+
+              // Vérification & redirection sur la bonne page
+              if (user.grades == 2) {
+                this.snackbar = true;
+                this.text = "Connexion réussie";
+                this.$router.push("/dashboard");
+              } else {
+                this.snackbar = true;
+                this.text = "Connexion réussie";
+              }
+            } else {
+              this.snackbar = true;
+              this.text = "Erreur Utilisateur inconnue";
+              // this.errorMsg = "Erreur Utilisateur inconnue...";
+              // this.error = true;
+            }
           });
       }
     }

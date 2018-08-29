@@ -40,7 +40,7 @@
         </v-list>
          <p class="p-user"> 
            Bienvenue <br>
-         <span style="font-size:18px"><b> John Doe </b></span>
+         <span style="font-size:18px"><b> {{userinfo.nomPrenoms}} </b></span>
         </p>
         <!-- FIN USER CONNECTED -->
   
@@ -205,9 +205,9 @@
   
       <v-spacer></v-spacer>
 
-      <v-form v-model="valid">
+      <v-form>
         <v-text-field
-          v-model="name"
+          
           label="Recherche..."
           style="width: 200px;margin-top: 12px;"
         ></v-text-field>
@@ -221,7 +221,7 @@
         <v-icon>sort</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="">
+      <v-btn icon @click.stop="logout">
         <v-icon>settings_power</v-icon>
       </v-btn>
 
@@ -318,7 +318,7 @@
       :top="y === 'top'"
       :vertical="mode === 'vertical'"
     >
-      {{ text }}
+      {{ text }} 
       <v-btn
         color="pink"
         flat
@@ -343,6 +343,7 @@ export default {
   },
   data() {
     return {
+      userinfo: null,
       notifications: false,
       sound: true,
       widgets: false,
@@ -422,6 +423,20 @@ export default {
           document.msExitFullscreen();
         }
       }
+    },
+    logout() {
+      sessionStorage.clear();
+      this.$router.push("/");
+    }
+  },
+  created() {
+    // console.log("session", sessionStorage.getItem("userConnected"));
+    this.userinfo = JSON.parse(sessionStorage.getItem("userConnected"));
+    if (userinfo === null) {
+      console.log("erreur");
+      // this.router.push("/");
+    } else {
+      console.log(userinfo.username);
     }
   }
 };
