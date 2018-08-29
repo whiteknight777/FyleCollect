@@ -122,32 +122,25 @@
         </v-flex>
     
     
-    <v-snackbar
-      v-model="snackbar"
-      :bottom="y === 'bottom'"
-      :left="x === 'left'"
-      :multi-line="mode === 'multi-line'"
-      :right="x === 'right'"
-      :timeout="timeout"
-      :top="y === 'top'"
-      :vertical="mode === 'vertical'"
+    
+    <snackbar
+    v-if="snackbar" 
+    :text="errorMsg"
+    :y="'top'"
+    :x="'right'"
     >
-      {{ text }}
-      <v-btn
-        color="pink"
-        flat
-        @click="snackbar = false"
-      >
-        Close
-      </v-btn>
-    </v-snackbar>
+    </snackbar>
     </v-layout>
 </template>
 <script>
 import Bg1 from "../assets/Bg-4.png";
+import snackbar from "../components/Snackbar";
 
 export default {
   name: "Login",
+  components: {
+    snackbar
+  },
 
   data() {
     return {
@@ -199,12 +192,9 @@ export default {
 
               // Vérification & redirection sur la bonne page
               if (user.grades == 2) {
-                this.snackbar = true;
-                this.text = "Connexion réussie";
-                this.$router.push("/dashboard");
-              } else {
-                this.snackbar = true;
-                this.text = "Connexion réussie";
+                this.$router.push("/dashboard-candidat");
+              } else if (user.grades == 3) {
+                this.$router.push("/dashboard-representant");
               }
             } else {
               this.snackbar = true;

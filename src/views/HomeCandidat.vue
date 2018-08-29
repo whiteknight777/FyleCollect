@@ -221,7 +221,7 @@
         <v-icon>sort</v-icon>
       </v-btn>
 
-      <v-btn icon @click.stop="logout">
+      <v-btn icon @click.stop="checkLogout">
         <v-icon>settings_power</v-icon>
       </v-btn>
 
@@ -308,25 +308,20 @@
     
     </v-navigation-drawer>
     <!-- END RIGTH MODAL  -->
-    <v-snackbar
-      v-model="snackbar"
-      :bottom="y === 'bottom'"
-      :left="x === 'left'"
-      :multi-line="mode === 'multi-line'"
-      :right="x === 'right'"
-      :timeout="timeout"
-      :top="y === 'top'"
-      :vertical="mode === 'vertical'"
+    <snackbar
+    v-if="snackbar" 
+    :text="text"
+    :y="y"
+    :x="x"
     >
-      {{ text }} 
-      <v-btn
-        color="pink"
-        flat
-        @click="snackbar = false"
-      >
-        Close
-      </v-btn>
-    </v-snackbar>
+    </snackbar>
+
+    <validationModal 
+    v-if="validation" 
+    @logout="logout" 
+    @abortLogout="abortLogout">
+    </validationModal>
+
 </div>    
 </template>
 
@@ -334,16 +329,21 @@
 <script>
 import charts from "./Charts.vue";
 import userInterface from "./UserInterface.vue";
+import validationModal from "../components/ValidationModal";
+import snackbar from "../components/Snackbar";
 
 export default {
-  name: "Home",
+  name: "HomeCandidat",
   components: {
     charts,
+    validationModal,
+    snackbar,
     userInterface
   },
   data() {
     return {
       userinfo: null,
+      validation: false,
       notifications: false,
       sound: true,
       widgets: false,
@@ -424,9 +424,15 @@ export default {
         }
       }
     },
+    checkLogout() {
+      this.validation = true;
+    },
     logout() {
       sessionStorage.clear();
       this.$router.push("/");
+    },
+    abortLogout() {
+      this.validation = false;
     }
   },
   created() {

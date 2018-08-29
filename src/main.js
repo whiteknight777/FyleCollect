@@ -23,7 +23,6 @@ import VueResource from 'vue-resource';
 
 // })
 
-// Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
 
 new Vue({

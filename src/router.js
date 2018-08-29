@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
+import HomeCandidat from './views/HomeCandidat.vue'
+import HomeRepresentant from './views/HomeRepresentant.vue'
 import Login from './views/Login.vue'
 import NotFound from './views/404.vue'
 
@@ -16,10 +17,16 @@ export default new Router({
       component: Login
     },
     {
-      path: '/dashboard',
-      name: 'home',
+      path: '/dashboard-candidat',
+      name: 'home-candidat',
       // beforeEnter: checkUser,
-      component: Home
+      component: HomeCandidat
+    },
+    {
+      path: '/dashboard-representant',
+      name: 'home-representant',
+      // beforeEnter: checkUser,
+      component: HomeRepresentant
     },
     {
       path: '/404',
