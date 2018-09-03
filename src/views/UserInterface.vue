@@ -159,7 +159,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
-import charts from "./Charts.vue";
+import charts from "../components/Charts.vue";
 
 export default {
   name: "UserInterface",
@@ -171,63 +171,59 @@ export default {
       items: [
         {
           active: true,
-          title: "Jason Oner",
+          title: "Kone Alassane",
           ranking: "3",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg"
+          avatar:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
         },
         {
           active: true,
-          title: "Ranee Carlson",
+          title: "Kouakou Jean",
           ranking: "4",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg"
+          avatar:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
         },
         {
-          title: "Cindy Baker",
+          title: "Yao Félicité",
           ranking: "2",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg"
+          avatar:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
         },
         {
-          title: "Ali Connors",
+          title: "Kipré Kouamé",
           ranking: "6",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg"
+          avatar:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
         }
       ],
       items2: [
         {
-          title: "Travis Howard",
+          title: "Ahoussou Jean",
           ranking: "1",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg"
+          avatar:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
         }
       ],
       chartData: {
         id: 1,
-        legend: "Graphique des votes par bureau de vote",
+        legend: "Graphique des votes obtenues par centres",
         type: "line",
         data: {
-          labels: [
-            "Bureau 1",
-            "Bureau 2",
-            "Bureau 3",
-            "Bureau 4",
-            "Bureau 5",
-            "Bureau 6",
-            "Bureau 7",
-            "Bureau 8"
-          ],
+          labels: ["Centre 1", "Centre 2", "Centre 3", "Centre 4", "Centre 5"],
           datasets: [
             {
               // another line graph
-              label: "Vous",
-              data: [4.8, 12.1, 12.7, 6.7, 139.8, 116.4, 50.7, 49.2],
+              label: "Nombre de voix",
+              data: [31, 55, 74, 62, 90],
               backgroundColor: [
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)" // Green
+                "rgba(0, 128, 128, 0.92)" // Green
+                // "rgb(0, 128, 128)", // Green
+                // "rgb(0, 128, 128)", // Green
+                // "rgb(0, 128, 128)", // Green
+                // "rgb(0, 128, 128)" // Green
+                // "#4CAF50", // Green
+                // "#FFC107", // Green
+                // "#607D8B" // Green
               ],
               borderColor: ["#B3E5FC"],
               borderWidth: 3

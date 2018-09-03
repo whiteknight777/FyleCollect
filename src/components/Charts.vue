@@ -4,8 +4,8 @@
     <section>
       <span style="font-size: 17px;text-transform: uppercase;"> {{legend}} </span>
     </section>
-      <canvas :id="'chart'+id" style="padding: 25px !important;" v-if="type != 'pie'"></canvas>
-      <canvas :id="'chart'+id" style="width: 100%;" v-if="type == 'pie' || type == 'doughnut'"></canvas>
+      <canvas :id="'chart'+id" style="" v-if="type == 'pie' || type == 'doughnut'"></canvas>
+      <canvas :id="'chart'+id" style="padding: 25px !important;" v-else-if="type != 'pie'"></canvas>
     </div>
   <!-- </div> -->
 </template>

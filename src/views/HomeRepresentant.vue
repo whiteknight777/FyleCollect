@@ -7,15 +7,8 @@
         <!-- LOGO -->
         <v-list style="padding-bottom: 0;">
           
-          <v-list-tile avatar>
-            <v-list-tile-avatar>
-              <img src="../assets/logo.png">
-            </v-list-tile-avatar>
-  
-            <v-list-tile-content>
-              <v-list-tile-title style="padding-left:12px;font-size:16px"><b> WEB APP </b></v-list-tile-title>
-            </v-list-tile-content>
-  
+          <v-list-tile>
+              <img src="../assets/logo_fc_ob_411x100.png" style="border-radius: 0;margin-bottom: 5px;width: 100%"> 
           </v-list-tile>
         </v-list>
         <!-- FIN LOGO -->
@@ -27,7 +20,7 @@
           <v-list-tile avatar>
             <v-list-tile-avatar class="user-div">
               <div data-v-7ba5bd90="" class="v-avatar" style="width: 80px;">
-                 <img src="https://randomuser.me/api/portraits/men/85.jpg" style="width:80px">
+                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ" style="width:80px">
                  
               </div>
             </v-list-tile-avatar>
@@ -39,7 +32,9 @@
           </v-list-tile>
         </v-list>
          <p class="p-user"> 
-           Bienvenue <br>
+           <b>Représentant</b> <br>
+           du <b>{{userinfo.bureauRepresentant}}</b><br>
+           au <b>{{userinfo.centreRepresentant}}</b> <br>
          <span style="font-size:18px"><b> {{userinfo.nomPrenoms}} </b></span>
         </p>
         <!-- FIN USER CONNECTED -->
@@ -58,130 +53,41 @@
           </v-list-tile>
         </v-list>
 
+        
         <v-list class="pa-0">
-          <v-list-group
-            no-action
-          >
-          
-            <v-list-tile slot="activator">
-              <v-list-tile-action>
-                <v-icon>how_to_vote</v-icon>
-              </v-list-tile-action>
-
-              <v-list-tile-content>
-                <v-list-tile-title>Bureau de votes</v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-
-            <v-list-tile @click="">
-              <v-list-tile-content>
-                <v-list-tile-title>Liste bureaux</v-list-tile-title>
-              </v-list-tile-content>
-
-            </v-list-tile>
-
-            <v-list-tile
-              @click=""
-            >
-              <v-list-tile-content>
-                <v-list-tile-title>Ajouter Bureau</v-list-tile-title>
-              </v-list-tile-content>
-
-            </v-list-tile>
-          </v-list-group>
-        </v-list>
-
-         <v-list class="pa-0">
-          <v-list-group
-            no-action
-          >
-          
-            <v-list-tile slot="activator">
-              <v-list-tile-action>
-                <v-icon>group</v-icon>
-              </v-list-tile-action>
-
-              <v-list-tile-content>
-                <v-list-tile-title>Représentants</v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-
-            <v-list-tile
-              @click=""
-            >
-              <v-list-tile-content>
-                <v-list-tile-title>Liste Représentants</v-list-tile-title>
-              </v-list-tile-content>
-
-            </v-list-tile>
-
-            <v-list-tile
-              @click=""
-            >
-              <v-list-tile-content>
-                <v-list-tile-title>Ajouter Réprésentant</v-list-tile-title>
-              </v-list-tile-content>
-
-            </v-list-tile>
-          </v-list-group>
-        </v-list>
-
-        <v-list class="pa-0">
-          <v-list-group
-            no-action
-          >
-          
-            <v-list-tile slot="activator">
-              <v-list-tile-action>
-                <v-icon>contacts</v-icon>
-              </v-list-tile-action>
-
-              <v-list-tile-content>
-                <v-list-tile-title>Candidats</v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-
-            <v-list-tile
-              @click=""
-            >
-              <v-list-tile-content>
-                <v-list-tile-title>Liste Candidats</v-list-tile-title>
-              </v-list-tile-content>
-
-            </v-list-tile>
-
-            <v-list-tile
-              @click=""
-            >
-              <v-list-tile-content>
-                <v-list-tile-title>Ajouter Candidat</v-list-tile-title>
-              </v-list-tile-content>
-
-            </v-list-tile>
-          </v-list-group>
-        </v-list>
-
-        <v-list class="pa-0">
-          <v-list-tile avatar @click="">
+          <v-list-tile avatar @click="addCandidatsResult">
             <v-list-tile-action>
-              <v-icon> notes </v-icon>
+              <v-icon> how_to_vote </v-icon>
             </v-list-tile-action>
   
             <v-list-tile-content>
-              <v-list-tile-title>Classement</v-list-tile-title>
+              <v-list-tile-title>Résltats candidats</v-list-tile-title>
             </v-list-tile-content>
   
           </v-list-tile>
         </v-list>
         
         <v-list class="pa-0">
-          <v-list-tile avatar @click="">
+          <v-list-tile avatar @click="addBureauResult">
             <v-list-tile-action>
-              <v-icon> settings </v-icon>
+              <v-icon> notes </v-icon>
             </v-list-tile-action>
   
             <v-list-tile-content>
-              <v-list-tile-title>Paramêtres</v-list-tile-title>
+              <v-list-tile-title>Stats Bureau de vote</v-list-tile-title>
+            </v-list-tile-content>
+  
+          </v-list-tile>
+        </v-list>
+
+        <v-list class="pa-0">
+          <v-list-tile avatar @click="">
+            <v-list-tile-action>
+              <v-icon> move_to_inbox </v-icon>
+            </v-list-tile-action>
+  
+            <v-list-tile-content>
+              <v-list-tile-title>Historique Sms</v-list-tile-title>
             </v-list-tile-content>
   
           </v-list-tile>
@@ -230,7 +136,7 @@
   
     <!-- CONTENT  -->
     <v-content>
-      <RepresentantInterface></RepresentantInterface>
+      <RepresentantInterface :user="userinfo"></RepresentantInterface>
     </v-content>
     <!-- END CONTENT  -->
   
@@ -315,29 +221,68 @@
     :x="x"
     >
     </snackbar>
+    <snackbar
+    v-if="successForm1" 
+    :text="text"
+    :y="y"
+    :x="x"
+    >
+    </snackbar>
+    <snackbar
+    v-if="successForm2" 
+    :text="text"
+    :y="y"
+    :x="x"
+    >
+    </snackbar>
 
-    <ValidationModal v-if="validation" v-on:logout="logout" v-on:abortLogout="abortLogout"></ValidationModal>
+    <ValidationModal
+    v-if="validation" 
+    v-on:logout="logout"
+    v-on:abortLogout="abortLogout">
+    </ValidationModal>
+   
+    <FormStatCandidats 
+    :userinfo="userinfo" 
+    :dataTable1="dataTable1" 
+    :dataTable2="dataTable2" 
+    v-if="addCandidatStats === true" 
+    @closeFormCandidat="closeFormCandidat" 
+    @saveCandidatsDataForm="saveCandidatsDataForm">
+    </FormStatCandidats>
+    
+    <FormStatsBureau 
+    :userinfo="userinfo" 
+    v-if="addBureauStats === true" 
+    @closeFormBureau="closeFormBureau" 
+    @saveBureauDataForm="saveBureauDataForm">
+    </FormStatsBureau>
+
 </div>    
 </template>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
-import charts from "./Charts.vue";
 import ValidationModal from "../components/ValidationModal";
 import RepresentantInterface from "./RepresentantInterface.vue";
 import snackbar from "../components/Snackbar";
+import FormStatCandidats from "../components/FormStatCandidats";
+import FormStatsBureau from "../components/FormStatsBureau";
 
 export default {
   name: "HomeRepresentant",
   components: {
-    charts,
     ValidationModal,
     snackbar,
+    FormStatCandidats,
+    FormStatsBureau,
     RepresentantInterface
   },
   data() {
     return {
-      userinfo: null,
+      userinfo: this.getUserConnected(),
+      addCandidatStats: false,
+      addBureauStats: false,
       notifications: false,
       validation: false,
       sound: true,
@@ -348,42 +293,22 @@ export default {
       right: true,
       rightDrawer: false,
       snackbar: true,
+      successForm1: false,
+      successForm2: false,
       y: "bottom",
       x: null,
       mode: "",
       timeout: 6000,
       text: "Bienvenue dans votre interface!",
-      items: [
-        {
-          active: true,
-          title: "Jason Oner",
-          ranking: "3",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg"
-        },
-        {
-          active: true,
-          title: "Ranee Carlson",
-          ranking: "4",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg"
-        },
-        {
-          title: "Cindy Baker",
-          ranking: "2",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg"
-        },
-        {
-          title: "Ali Connors",
-          ranking: "6",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg"
-        }
+      dataGet: [
+        // { id: 1, name: "candidat 1", nbVoix: Number },
+        // { id: 2, name: "candidat 2", nbVoix: Number },
+        // { id: 3, name: "candidat 3", nbVoix: Number },
+        // { id: 4, name: "candidat 4", nbVoix: Number },
+        // { id: 5, name: "candidat 5", nbVoix: Number }
       ],
-      items2: [
-        {
-          title: "Travis Howard",
-          ranking: "1",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg"
-        }
-      ]
+      dataTable1: [],
+      dataTable2: []
     };
   },
   methods: {
@@ -428,16 +353,103 @@ export default {
     },
     abortLogout() {
       this.validation = false;
+    },
+    closeFormCandidat() {
+      this.addCandidatStats = false;
+      this.dataTable1 = [];
+      this.dataTable2 = [];
+    },
+    saveCandidatsDataForm() {
+      this.addCandidatStats = false;
+      this.dataTable1 = [];
+      this.dataTable2 = [];
+      this.y = "top";
+      this.x = "right";
+      this.text = "Les données des candidats ont été enregistrées avec succès";
+      this.successForm1 = true;
+    },
+    addCandidatsResult() {
+      this.successForm1 = false;
+      this.addCandidatStats = !this.addCandidatStats;
+      let middle = this.dataGet.length / 2;
+      let o = 0;
+      for (let data of this.dataGet) {
+        if (o < middle) {
+          this.dataTable1.push({
+            id: data.id,
+            name: data.name,
+            nbVoix: data.nbVoix
+          });
+        } else {
+          this.dataTable2.push({
+            id: data.id,
+            name: data.name,
+            nbVoix: data.nbVoix
+          });
+        }
+        o++;
+      }
+    },
+    addBureauResult() {
+      this.successForm2 = false;
+      this.addBureauStats = !this.addBureauStats;
+    },
+    closeFormBureau() {
+      this.addBureauStats = false;
+    },
+    saveBureauDataForm() {
+      this.addBureauStats = false;
+      this.y = "top";
+      this.x = "right";
+      this.text = "Les données du bureau ont été enregistrées avec succès";
+      this.successForm2 = true;
+    },
+    getCandidatsSuivis(userinfo) {
+      this.axios
+        .get(
+          "http://31.207.34.70/fylecollect_api/web/app_dev.php/get/candidats/" +
+            userinfo.idClient,
+          {
+            headers: {
+              "Content-type": "application/x-www-form-urlencoded"
+            }
+          }
+        )
+        .then(response => {
+          let data = response.data;
+          let nbResult = data["nbResultat"];
+          var i = 0;
+          for (i; i < nbResult; i++) {
+            this.dataGet.push({
+              id: data["" + i + ""].idCandidat,
+              name: data["" + i + ""].nomPrenom,
+              nbVoix: Number
+            });
+          }
+        });
+    },
+    getStatsBureau() {
+      this.axios
+        .post("http://localhost:8000/api/stats/bureau/" + userinfo.id, {
+          headers: {
+            "Content-type": "application/x-www-form-urlencoded"
+          }
+        })
+        .then(response => {
+          console.log(response.data);
+          // this.$emit("saveDataForm");
+        });
+    },
+    getUserConnected() {
+      return JSON.parse(sessionStorage.getItem("userConnected"));
     }
   },
-  created() {
-    // console.log("session", sessionStorage.getItem("userConnected"));
-    this.userinfo = JSON.parse(sessionStorage.getItem("userConnected"));
+  mounted() {
+    let userinfo = this.getUserConnected();
     if (userinfo === null) {
-      console.log("erreur");
-      // this.router.push("/");
+      this.router.push("/");
     } else {
-      console.log(userinfo.username);
+      this.getCandidatsSuivis(userinfo);
     }
   }
 };

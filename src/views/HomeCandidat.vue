@@ -7,15 +7,8 @@
         <!-- LOGO -->
         <v-list style="padding-bottom: 0;">
           
-          <v-list-tile avatar>
-            <v-list-tile-avatar>
-              <img src="../assets/logo.png">
-            </v-list-tile-avatar>
-  
-            <v-list-tile-content>
-              <v-list-tile-title style="padding-left:12px;font-size:16px"><b> WEB APP </b></v-list-tile-title>
-            </v-list-tile-content>
-  
+          <v-list-tile>
+              <img src="../assets/logo_fc_ob_411x100.png" style="border-radius: 0;margin-bottom: 5px;width: 100%"> 
           </v-list-tile>
         </v-list>
         <!-- FIN LOGO -->
@@ -27,7 +20,7 @@
           <v-list-tile avatar>
             <v-list-tile-avatar class="user-div">
               <div data-v-7ba5bd90="" class="v-avatar" style="width: 80px;">
-                 <img src="https://randomuser.me/api/portraits/men/85.jpg" style="width:80px">
+                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ" style="width:80px">
                  
               </div>
             </v-list-tile-avatar>
@@ -39,7 +32,8 @@
           </v-list-tile>
         </v-list>
          <p class="p-user"> 
-           Bienvenue <br>
+           <b>Candidat</b> <br>
+           à {{userinfo.commune}} <br>
          <span style="font-size:18px"><b> {{userinfo.nomPrenoms}} </b></span>
         </p>
         <!-- FIN USER CONNECTED -->
@@ -69,13 +63,13 @@
               </v-list-tile-action>
 
               <v-list-tile-content>
-                <v-list-tile-title>Bureau de votes</v-list-tile-title>
+                <v-list-tile-title>Centres de votes</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
 
             <v-list-tile @click="">
               <v-list-tile-content>
-                <v-list-tile-title>Liste bureaux</v-list-tile-title>
+                <v-list-tile-title>Liste Centre</v-list-tile-title>
               </v-list-tile-content>
 
             </v-list-tile>
@@ -84,7 +78,7 @@
               @click=""
             >
               <v-list-tile-content>
-                <v-list-tile-title>Ajouter Bureau</v-list-tile-title>
+                <v-list-tile-title>Ajouter Centre</v-list-tile-title>
               </v-list-tile-content>
 
             </v-list-tile>
@@ -327,7 +321,6 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
-import charts from "./Charts.vue";
 import userInterface from "./UserInterface.vue";
 import validationModal from "../components/ValidationModal";
 import snackbar from "../components/Snackbar";
@@ -335,14 +328,13 @@ import snackbar from "../components/Snackbar";
 export default {
   name: "HomeCandidat",
   components: {
-    charts,
     validationModal,
     snackbar,
     userInterface
   },
   data() {
     return {
-      userinfo: null,
+      userinfo: this.getUserConnected(),
       validation: false,
       notifications: false,
       sound: true,
@@ -357,38 +349,7 @@ export default {
       x: null,
       mode: "",
       timeout: 6000,
-      text: "Bienvenue dans votre interface!",
-      items: [
-        {
-          active: true,
-          title: "Jason Oner",
-          ranking: "3",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg"
-        },
-        {
-          active: true,
-          title: "Ranee Carlson",
-          ranking: "4",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg"
-        },
-        {
-          title: "Cindy Baker",
-          ranking: "2",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg"
-        },
-        {
-          title: "Ali Connors",
-          ranking: "6",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg"
-        }
-      ],
-      items2: [
-        {
-          title: "Travis Howard",
-          ranking: "1",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg"
-        }
-      ]
+      text: "Bienvenue dans votre interface!"
     };
   },
   methods: {
@@ -433,16 +394,15 @@ export default {
     },
     abortLogout() {
       this.validation = false;
+    },
+    getUserConnected() {
+      return JSON.parse(sessionStorage.getItem("userConnected"));
     }
   },
-  created() {
-    // console.log("session", sessionStorage.getItem("userConnected"));
-    this.userinfo = JSON.parse(sessionStorage.getItem("userConnected"));
+  mounted() {
+    let userinfo = this.getUserConnected();
     if (userinfo === null) {
-      console.log("erreur");
-      // this.router.push("/");
-    } else {
-      console.log(userinfo.username);
+      this.router.push("/");
     }
   }
 };

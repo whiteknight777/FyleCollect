@@ -10,10 +10,10 @@
     
                     <!-- <v-container> -->
                         <v-card-text style="position: absolute;bottom: 0;">    
-                        <p class="text-xs-left display-2" style="color:white">Fyle Group</p>
+                        <p class="text-xs-left display-2" style="color:white">FYLE COLLECT</p>
                         <p style="color:white">
-                            some Lorem ipsum dolor sit amet consectetur adipisicing elit.<br>
-                            Iste, dolorum maiores in ipsum officiis distinctio illo laudantium <br>
+                            Votre web application qui communique, collect, centralise & calcule<br>
+                            vos données en temps réel.<br>
                             <v-btn
                             dark
                             icon
@@ -52,7 +52,7 @@
     
                         <v-layout align-center justify-center column fill-height>
     
-                            <img src="../assets/logo.png" class="responsive" width="50%" style="margin-left: -23px;">
+                            <img src="../assets/logo_fc_ob_411x100.png" class="responsive" width="100%" style="margin-left: -5px;margin-bottom: 30px;margin-top: 60px;">
                             <!-- <span width="50%" style="border-radius:100%" class="deep-orange darken-3">
                                 <v-icon>how_to_vote</v-icon>
                             </span> -->
@@ -85,7 +85,7 @@
     
                             <v-form id="login" ref="form" style="width:100%">
     
-                                <v-text-field v-model="username" :rules="nameRules" :counter="15" label="Username" required></v-text-field>
+                                <v-text-field v-model="email" :rules="emailRules" label="Email" required></v-text-field>
     
                                 <v-text-field v-model="password" type="password" label="Password" required></v-text-field>
     
@@ -147,10 +147,10 @@ export default {
       Bg: Bg1,
       error: false,
       errorMsg: "Erreur Utilisateur inconnue...",
-      username: "desire.arra",
-      nameRules: [
-        v => !!v || "Username requis",
-        v => (v && v.length <= 15) || "username must be less than 12 characters"
+      email: "kouao.hypolite@gmail.com",
+      emailRules: [
+        v => !!v || "E-mail obligatoire",
+        v => /.+@.+[(.)].+/.test(v) || "E-mail doit être valide"
       ],
       password: "1234",
       select: null,
@@ -170,37 +170,39 @@ export default {
         // Native form submission is not yet supported
         let form = document.getElementById("login");
         let data = new FormData(form);
-        data.append("username", this.username);
+        data.append("email", this.email);
         data.append("password", this.password);
         // let data = [username => this.username, password => this.password];
         // console.log(form);
         this.axios
-          .post("http://localhost:8000/api/checkuser", data, {
-            headers: {
-              "Content-type": "application/x-www-form-urlencoded"
+          .post(
+            "http://31.207.34.70/fylecollect_api/web/app_dev.php/checkuser",
+            data,
+            {
+              headers: {
+                "Content-type": "application/x-www-form-urlencoded"
+              }
             }
-          })
+          )
           .then(response => {
-            // console.log(this.$router.history.current.path);
-            if (response.data.username != undefined) {
+            // console.log(response.data);
+            console.log(this.$router.history.current.path);
+            if (response.data.statusRequete == 100) {
               // Récupération des données récupérée
-              data = JSON.stringify(response.data);
-
+              data = JSON.stringify(response.data.response);
               // Sauvegarde des données récupérée dans la séssion
               sessionStorage.setItem("userConnected", data);
               let user = JSON.parse(sessionStorage.getItem("userConnected"));
-
               // Vérification & redirection sur la bonne page
               if (user.grades == 2) {
                 this.$router.push("/dashboard-candidat");
               } else if (user.grades == 3) {
                 this.$router.push("/dashboard-representant");
               }
-            } else {
+            }
+            if (response.data.statusRequete == 200) {
               this.snackbar = true;
               this.text = "Erreur Utilisateur inconnue";
-              // this.errorMsg = "Erreur Utilisateur inconnue...";
-              // this.error = true;
             }
           });
       }

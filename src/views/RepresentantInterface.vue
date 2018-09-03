@@ -5,7 +5,7 @@
   
         <v-layout row wrap style="margin-bottom:10px">
           <!--  Stat bar -->
-          <v-flex xs6 md3 lg3>
+          <v-flex xs6 md4 lg4>
             <v-card>
               <div class="card-icon-block deep-orange darken-2" dark>
                 <v-icon dark>supervised_user_circle</v-icon>
@@ -25,7 +25,7 @@
           <!-- Fin stat bar -->
   
           <!--  Stat bar -->
-          <v-flex xs6 md3 lg3>
+          <v-flex xs6 md4 lg4>
             <v-card>
               <div class="card-icon-block warning" dark>
                 <v-icon dark>stars</v-icon>
@@ -33,7 +33,7 @@
               <v-card-title style="padding-top: 50px;padding-bottom:0">
                 <div style="text-align: right;width:100%">
                   <span class="number-card" style="color:#FFAB00 !important">12000</span><br>
-                  <span style="font-size:13px;text-transform:uppercase">Total de votes acquis</span>
+                  <span style="font-size:13px;text-transform:uppercase">Votes obtenus</span>
                   <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
                 </div>
               </v-card-title>
@@ -45,15 +45,15 @@
           <!-- Fin stat bar -->
   
           <!--  Stat bar -->
-          <v-flex xs6 md3 lg3>
+          <v-flex xs12 md4 lg4>
             <v-card>
               <div class="card-icon-block success" dark>
                 <v-icon dark>voice_over_off</v-icon>
               </div>
               <v-card-title style="padding-top: 50px;padding-bottom:0">
                 <div style="text-align: right;width:100%">
-                  <span class="number-card" style="color:#53af50 !important">40%</span><br>
-                  <span style="font-size:13px;text-transform:uppercase">Taux d'abstention</span>
+                  <span class="number-card" style="color:#53af50 !important">130</span><br>
+                  <span style="font-size:13px;text-transform:uppercase">Nombre de Bulletin Nul</span>
                   <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
                 </div>
               </v-card-title>
@@ -63,94 +63,39 @@
             </v-card>
           </v-flex>
           <!-- Fin stat bar -->
-  
-          <!--  Stat bar -->
-          <v-flex xs6 md3 lg3>
+
+          <!-- <v-flex xs6 md3 lg3>
             <v-card>
-              <div class="card-icon-block primary">
-                <v-icon dark>how_to_vote</v-icon>
-              </div>
-              <v-card-title style="padding-top: 50px;padding-bottom:0">
-                <div style="text-align: right;width:100%">
-                  <span class="number-card" style="color:#3c76d2 !important">60%</span><br>
-                  <span style="font-size:13px;text-transform:uppercase ">Taux de participation</span>
-                  <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
-                </div>
-              </v-card-title>
-              <v-card-actions>
-                <v-progress-linear color="primary" height="4" value="60"></v-progress-linear>
-              </v-card-actions>
+              <charts :data="pieData.data" :id="pieData.id" :type="pieData.type" :options="pieData.options" :legend="pieData.legend" style="">
+              </charts>
+  
             </v-card>
-          </v-flex>
-          <!-- Fin stat bar -->
+          </v-flex> -->
+  
   
         </v-layout>
   
         <v-layout row wrap style="margin-bottom:10px">
   
           <!--  Graphique -->
-          <v-flex xs12 md9 lg9>
+          <v-flex xs12 md6 lg6>
             <v-card>
-              <charts :data="chartData.data" :id="chartData.id" :type="chartData.type" :options="chartData.options" :legend="chartData.legend" :width="400" style="height:440px">
+              <charts v-if="loaded" :data="chartData.data" :id="chartData.id" :type="chartData.type" :options="chartData.options" :legend="chartData.legend" :width="400" style="height:440px">
               </charts>
   
             </v-card>
           </v-flex>
-          <!-- Fin Graphique -->
-  
-          <!-- Classement candidat -->
-          <v-flex xs12 md3 lg3>
-            <v-card>
-  
-              <v-list subheader>
-                <v-subheader>Candidat en tête</v-subheader>
-  
-                <v-list-tile v-for="item in items2" :key="item.title" avatar @click="">
-                  <v-list-tile-avatar>
-                    <img :src="item.avatar">
-                  </v-list-tile-avatar>
-  
-                  <v-list-tile-content>
-                    <v-list-tile-title v-html="item.title"></v-list-tile-title>
-                  </v-list-tile-content>
 
-                  <v-list-tile-action>
-                    <v-chip :color="parseInt(item.ranking) < 3 ? 'green lighten-1' : 'yellow darken-1'" text-color="white" style="font-size:12px">
-                      N°{{item.ranking}}
-                    </v-chip>
-                  </v-list-tile-action>
-                </v-list-tile>
-              </v-list>
+          
+          <v-flex xs12 md6 lg6>
+            <v-card>
+              <charts v-if="loaded" :data="pieData.data" :id="pieData.id" :type="pieData.type" :options="pieData.options" :legend="pieData.legend" :height="440" style="height:440px">
+              </charts>
   
-              <v-divider></v-divider>
-              <v-list subheader>
-                <v-subheader>Liste des candidats</v-subheader>
-                <v-list-tile v-for="item in items" :key="item.title" avatar @click="">
-                  <v-list-tile-avatar>
-                    <img :src="item.avatar">
-                  </v-list-tile-avatar>
-  
-                  <v-list-tile-content>
-                    <v-list-tile-title v-html="item.title"></v-list-tile-title>
-                  </v-list-tile-content>
-  
-                  <v-list-tile-action>
-                    <!-- <v-icon :color="item.active ? 'teal' : 'grey'">chat_bubble</v-icon> -->
-                    <v-chip :color="parseInt(item.ranking) < 4 ? 'green lighten-1' : 'yellow darken-1'" text-color="white" style="font-size:12px">
-                      <!-- <v-icon dark v-if="parseInt(item.ranking) < 0" style="font-size:16px">arrow_downward</v-icon>
-                      <v-icon dark v-if="parseInt(item.ranking) > 0" style="font-size:16px">arrow_upward</v-icon> -->
-                      N°{{item.ranking}}
-                    </v-chip>
-                  </v-list-tile-action>
-                </v-list-tile>
-  
-                <v-subheader>Voir tout le classement</v-subheader>
-              </v-list>
             </v-card>
           </v-flex>
-          <!-- Fin Classement candidat -->
-
         </v-layout>
+
   
       </v-container>
     </v-slide-y-transition>
@@ -159,84 +104,61 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
-import charts from "./Charts.vue";
+const apiDomain = "http://31.207.34.70/fylecollect_api/web/app_dev.php/";
+const localDomain = "http://localhost/API-REST/web/app_dev.php/";
+import charts from "../components/Charts.vue";
 
 export default {
   name: "RepresentantInterface",
+  props: {
+    user: Object
+  },
   components: {
     charts
   },
   data() {
     return {
-      items: [
-        {
-          active: true,
-          title: "Jason Oner",
-          ranking: "3",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg"
-        },
-        {
-          active: true,
-          title: "Ranee Carlson",
-          ranking: "4",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg"
-        },
-        {
-          title: "Cindy Baker",
-          ranking: "2",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg"
-        },
-        {
-          title: "Ali Connors",
-          ranking: "6",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg"
-        }
-      ],
-      items2: [
-        {
-          title: "Travis Howard",
-          ranking: "1",
-          avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg"
-        }
-      ],
+      loaded: false,
+      barChartLabel: [],
+      dataChartLabel: [],
       chartData: {
         id: 1,
-        legend: "Graphique des votes par bureau de vote",
-        type: "line",
+        legend: "Graphique des voix par candidats",
+        type: "bar",
         data: {
-          labels: [
-            "Bureau 1",
-            "Bureau 2",
-            "Bureau 3",
-            "Bureau 4",
-            "Bureau 5",
-            "Bureau 6",
-            "Bureau 7",
-            "Bureau 8"
-          ],
+          labels: [],
           datasets: [
             {
               // another line graph
-              label: "Vous",
-              data: [4.8, 12.1, 12.7, 6.7, 139.8, 116.4, 50.7, 49.2],
+              label: "Nombre de voix",
+              data: [],
               backgroundColor: [
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)", // Green
-                "rgba(230, 74, 25, 0.78)" // Green
+                "#90CAF9", // Green
+                "#C5CAE9", // Green
+                "#009688", // Green
+                "#01579B", // Green
+                "#FB8C00", // Green
+                "#4CAF50", // Green
+                "#FFC107", // Green
+                "#607D8B" // Green
               ],
-              borderColor: ["#B3E5FC"],
+              borderColor: [
+                "#90CAF9", // Green
+                "#C5CAE9", // Green
+                "#009688", // Green
+                "#01579B", // Green
+                "#FB8C00", // Green
+                "#4CAF50", // Green
+                "#FFC107", // Green
+                "#607D8B" // Green
+              ],
               borderWidth: 3
             }
           ]
         },
         options: {
           responsive: true,
-          lineTension: 1,
+          lineTension: 2,
           maintainAspectRatio: false,
           scales: {
             yAxes: [
@@ -249,10 +171,90 @@ export default {
             ]
           }
         }
+      },
+      pieData: {
+        id: 2,
+        // legend: "Graphique des votes par bureau de vote",
+        type: "pie",
+        data: {
+          labels: [],
+          datasets: [
+            {
+              data: [],
+              backgroundColor: [
+                "#90CAF9", // Green
+                "#C5CAE9", // Green
+                "#009688", // Green
+                "#01579B", // Green
+                "#FB8C00", // Green
+                "#4CAF50", // Green
+                "#FFC107", // Green
+                "#607D8B" // Green
+              ]
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
       }
     };
   },
-  methods: {},
+  methods: {
+    getDataBarChart() {
+      this.axios
+        .get(
+          apiDomain +
+            "api/statistiques/representant/data_chart_bar/" +
+            this.user.idUtilisateur,
+          {
+            headers: {
+              "Content-type": "application/x-www-form-urlencoded"
+            }
+          }
+        )
+        .then(response => {
+          // console.log(response.data);
+          // Récupérons la reponse renvoyée
+          let data = response.data.response;
+          // Récupérons la nombre de données récupérées
+
+          console.log(response.data);
+          // Vérifions le status de la requete
+          if (response.data.statusRequete == 100) {
+            let nbResult = data.length;
+
+            // Ajoutons les informations aux différentes variables
+            for (let i = 0; i < nbResult; i++) {
+              for (let index in data[i]) {
+                this.barChartLabel.push("" + index + "");
+                this.dataChartLabel.push(data[i][index]);
+              }
+            }
+
+            // Mettons à jours les variables utiles pour le graphique
+            this.loaded = true;
+            this.chartData.data.labels = this.barChartLabel;
+            this.chartData.data.datasets[0].data = this.dataChartLabel;
+
+            this.pieData.data.labels = this.barChartLabel;
+            this.pieData.data.datasets[0].data = this.dataChartLabel;
+          } else {
+            //
+            this.loaded = true;
+            this.chartData.data.labels = [];
+            this.chartData.data.datasets[0].data = this.dataChartLabel;
+
+            this.pieData.data.labels = [];
+            this.pieData.data.datasets[0].data = this.dataChartLabel;
+          }
+        });
+    }
+  },
+  beforeMount() {
+    this.getDataBarChart();
+  },
   mounted() {
     $(".number-card").each(function() {
       $(this)
