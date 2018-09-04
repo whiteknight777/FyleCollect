@@ -300,13 +300,7 @@ export default {
       mode: "",
       timeout: 6000,
       text: "Bienvenue dans votre interface!",
-      dataGet: [
-        // { id: 1, name: "candidat 1", nbVoix: Number },
-        // { id: 2, name: "candidat 2", nbVoix: Number },
-        // { id: 3, name: "candidat 3", nbVoix: Number },
-        // { id: 4, name: "candidat 4", nbVoix: Number },
-        // { id: 5, name: "candidat 5", nbVoix: Number }
-      ],
+      dataGet: [],
       dataTable1: [],
       dataTable2: []
     };
