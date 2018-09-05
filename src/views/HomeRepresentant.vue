@@ -269,6 +269,9 @@ import snackbar from "../components/Snackbar";
 import FormStatCandidats from "../components/FormStatCandidats";
 import FormStatsBureau from "../components/FormStatsBureau";
 
+const apiDomain = "http://31.207.34.70/fylecollect_api/web/app_dev.php/";
+const localDomain = "http://localhost/API-REST/web/app_dev.php/";
+
 export default {
   name: "HomeRepresentant",
   components: {
@@ -400,17 +403,14 @@ export default {
     },
     getCandidatsSuivis(userinfo) {
       this.axios
-        .get(
-          "http://31.207.34.70/fylecollect_api/web/app_dev.php/get/candidats/" +
-            userinfo.idClient,
-          {
-            headers: {
-              "Content-type": "application/x-www-form-urlencoded"
-            }
+        .get(localDomain + "get/candidats/" + userinfo.idClient, {
+          headers: {
+            "Content-type": "application/x-www-form-urlencoded"
           }
-        )
+        })
         .then(response => {
           let data = response.data;
+          // console.log(data);
           let nbResult = data["nbResultat"];
           var i = 0;
           for (i; i < nbResult; i++) {
@@ -420,18 +420,6 @@ export default {
               nbVoix: Number
             });
           }
-        });
-    },
-    getStatsBureau() {
-      this.axios
-        .post("http://localhost:8000/api/stats/bureau/" + userinfo.id, {
-          headers: {
-            "Content-type": "application/x-www-form-urlencoded"
-          }
-        })
-        .then(response => {
-          console.log(response.data);
-          // this.$emit("saveDataForm");
         });
     },
     getUserConnected() {

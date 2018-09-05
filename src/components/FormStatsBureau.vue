@@ -119,13 +119,13 @@ export default {
       data.append("nbVotant", this.nb_votant);
       data.append("nbBulletinNul", this.nb_bulletin_null);
       this.axios
-        .post(apiDomain + "statsbureaux/add", data, {
+        .post(localDomain + "statsbureaux/add", data, {
           headers: {
             "Content-type": "application/json"
           }
         })
         .then(response => {
-          console.log(response.data);
+          // console.log(response.data);
           this.$emit("saveBureauDataForm");
         });
     }

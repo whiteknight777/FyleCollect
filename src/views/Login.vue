@@ -136,6 +136,9 @@
 import Bg1 from "../assets/Bg-4.png";
 import snackbar from "../components/Snackbar";
 
+const apiDomain = "http://31.207.34.70/fylecollect_api/web/app_dev.php/";
+const localDomain = "http://localhost/API-REST/web/app_dev.php/";
+
 export default {
   name: "Login",
   components: {
@@ -175,15 +178,11 @@ export default {
         // let data = [username => this.username, password => this.password];
         // console.log(form);
         this.axios
-          .post(
-            "http://31.207.34.70/fylecollect_api/web/app_dev.php/checkuser",
-            data,
-            {
-              headers: {
-                "Content-type": "application/x-www-form-urlencoded"
-              }
+          .post(localDomain + "api/checkuser", data, {
+            headers: {
+              "Content-type": "application/x-www-form-urlencoded"
             }
-          )
+          })
           .then(response => {
             // console.log(response.data);
             console.log(this.$router.history.current.path);

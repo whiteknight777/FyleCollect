@@ -129,13 +129,13 @@ export default {
         data.append("id_" + item2.id, item2.nbVoix);
       }
       this.axios
-        .post(apiDomain + "statscandidatsbureaux/add", data, {
+        .post(localDomain + "statscandidatsbureaux/add", data, {
           headers: {
             "Content-type": "application/x-www-form-urlencoded"
           }
         })
         .then(response => {
-          console.log(response.data);
+          // console.log(response.data);
           this.$emit("saveCandidatsDataForm");
         });
       // console.log(data);
