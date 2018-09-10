@@ -8,7 +8,7 @@
         <v-list style="padding-bottom: 0;">
           
           <v-list-tile>
-              <img src="../assets/logo_fc_ob_411x100.png" style="border-radius: 0;margin-bottom: 5px;width: 100%"> 
+              <img src="../../assets/logo_fc_ob_411x100.png" style="border-radius: 0;margin-bottom: 5px;width: 100%"> 
           </v-list-tile>
         </v-list>
         <!-- FIN LOGO -->
@@ -42,14 +42,21 @@
   
         <!-- LEFT MENU -->
         <v-list class="pa-0">
-           <v-list-tile @click="" class="active-item">
+          <v-list-tile @click="active = 1" class="" :class="{'active-item': active === 1}">
+
             <v-list-tile-action>
                 <v-icon>dashboard</v-icon>
             </v-list-tile-action>
 
-            <v-list-tile-content @click="">
-              <v-list-tile-title>Tableau de bord</v-list-tile-title>
-            </v-list-tile-content>
+            
+            <router-link to="/dashboard-representant">
+              <v-list-tile-content @click="active = 1">
+                <v-list-tile-title  class="" :class="{'active-color': active === 1}">
+                  Tableau de bord
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </router-link>
+
           </v-list-tile>
         </v-list>
 
@@ -61,7 +68,7 @@
             </v-list-tile-action>
   
             <v-list-tile-content>
-              <v-list-tile-title>Résltats candidats</v-list-tile-title>
+              <v-list-tile-title>Résultats candidats</v-list-tile-title>
             </v-list-tile-content>
   
           </v-list-tile>
@@ -81,14 +88,17 @@
         </v-list>
 
         <v-list class="pa-0">
-          <v-list-tile avatar @click="">
+          <v-list-tile avatar @click="active = 4" class="" :class="{'active-item': active === 4}">
+
             <v-list-tile-action>
               <v-icon> move_to_inbox </v-icon>
             </v-list-tile-action>
-  
-            <v-list-tile-content>
-              <v-list-tile-title>Historique Sms</v-list-tile-title>
-            </v-list-tile-content>
+
+            <router-link to="/historique-sms">
+              <v-list-tile-content @click="active = 4">
+                <v-list-tile-title class="" :class="{'active-color': active === 4}">Historique Sms</v-list-tile-title>
+              </v-list-tile-content>
+            </router-link>
   
           </v-list-tile>
         </v-list>
@@ -136,7 +146,7 @@
   
     <!-- CONTENT  -->
     <v-content>
-      <RepresentantInterface :user="userinfo"></RepresentantInterface>
+      <HistoriqueSms :user="userinfo"></HistoriqueSms>
     </v-content>
     <!-- END CONTENT  -->
   
@@ -263,27 +273,28 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
-import ValidationModal from "../components/ValidationModal";
-import RepresentantInterface from "./RepresentantInterface.vue";
-import snackbar from "../components/Snackbar";
-import FormStatCandidats from "../components/FormStatCandidats";
-import FormStatsBureau from "../components/FormStatsBureau";
+import ValidationModal from "../../components/ValidationModal";
+import HistoriqueSms from "./HistoriqueSms.vue";
+import snackbar from "../../components/Snackbar";
+import FormStatCandidats from "../../components/FormStatCandidats";
+import FormStatsBureau from "../../components/FormStatsBureau";
 
 const apiDomain = "http://31.207.34.70/fylecollect_api/web/app_dev.php/";
 const localDomain = "http://localhost/API-REST/web/app_dev.php/";
 
 export default {
-  name: "HomeRepresentant",
+  name: "SmsRepresentant",
   components: {
     ValidationModal,
     snackbar,
     FormStatCandidats,
     FormStatsBureau,
-    RepresentantInterface
+    HistoriqueSms
   },
   data() {
     return {
       userinfo: this.getUserConnected(),
+      active: 4,
       addCandidatStats: false,
       addBureauStats: false,
       notifications: false,
@@ -295,7 +306,7 @@ export default {
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      snackbar: true,
+      snackbar: false,
       successForm1: false,
       successForm2: false,
       y: "bottom",
@@ -437,79 +448,8 @@ export default {
 };
 </script>
 
-<style>
-.jumbotron__wrapper {
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-  -webkit-transition: inherit;
-  transition: inherit;
-  width: 100%;
-}
-.hr-nav {
-  margin: 5px 12px;
-  border: 0.5px solid #e64a2b;
-}
-.user-div {
-  border: 14px solid #e64a2b;
-  padding: 8px;
-  display: inline-block;
-  border-radius: 90px;
-  margin-top: 28px;
-  margin-left: 60px;
-}
-.p-user {
-  margin-top: 30px;
-  text-align: center;
-  margin-left: 5px;
-}
-.active-item {
-  background: #e64a19;
-  color: white;
-  box-shadow: 1px 1px 1px 1px #bdbdbd;
-}
-.v-list__group__header .v-list__group__header__append-icon,
-.v-list__group__header .v-list__group__header__prepend-icon {
-  padding: 0 5px;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  position: absolute;
-  right: 0;
-}
-::-webkit-scrollbar {
-  /* Scrollbars */
-  width: 7px;
-  background: #b7b7b7;
-  -webkit-box-shadow: inset 1px 1px 0 0 rgb(137, 131, 117),
-    inset -1px -1px 0 0 rgb(224, 220, 210);
-}
-::-webkit-scrollbar-thumb:hover {
-  /* Barre */
-  -webkit-box-shadow: inset 0 0 0 1px rgb(90, 90, 90),
-    inset 0 0 0 6px rgb(110, 110, 110);
-  border-radius: 3px;
-}
-.card-icon-block {
-  position: absolute;
-  left: 15px;
-  padding: 14px;
-  top: -10px;
-  box-shadow: 2px 2px #ddd;
-}
-
-.number-card {
-  color: #4caf50 !important;
-  font-size: 30px;
-  font-weight: 600;
-}
-.container {
-  -webkit-box-flex: 1;
-  -ms-flex: 1 1 100%;
-  flex: 1 1 100%;
-  margin: auto;
-  padding: 24px;
-  width: 101%;
+<style scoped>
+.active-color {
+  color: white !important;
 }
 </style>

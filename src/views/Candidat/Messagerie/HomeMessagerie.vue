@@ -1,14 +1,14 @@
 <template>
 <div>
       <!-- LEFT SIDEBAR  -->
-    <v-navigation-drawer persistent :mini-variant="miniVariant" :clipped="clipped" v-model="drawer" enable-resize-watcher fixed app width=230>
+    <v-navigation-drawer persistent :mini-variant="miniVariant" :clipped="clipped" v-model="drawer" enable-resize-watcher fixed app width=230 >
       <!-- <v-jumbotron :gradient="gradient" dark src="https://cdn.vuetifyjs.com/images/parallax/material2.jpg" style="height: 100%;"> -->
 
         <!-- LOGO -->
         <v-list style="padding-bottom: 0;">
           
           <v-list-tile>
-              <img src="../assets/logo_fc_ob_411x100.png" style="border-radius: 0;margin-bottom: 5px;width: 100%"> 
+              <img src="../../../assets/logo_fc_ob_411x100.png" style="border-radius: 0;margin-bottom: 5px;width: 100%"> 
           </v-list-tile>
         </v-list>
         <!-- FIN LOGO -->
@@ -41,14 +41,19 @@
   
         <!-- LEFT MENU -->
         <v-list class="pa-0">
-           <v-list-tile @click="" class="active-item">
+           <v-list-tile @click="active = 1" class="" :class="{'active-item': active === 1}">
             <v-list-tile-action>
                 <v-icon>dashboard</v-icon>
             </v-list-tile-action>
 
-            <v-list-tile-content @click="">
-              <v-list-tile-title>Tableau de bord</v-list-tile-title>
-            </v-list-tile-content>
+            <router-link to="/dashboard-candidat">
+              <v-list-tile-content @click="active = 1">
+                <v-list-tile-title  class="" :class="{'active-color': active === 1}">
+                  Tableau de bord
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </router-link>
+
           </v-list-tile>
         </v-list>
 
@@ -169,6 +174,22 @@
         </v-list>
         
         <v-list class="pa-0">
+          
+          <router-link to="/messagerie">
+            <v-list-tile @click="active = 6" class="" :class="{'active-item': active === 6}">
+              <v-list-tile-action>
+                <v-icon> mail </v-icon>
+              </v-list-tile-action>
+    
+              <v-list-tile-content>
+                <v-list-tile-title class="" :class="{'active-color': active === 6}">Messagerie</v-list-tile-title>
+              </v-list-tile-content>
+    
+            </v-list-tile>
+          </router-link>
+        </v-list>
+
+        <v-list class="pa-0">
           <v-list-tile avatar @click="">
             <v-list-tile-action>
               <v-icon> settings </v-icon>
@@ -180,6 +201,7 @@
   
           </v-list-tile>
         </v-list>
+        
         <!-- FIN LEFT MENU -->
 
     </v-navigation-drawer>
@@ -224,7 +246,7 @@
   
     <!-- CONTENT  -->
     <v-content>
-      <userInterface></userInterface>
+      <messagerieInterface></messagerieInterface>
     </v-content>
     <!-- END CONTENT  -->
   
@@ -254,7 +276,7 @@
 
         <v-divider></v-divider>
 
-        <v-list
+      <v-list
           subheader
           three-line
         >
@@ -321,21 +343,22 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
-import userInterface from "./UserInterface.vue";
-import validationModal from "../components/ValidationModal";
-import snackbar from "../components/Snackbar";
+import messagerieInterface from "./MessagerieInterface.vue";
+import validationModal from "../../../components/ValidationModal";
+import snackbar from "../../../components/Snackbar";
 
 export default {
-  name: "HomeCandidat",
+  name: "HomeMessagerie",
   components: {
     validationModal,
     snackbar,
-    userInterface
+    messagerieInterface
   },
   data() {
     return {
       userinfo: this.getUserConnected(),
       validation: false,
+      active: 6,
       notifications: false,
       sound: true,
       widgets: false,
@@ -344,7 +367,7 @@ export default {
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      snackbar: true,
+      snackbar: false,
       y: "bottom",
       x: null,
       mode: "",
@@ -470,6 +493,9 @@ export default {
   box-shadow: 2px 2px #ddd;
 }
 
+.active-color {
+  color: white !important;
+}
 .number-card {
   color: #4caf50 !important;
   font-size: 30px;

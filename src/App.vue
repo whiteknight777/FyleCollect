@@ -39,11 +39,7 @@ export default {
   text-align: center;
   margin-left: 5px;
 }
-.active-item {
-  background: #e64a19;
-  color: white;
-  box-shadow: 1px 1px 1px 1px #bdbdbd;
-}
+
 ::-webkit-scrollbar {
   /* Scrollbars */
   width: 7px;

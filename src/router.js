@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HomeCandidat from './views/HomeCandidat.vue'
-import HomeRepresentant from './views/HomeRepresentant.vue'
+import HomeCandidat from './views/Candidat/HomeCandidat.vue'
+import HomeRepresentant from './views/Representant/HomeRepresentant.vue'
+import HomeMessagerie from './views/Candidat/Messagerie/HomeMessagerie.vue'
+import SmsRepresentant from './views/Representant/SmsRepresentant.vue'
 import Login from './views/Login.vue'
 import NotFound from './views/404.vue'
 
@@ -27,6 +29,18 @@ export default new Router({
       name: 'home-representant',
       // beforeEnter: checkUser,
       component: HomeRepresentant
+    },
+    {
+      path: '/historique-sms',
+      name: 'historique-sms',
+      // beforeEnter: checkUser,
+      component: SmsRepresentant
+    },
+    {
+      path: '/messagerie',
+      name: 'messagerie',
+      // beforeEnter: checkUser,
+      component: HomeMessagerie
     },
     {
       path: '/404',

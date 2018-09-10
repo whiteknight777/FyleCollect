@@ -123,35 +123,42 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
+// Config API
 const apiDomain = "http://31.207.34.70/fylecollect_api/web/app_dev.php/";
 const localDomain = "http://localhost/API-REST/web/app_dev.php/";
-import charts from "../components/Charts.vue";
 
 export default {
   name: "RepresentantInterface",
   props: {
     user: Object
   },
-  components: {
-    charts
-  },
   data() {
     return {
+      // Affiche les graphiques
       loaded: false,
-      interval: setInterval(this.CheckData, 3000),
+
+      // verifie en BD si des stats sont disponibles
+      interval: setInterval(this.CheckData, 2000),
+
+      // Fait un log des stats récupérées
       log: {
         statBureau: false,
         statCandidats: false
       },
+
+      // affiche le nom du candidat
       nomCandidat: "",
-      update: false,
-      a: 0,
-      ok: 0,
+
+      // Affiche les statistiques du bureau de vote
       nbVotant: 0,
       nbVote: 0,
       nbBulletinNul: 0,
+
+      // Variable tempon de la fonction affichant les graphiques
       barChartLabel: [],
       dataChartLabel: [],
+
+      // Objet permettant de créer le graphique en bar
       chartData: {
         id: 1,
         legend: "Graphique des voix par candidats",
@@ -203,6 +210,8 @@ export default {
           }
         }
       },
+
+      // Objet permettant de créer le graphique en cercle
       pieData: {
         id: 2,
         // legend: "Graphique des votes par bureau de vote",
@@ -233,6 +242,7 @@ export default {
     };
   },
   methods: {
+    // Fonction permettant de creer un graphique
     createChart(chartId, chartData) {
       const ctx = document.getElementById("chart" + chartId);
       const myChart = new Chart(ctx, {
@@ -241,8 +251,9 @@ export default {
         options: chartData.options
       });
     },
+
+    // Fonction permettant de récupérer les données du graphique en bar et en cercle
     getDataBarChart() {
-      // console.log("test");
       // Récupération des données des candidats suivis
       this.axios
         .get(
@@ -256,79 +267,58 @@ export default {
           }
         )
         .then(response => {
-          // console.log(response.data);
           // Récupérons la reponse renvoyée
           let data = response.data.response;
           // Récupérons la nombre de données récupérées
 
-          // console.log(data);
           // Vérifions le status de la requete
+          // Success de la requete
           if (response.data.statusRequete == 100) {
-            // console.log("données");
-            // console.log("DONNEES", this.ok);
-            // console.log(this.OK);
-            let nbResult = data.length;
+            if (response.data.response !== undefined) {
+              let nbResult = data.length;
 
-            // Ajoutons les informations aux différentes variables
-            if (this.log.statCandidats === false) {
-              // console.log("DONNEES", this.ok);
-              if (
-                this.dataChartLabel.length === 0 &&
-                this.barChartLabel.length === 0
-              ) {
-                for (let i = 0; i < nbResult; i++) {
-                  for (let index in data[i]) {
-                    this.barChartLabel.push("" + index + "");
-                    this.dataChartLabel.push(data[i][index]);
+              // Ajoutons les informations aux différentes variables
+              // Vérifions si les candidats on déja été chargé
+              if (this.log.statCandidats === false) {
+                // Vérifions si les données des candidats sont bien dans les variables
+                if (
+                  this.dataChartLabel.length === 0 &&
+                  this.barChartLabel.length === 0
+                ) {
+                  // Renseignons les données des candidats récupérées dans des variables
+                  for (let i = 0; i < nbResult; i++) {
+                    for (let index in data[i]) {
+                      this.barChartLabel.push("" + index + "");
+                      this.dataChartLabel.push(data[i][index]);
+                    }
                   }
                 }
+                // Renseignons les données des candidats récupérées dans le graphe en bar
+                this.loaded = true;
+                this.chartData.data.labels = this.barChartLabel;
+                this.chartData.data.datasets[0].data = this.dataChartLabel;
+
+                // Renseignons les données des candidats récupérées dans le graphe en cercle
+                this.pieData.data.labels = this.barChartLabel;
+                this.pieData.data.datasets[0].data = this.dataChartLabel;
+
+                // Créons les différents graphes
+                this.createChart(this.chartData.id, this.chartData);
+                this.createChart(this.pieData.id, this.pieData);
+
+                // Marquons que la récupération des données des candidats à été un succes
+                this.log.statCandidats = true;
+              } else {
+                // Réinitialisons les variables des graphiques
+                this.barChartLabel = [];
+                this.dataChartLabel = [];
               }
-
-              this.loaded = true;
-              this.chartData.data.labels = this.barChartLabel;
-              this.chartData.data.datasets[0].data = this.dataChartLabel;
-
-              this.pieData.data.labels = this.barChartLabel;
-              this.pieData.data.datasets[0].data = this.dataChartLabel;
-
-              // On reinitialise les valeures
-              // this.createChart(false);
-              // this.createPieChart(false);
-
-              // On charge les nouvelles valeures
-              // On affiche les nouveaux graphiques
-              // this.createChart(true);
-              // this.createPieChart(true);
-
-              this.createChart(this.chartData.id, this.chartData);
-              this.createChart(this.pieData.id, this.pieData);
-              this.loaded = true;
-              this.log.statCandidats = true;
-            } else {
-              this.barChartLabel = [];
-              this.dataChartLabel = [];
             }
-
-            // console.log(this.chartData.data.labels);
-            // console.log(this.chartData.data.datasets[0].data);
-            // console.log(this.pieData.data.datasets[0].data);
-            // Mettons à jours les variables utiles pour le graphique
           }
-          if (response.data.statusRequete == 200) {
-            this.update = false;
-            // //
-            this.loaded = true;
-            this.chartData.data.labels = this.barChartLabel;
-            this.chartData.data.datasets[0].data = this.dataChartLabel;
-            this.pieData.data.labels = this.barChartLabel;
-            this.pieData.data.datasets[0].data = this.dataChartLabel;
 
-            // On affiche les nouveaux graphiques
-            this.createChart(this.chartData.id, this.chartData);
-            this.createChart(this.pieData.id, this.pieData);
-          } else {
-            this.update = false;
-            // //
+          // Si des données sont manquantes en bd
+          if (response.data.statusRequete == 200) {
+            // Affichons un graphique avec des valeurs par défaut
             this.loaded = true;
             this.chartData.data.labels = this.barChartLabel;
             this.chartData.data.datasets[0].data = this.dataChartLabel;
@@ -339,11 +329,10 @@ export default {
             // this.createChart(this.chartData.id, this.chartData);
             // this.createChart(this.pieData.id, this.pieData);
           }
-
-          // console.log("test");
         });
     },
 
+    // Fonction permettant de récupérer les statistiques d'un bureau de vote
     getDataBureau() {
       // Récupération des données du bureau
       this.axios
@@ -360,18 +349,17 @@ export default {
           // Vérifions le status de la requete
           // S'IL NE MANQUE PAS DE DONNEES EN BASE
           if (response.data.statusRequete == 100) {
-            // console.log("bureau", this.log.statBureau);
-            // if (this.log.statBureau === false) {
-
-            this.log.statBureau = true;
+            // Nombre de votant
             this.nbVotant = response.data.resp_stat_bureau[0].nbVotant;
             // Nombre de votes obtenu
             this.nbVote = response.data.resp_stat_cdtbureau[0].nbVote;
             // Nombre de bulletin null
             this.nbBulletinNul =
               response.data.resp_stat_bureau[0].nbBulletinNul;
+            // Récupérons le nom du candidat
             this.nomCandidat = response.data.resp_representant[0].nomCandidat;
 
+            // Créons un tableau pour gérer l'animation des nombres
             let newData = new Array();
             newData[0] = new Array("votant", this.nbVotant);
             newData[1] = new Array("voix", this.nbVote);
@@ -379,106 +367,125 @@ export default {
             for (let item of newData) {
               this.animateValue(item[0], 0, item[1], 4000);
             }
+
+            // Marquons que la requete à été un succes
+            this.log.statBureau = true;
           }
 
           // S'IL MANQUE DES DONNEES EN BASE
           if (response.data.statusRequete == 200) {
+            // Créons un tableau pour gérer l'animation des nombres
             let newData = new Array();
-            // console.log("bureau", response.data.resp_stat_cdtbureau.length);
 
+            // Marquons que la requete est incomplete
             this.log.statBureau = false;
-            // console.log(this.log.statBureau);
 
             // S'IL N'EXISTE PAS DE STATS SUR LES CANDIDATS EN LIGNE MAIS QU'IL EXISTE DES STATS SUR LE BUREAU
             if (
-              response.data.resp_stat_bureau.length > 0 &&
-              response.data.resp_stat_cdtbureau.length === 0
+              response.data.resp_stat_bureau !== undefined &&
+              response.data.resp_stat_cdtbureau !== undefined
             ) {
-              // Nombre de votant récupéré
-              this.nbVotant = response.data.resp_stat_bureau[0].nbVotant;
-              // Nombre de bulletin null récupéré
-              this.nbBulletinNul =
-                response.data.resp_stat_bureau[0].nbBulletinNul;
-              // Nombre de votes obtenu récupéré
-              this.nbVote = 0;
+              if (
+                response.data.resp_stat_bureau.length > 0 &&
+                response.data.resp_stat_cdtbureau.length === 0
+              ) {
+                // Nombre de votant récupéré
+                this.nbVotant = response.data.resp_stat_bureau[0].nbVotant;
+                // Nombre de bulletin null récupéré
+                this.nbBulletinNul =
+                  response.data.resp_stat_bureau[0].nbBulletinNul;
+                // Nombre de votes obtenu récupéré
+                this.nbVote = 0;
+                // Récupérons le nom du candidat
+                this.nomCandidat =
+                  response.data.resp_representant[0].nomCandidat;
 
-              // Créons un tableau pour gérer l'animation
-              newData[0] = new Array("votant", this.nbVotant);
-              newData[2] = new Array("bulletin", this.nbBulletinNul);
+                // Créons un tableau pour gérer l'animation
+                newData[0] = new Array("votant", this.nbVotant);
+                newData[2] = new Array("bulletin", this.nbBulletinNul);
 
-              for (let item of newData) {
-                this.animateValue(item[0], 0, item[1], 4000);
+                // for (let item of newData) {
+                //   this.animateValue(item[0], 0, item[1], 4000);
+                // }
               }
-            }
 
-            // S'IL EXISTE DES STATS SUR LES CANDIDATS EN LIGNE ET QU'IL N'EXISTE PAS DE STATS SUR LE BUREAU
-            if (
-              response.data.resp_stat_cdtbureau.length > 0 &&
-              response.data.resp_stat_bureau.length === 0
-            ) {
-              // Nombre de votant récupéré
-              this.nbVotant = 0;
-              // Nombre de bulletin null récupéré
-              this.nbBulletinNul = 0;
-              // Nombre de votes obtenu récupéré
-              this.nbVote = response.data.resp_stat_cdtbureau[0].nbVote;
+              // S'IL EXISTE DES STATS SUR LES CANDIDATS EN LIGNE ET QU'IL N'EXISTE PAS DE STATS SUR LE BUREAU
+              if (
+                response.data.resp_stat_cdtbureau.length > 0 &&
+                response.data.resp_stat_bureau.length === 0
+              ) {
+                // Nombre de votant récupéré
+                this.nbVotant = 0;
+                // Nombre de bulletin null récupéré
+                this.nbBulletinNul = 0;
+                // Nombre de votes obtenu récupéré
+                this.nbVote = response.data.resp_stat_cdtbureau[0].nbVote;
+                // Récupérons le nom du candidat
+                this.nomCandidat =
+                  response.data.resp_representant[0].nomCandidat;
 
-              // Créons un tableau pour gérer l'animation
-              newData[1] = new Array("voix", this.nbVote);
+                // Créons un tableau pour gérer l'animation
+                newData[1] = new Array("voix", this.nbVote);
 
-              for (let item of newData) {
-                this.animateValue(item[0], 0, item[1], 4000);
+                // for (let item of newData) {
+                //   this.animateValue(item[0], 0, item[1], 4000);
+                // }
               }
             }
           }
         });
     },
+
+    // Fonction permettant d'animer des nombres
     animateValue(id, start, end, duration) {
-      let range = end - start;
-      let current = start;
-      let increment = end > start ? 1 : -1;
-      let stepTime = Math.abs(Math.floor(duration / range));
-      let obj = document.getElementById(id);
-      let timer = setInterval(function() {
-        current += increment;
-        obj.innerHTML = current;
-        if (current == end) {
-          clearInterval(timer);
-        }
-      }, stepTime);
+      if (end > start) {
+        let range = end - start;
+        let current = start;
+        let increment = end > start ? 1 : -1;
+        let stepTime = Math.abs(Math.floor(duration / range));
+        let obj = document.getElementById(id);
+        let timer = setInterval(function() {
+          current += increment;
+          obj.innerHTML = current;
+          if (current == end) {
+            clearInterval(timer);
+          }
+        }, stepTime);
+      }
     },
+
+    // Fonction permettant de stopper les vérifications en BD lorsque tous les éléments sont bien chargés
     CheckData() {
       if (this.log.statBureau === false) {
         this.getDataBureau();
-        // console.log(this.log.statBureau);
       }
       if (this.log.statCandidats === false) {
         this.getDataBarChart();
-        // console.log(this.log.statCandidats);
       }
       if (this.log.statBureau === true && this.log.statCandidats === true) {
-        // console.log("clear");
         clearInterval(this.interval);
       }
     }
   },
   computed: {
+    // Fonction retournant le nombre de votant
     getVotant() {
       return this.nbVotant;
     },
+    // Fonction retournant le nombre de votes obtenue par le candidat du representant
     getVoix() {
       return this.nbVote;
     },
+    // Fonction retournant le nombre de bulletin null
     getBulletinNul() {
       return this.nbBulletinNul;
     }
   },
   beforeMount() {
-    // this.CheckData();
-    // this.interval = ;
+    localStorage.setItem("interval", this.interval);
+    // Fonction déclenchant les vérifications en BD
     this.interval;
-  },
-  mounted() {}
+  }
 };
 </script>
 

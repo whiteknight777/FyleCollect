@@ -1,12 +1,5 @@
 <template>
      <v-layout row justify-center>
-    <v-btn
-      color="primary"
-      dark
-      @click="dialog = true"
-    >
-      Open Dialog
-    </v-btn>
 
     <v-dialog
       v-model="dialog"

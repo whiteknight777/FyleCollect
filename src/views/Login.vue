@@ -6,7 +6,7 @@
             <v-layout row wrap>    
     
     
-                <v-flex xs6 md8 lg8 fill-height :class="'bg-login'" :style="'background:url('+Bg+');height:-webkit-fill-available;background-size: cover;'">
+                <v-flex xs6 md8 lg8 fill-height :class="'bg-login'" :style="'background:url('+Bg+');height:700px;background-size: cover;'">
     
                     <!-- <v-container> -->
                         <v-card-text style="position: absolute;bottom: 0;">    
