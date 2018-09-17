@@ -2,10 +2,50 @@
   <v-container fluid grid-list-md>
     <v-slide-y-transition mode="out-in">
       <v-container grid-list-md text-xs-center>
-  
-        <v-layout row wrap style="margin-bottom:10px">
+        <v-layout>
+          <v-menu offset-y style="position: absolute;right: 50px;">
+            <v-btn
+              slot="activator"
+              color="primary"
+              dark
+            >
+              Filtres
+            </v-btn>
+            <v-list>
+              <v-list-tile
+                @click="valider = false"
+              >
+                <v-list-tile-title>Données brutes</v-list-tile-title>
+              </v-list-tile>
+              <v-list-tile
+                @click="valider = true"
+              >
+                <v-list-tile-title>Données validées</v-list-tile-title>
+              </v-list-tile>
+            </v-list>
+          </v-menu>
+        </v-layout>
+
+        <v-layout row wrap style="margin-bottom:10px" v-if="valider === false">
+         <!-- <v-layout row wrap block> -->
+           <v-flex xs12 md12 lg12 style="margin-bottom: 20px;">
+
+            <v-breadcrumbs divider="/">
+              <v-breadcrumbs-item
+                :disabled="true"
+              >
+                Tableau de bord
+              </v-breadcrumbs-item>
+              <v-breadcrumbs-item
+                :disabled="false"
+              >
+                Données brutes
+              </v-breadcrumbs-item>
+            </v-breadcrumbs>
+           </v-flex>
+          <!-- </v-layout> -->
           <!--  Stat bar -->
-          <v-flex xs6 md3 lg3>
+          <v-flex xs6 md2 lg2>
             <v-card>
               <div class="card-icon-block deep-orange darken-2" dark>
                 <v-icon dark>supervised_user_circle</v-icon>
@@ -13,7 +53,7 @@
               <v-card-title style="padding-top: 50px;padding-bottom:0">
                 <div style="text-align: right;width:100%">
                   <span id="votant" class="number-card" style="color:#e64a2b !important">{{nbVotant}}</span><br>
-                  <span style="font-size:13px;text-transform:uppercase">Nombre Total de <br>votant à <b>{{user.commune}}</b></span>
+                  <span style="font-size:11px;text-transform:uppercase">Nombre Total de <br>votant à <b>{{user.commune}}</b></span>
                   <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
                 </div>
               </v-card-title>
@@ -25,7 +65,7 @@
           <!-- Fin stat bar -->
   
           <!--  Stat bar -->
-          <v-flex xs6 md3 lg3>
+          <v-flex xs6 md2 lg2>
             <v-card>
               <div class="card-icon-block warning" dark>
                 <v-icon dark>stars</v-icon>
@@ -33,7 +73,7 @@
               <v-card-title style="padding-top: 50px;padding-bottom:0">
                 <div style="text-align: right;width:100%">
                   <span id="voix" class="number-card" style="color:#FFAB00 !important">{{nbVote}}</span><br>
-                  <span style="font-size:13px;text-transform:uppercase">Total de votes acquis <br>soit <b>{{tauxVoixObtenue}} %</b></span>
+                  <span style="font-size:11px;text-transform:uppercase">Total de votes <br>acquis soit <b>{{tauxVoixObtenue}} %</b></span>
                   <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
                 </div>
               </v-card-title>
@@ -45,7 +85,7 @@
           <!-- Fin stat bar -->
   
           <!--  Stat bar -->
-          <v-flex xs6 md3 lg3>
+          <v-flex xs6 md2 lg2>
             <v-card>
               <div class="card-icon-block success" dark>
                 <v-icon dark>voice_over_off</v-icon>
@@ -53,7 +93,7 @@
               <v-card-title style="padding-top: 50px;padding-bottom:0">
                 <div style="text-align: right;width:100%">
                   <span id="abstention" class="number-card" style="color:#53af50 !important">{{tauxAbstention}}%</span><br>
-                  <span style="font-size:13px;text-transform:uppercase">Taux d'abstention <br>commune <b>{{user.commune}}</b></span>
+                  <span style="font-size:11px;text-transform:uppercase">Taux d'abstention <br>à <b>{{user.commune}}</b></span>
                   <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
                 </div>
               </v-card-title>
@@ -65,7 +105,7 @@
           <!-- Fin stat bar -->
   
           <!--  Stat bar -->
-          <v-flex xs6 md3 lg3>
+          <v-flex xs6 md2 lg2>
             <v-card>
               <div class="card-icon-block primary">
                 <v-icon dark>how_to_vote</v-icon>
@@ -73,7 +113,7 @@
               <v-card-title style="padding-top: 50px;padding-bottom:0">
                 <div style="text-align: right;width:100%">
                   <span id="participation" class="number-card" style="color:#3c76d2 !important">{{tauxParticipation}}%</span><br>
-                  <span style="font-size:13px;text-transform:uppercase ">Taux de participation <br>commune <b>{{user.commune}}</b></span>
+                  <span style="font-size:11px;text-transform:uppercase ">Taux de participation <br>à <b>{{user.commune}}</b></span>
                   <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
                 </div>
               </v-card-title>
@@ -83,8 +123,204 @@
             </v-card>
           </v-flex>
           <!-- Fin stat bar -->
+
+          <!--  Stat bar -->
+          <v-flex xs6 md4 lg4>
+            <v-card>
+              <!-- <div class="card-icon-block primary">
+                <v-icon dark>how_to_vote</v-icon>
+              </div> -->
+              <!-- <v-card-title style="padding-top: 50px;padding-bottom:0"> -->
+                <v-list>
+                  <v-list-tile
+                    v-for="item in items"
+                    :key="item.title"
+                    avatar
+                    @click=""
+                  >
+                  
+                    <v-list-tile-action>
+                      <v-btn icon ripple style="position: relative;font-size: large;" :color="item.color" dark>
+                        <span ripple icon>
+                          <b v-if="item.ranking === 1" style="float:left;margin-left: -5px;">{{item.ranking}}</b>
+                          <b v-else style="float: left;margin-left: -11px;">{{item.ranking}}</b>
+                          <small v-if="item.ranking === 1" style="font-size: 8px;text-transform: lowercase;position: absolute;">er</small>
+                          <small v-else style="font-size: 8px;text-transform: lowercase;position: absolute;right: 4px;">ème</small>
+                        </span>
+                      </v-btn>
+                      <!-- <span ripple icon v-text="item.ranking"></span> -->
+                      <!-- <v-icon v-if="item.icon" color="pink">star</v-icon> -->
+                    </v-list-tile-action>
+
+                    <!-- <v-list-tile-avatar>
+                      <img :src="item.avatar">
+                    </v-list-tile-avatar> -->
+
+                    <v-list-tile-content>
+                      <v-list-tile-title v-text="item.title"></v-list-tile-title>
+                    </v-list-tile-content>
+
+                    <v-list-tile-action>
+                      <span style="color:green"><b>{{item.voix}}</b></span>
+                    </v-list-tile-action>
+                  </v-list-tile>
+                </v-list>
+              <!-- </v-card-title> -->
+              <!-- <v-card-actions>
+                <v-progress-linear color="primary" height="4" :value="tauxParticipation"></v-progress-linear>
+              </v-card-actions> -->
+            </v-card>
+          </v-flex>
+          <!-- Fin stat bar -->
   
         </v-layout>
+
+        <v-layout row wrap style="margin-bottom:10px" v-if="valider === true">
+          <v-flex xs12 md12 lg12 style="margin-bottom: 20px;">
+            <v-breadcrumbs divider="/">
+              <v-breadcrumbs-item
+                :disabled="true"
+              >
+                Tableau de bord
+              </v-breadcrumbs-item>
+              <v-breadcrumbs-item
+                :disabled="false"
+              >
+                Données validées
+              </v-breadcrumbs-item>
+            </v-breadcrumbs>
+           </v-flex>
+          <!--  Stat bar -->
+          <v-flex xs6 md2 lg2>
+            <v-card>
+              <div class="card-icon-block deep-orange darken-2" dark>
+                <v-icon dark>supervised_user_circle</v-icon>
+              </div>
+              <v-card-title style="padding-top: 50px;padding-bottom:0">
+                <div style="text-align: right;width:100%">
+                  <span id="votant" class="number-card" style="color:#e64a2b !important">{{nbVotant}}</span><br>
+                  <span style="font-size:11px;text-transform:uppercase">Nombre Total de <br>votant à <b>{{user.commune}}</b></span>
+                  <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
+                </div>
+              </v-card-title>
+              <v-card-actions>
+                <v-progress-linear color="deep-orange darken-2" height="4" :value="nbVotant"></v-progress-linear>
+              </v-card-actions>
+            </v-card>
+          </v-flex>
+          <!-- Fin stat bar -->
+  
+          <!--  Stat bar -->
+          <v-flex xs6 md2 lg2>
+            <v-card>
+              <div class="card-icon-block warning" dark>
+                <v-icon dark>stars</v-icon>
+              </div>
+              <v-card-title style="padding-top: 50px;padding-bottom:0">
+                <div style="text-align: right;width:100%">
+                  <span id="voix" class="number-card" style="color:#FFAB00 !important">{{nbVote}}</span><br>
+                  <span style="font-size:11px;text-transform:uppercase">Total de votes <br>acquis soit <b>{{tauxVoixObtenue}} %</b></span>
+                  <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
+                </div>
+              </v-card-title>
+              <v-card-actions>
+                <v-progress-linear color="warning" height="4" :value="nbVote"></v-progress-linear>
+              </v-card-actions>
+            </v-card>
+          </v-flex>
+          <!-- Fin stat bar -->
+  
+          <!--  Stat bar -->
+          <v-flex xs6 md2 lg2>
+            <v-card>
+              <div class="card-icon-block success" dark>
+                <v-icon dark>voice_over_off</v-icon>
+              </div>
+              <v-card-title style="padding-top: 50px;padding-bottom:0">
+                <div style="text-align: right;width:100%">
+                  <span id="abstention" class="number-card" style="color:#53af50 !important">{{tauxAbstention}}%</span><br>
+                  <span style="font-size:11px;text-transform:uppercase">Taux d'abstention <br>à <b>{{user.commune}}</b></span>
+                  <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
+                </div>
+              </v-card-title>
+              <v-card-actions>
+                <v-progress-linear color="success" height="4" :value="tauxAbstention"></v-progress-linear>
+              </v-card-actions>
+            </v-card>
+          </v-flex>
+          <!-- Fin stat bar -->
+  
+          <!--  Stat bar -->
+          <v-flex xs6 md2 lg2>
+            <v-card>
+              <div class="card-icon-block primary">
+                <v-icon dark>how_to_vote</v-icon>
+              </div>
+              <v-card-title style="padding-top: 50px;padding-bottom:0">
+                <div style="text-align: right;width:100%">
+                  <span id="participation" class="number-card" style="color:#3c76d2 !important">{{tauxParticipation}}%</span><br>
+                  <span style="font-size:11px;text-transform:uppercase ">Taux de participation <br>à <b>{{user.commune}}</b></span>
+                  <!-- <span>Whitsunday Island, Whitsunday Islands</span> -->
+                </div>
+              </v-card-title>
+              <v-card-actions>
+                <v-progress-linear color="primary" height="4" :value="tauxParticipation"></v-progress-linear>
+              </v-card-actions>
+            </v-card>
+          </v-flex>
+          <!-- Fin stat bar -->
+
+          <!--  Stat bar -->
+          <v-flex xs6 md4 lg4>
+            <v-card>
+              <!-- <div class="card-icon-block primary">
+                <v-icon dark>how_to_vote</v-icon>
+              </div> -->
+              <!-- <v-card-title style="padding-top: 50px;padding-bottom:0"> -->
+                <v-list>
+                  <v-list-tile
+                    v-for="item in items"
+                    :key="item.title"
+                    avatar
+                    @click=""
+                  >
+                  
+                    <v-list-tile-action>
+                      <v-btn icon ripple style="position: relative;font-size: large;" :color="item.color" dark>
+                        <span ripple icon>
+                          <b v-if="item.ranking === 1" style="float:left;margin-left: -5px;">{{item.ranking}}</b>
+                          <b v-else style="float: left;margin-left: -11px;">{{item.ranking}}</b>
+                          <small v-if="item.ranking === 1" style="font-size: 8px;text-transform: lowercase;position: absolute;">er</small>
+                          <small v-else style="font-size: 8px;text-transform: lowercase;position: absolute;right: 4px;">ème</small>
+                        </span>
+                      </v-btn>
+                      <!-- <span ripple icon v-text="item.ranking"></span> -->
+                      <!-- <v-icon v-if="item.icon" color="pink">star</v-icon> -->
+                    </v-list-tile-action>
+
+                    <!-- <v-list-tile-avatar>
+                      <img :src="item.avatar">
+                    </v-list-tile-avatar> -->
+
+                    <v-list-tile-content>
+                      <v-list-tile-title v-text="item.title"></v-list-tile-title>
+                    </v-list-tile-content>
+
+                    <v-list-tile-action>
+                      <span style="color:green"><b>{{item.voix}}</b></span>
+                    </v-list-tile-action>
+                  </v-list-tile>
+                </v-list>
+              <!-- </v-card-title> -->
+              <!-- <v-card-actions>
+                <v-progress-linear color="primary" height="4" :value="tauxParticipation"></v-progress-linear>
+              </v-card-actions> -->
+            </v-card>
+          </v-flex>
+          <!-- Fin stat bar -->
+  
+        </v-layout>
+        
   
         <v-layout row wrap style="margin-bottom:10px">
   
@@ -97,61 +333,12 @@
                   <span style="font-size: 17px;text-transform: uppercase;"> {{chartData.legend}} </span>
                 </section>
                 <div id="divGraph" style="padding:10px; background: white">
-                <canvas :id="'chart'+chartData.id" :width="400" :height="380"></canvas>
+                <canvas :id="'chart'+chartData.id" :width="400" :height="500"></canvas>
                 </div>
   
             </v-card>
           </v-flex>
           <!-- Fin Graphique -->
-  
-          <!-- Classement candidat -->
-          <!-- <v-flex xs12 md3 lg3>
-            <v-card>
-  
-              <v-list subheader>
-                <v-subheader>Candidat en tête</v-subheader>
-  
-                <v-list-tile v-for="item in items2" :key="item.title" avatar @click="">
-                  <v-list-tile-avatar>
-                    <img :src="item.avatar">
-                  </v-list-tile-avatar>
-  
-                  <v-list-tile-content>
-                    <v-list-tile-title v-html="item.title"></v-list-tile-title>
-                  </v-list-tile-content>
-
-                  <v-list-tile-action>
-                    <v-chip :color="parseInt(item.ranking) < 3 ? 'green lighten-1' : 'yellow darken-1'" text-color="white" style="font-size:12px">
-                      N°{{item.ranking}}
-                    </v-chip>
-                  </v-list-tile-action>
-                </v-list-tile>
-              </v-list>
-  
-              <v-divider></v-divider>
-              <v-list subheader>
-                <v-subheader>Liste des candidats</v-subheader>
-                <v-list-tile v-for="item in items" :key="item.title" avatar @click="">
-                  <v-list-tile-avatar>
-                    <img :src="item.avatar">
-                  </v-list-tile-avatar>
-  
-                  <v-list-tile-content>
-                    <v-list-tile-title v-html="item.title"></v-list-tile-title>
-                  </v-list-tile-content>
-  
-                  <v-list-tile-action>
-                    <v-chip :color="parseInt(item.ranking) < 4 ? 'green lighten-1' : 'yellow darken-1'" text-color="white" style="font-size:12px">
-                      N°{{item.ranking}}
-                    </v-chip>
-                  </v-list-tile-action>
-                </v-list-tile>
-  
-                <v-subheader>Voir tout le classement</v-subheader>
-              </v-list>
-            </v-card>
-          </v-flex> -->
-          <!-- Fin Classement candidat -->
 
         </v-layout>
   
@@ -193,7 +380,35 @@ export default {
       // Affiche les statistiques du bureau de vote
       nbVotant: 0,
       nbVote: 0,
+      items: [
+        {
+          icon: true,
+          title: "Jean-Marc Gauze",
+          color: "green",
+          voix: "30%",
+          ranking: 1,
+          avatar:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
+        },
+        {
+          title: "Thierry Joel",
+          color: "orange accent-3",
+          voix: "28%",
+          ranking: 2,
+          avatar:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
+        },
+        {
+          title: "Avi Hortense",
+          color: "amber accent-3",
+          voix: "22%",
+          ranking: 3,
+          avatar:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
+        }
+      ],
       tauxAbstention: 0,
+      valider: false,
       tauxParticipation: 0,
       tauxVoixObtenue: 0,
 
@@ -205,34 +420,18 @@ export default {
       chartData: {
         id: 1,
         legend: "Graphique des voix du candidats par centres",
-        type: "bar",
+        type: "line",
         data: {
-          labels: [],
+          // labels: [],
           datasets: [
             {
               // another line graph
               label: "Nombre de voix",
+              backgroundColor: "#7E57C2",
+              pointBackgroundColor: "white",
+              borderWidth: 1,
+              pointBorderColor: "#249EBF",
               data: [],
-              backgroundColor: [
-                "#90CAF9", // Green
-                "#C5CAE9", // Green
-                "#009688", // Green
-                "#01579B", // Green
-                "#FB8C00", // Green
-                "#4CAF50", // Green
-                "#FFC107", // Green
-                "#607D8B" // Green
-              ],
-              borderColor: [
-                "#90CAF9", // Green
-                "#C5CAE9", // Green
-                "#009688", // Green
-                "#01579B", // Green
-                "#FB8C00", // Green
-                "#4CAF50", // Green
-                "#FFC107", // Green
-                "#607D8B" // Green
-              ],
               borderWidth: 3
             }
           ]
@@ -284,7 +483,6 @@ export default {
               this.oldData.length === 0 &&
               this.checked === 0
             ) {
-              // console.log("ok");
               // Renseignons les données des candidats récupérées dans des variables
               for (let key in resultatsCentres) {
                 // Récupérons le premier objet

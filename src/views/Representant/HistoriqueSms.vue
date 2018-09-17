@@ -66,53 +66,7 @@ export default {
         { text: "Date traitement", value: "datetraitement" },
         { text: "Etat", value: "etat" }
       ],
-      logSms: [
-        {
-          value: false,
-          // smsid: 1,
-          numero: "09290508",
-          message: "FCDV 33*98*72*88",
-          dateenvoi: "05/09/2018 - 15:20",
-          datetraitement: "05/09/2018 - 15:22",
-          etat: "Traité"
-        },
-        {
-          value: false,
-          // smsid: 2,
-          numero: "09290508",
-          message: "FCDV 33*98*72*88",
-          dateenvoi: "05/09/2018 - 15:25",
-          datetraitement: "05/09/2018 - 15:22",
-          etat: "Traité"
-        },
-        {
-          value: false,
-          // smsid: 3,
-          numero: "09290508",
-          message: "FCDV 33*98*72*88",
-          dateenvoi: "05/09/2018 - 15:26",
-          datetraitement: "05/09/2018 - 15:22",
-          etat: "Annulé"
-        },
-        {
-          value: false,
-          // smsid: 4,
-          numero: "09290508",
-          message: "FCDV 33*98*72*88",
-          dateenvoi: "05/09/2018 - 15:40",
-          datetraitement: "05/09/2018 - 15:22",
-          etat: "Annulé"
-        },
-        {
-          value: false,
-          // smsid: 5,
-          numero: "09290508",
-          message: "FCDV 33*98*72*88",
-          dateenvoi: "05/09/2018 - 15:50",
-          datetraitement: "05/09/2018 - 15:22",
-          etat: "Annulé"
-        }
-      ]
+      logSms: []
     };
   },
   methods: {

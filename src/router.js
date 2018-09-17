@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import HomeCandidat from './views/Candidat/HomeCandidat.vue'
+import LieuxVotes from './views/Candidat/LieuxVotes/HomeLieux.vue'
+import ListeRepresentant from './views/Candidat/Representant/HomeRepresentant.vue'
+import ListeCandidats from './views/Candidat/ListeCandidats/HomeCandidatsListe.vue'
+import Messagerie from './views/Candidat/Messagerie/HomeMessagerie.vue'
 import HomeRepresentant from './views/Representant/HomeRepresentant.vue'
-import HomeMessagerie from './views/Candidat/Messagerie/HomeMessagerie.vue'
-import SmsRepresentant from './views/Representant/SmsRepresentant.vue'
 import Login from './views/Login.vue'
 import NotFound from './views/404.vue'
 
@@ -11,36 +13,37 @@ Vue.use(Router)
 
 export default new Router({
   mode: 'history',
-  base: __dirname,
   routes: [{
       path: '/',
       name: 'login',
-      // beforeEnter: checkUser,
       component: Login
     },
     {
       path: '/dashboard-candidat',
       name: 'home-candidat',
-      // beforeEnter: checkUser,
       component: HomeCandidat
     },
     {
       path: '/dashboard-representant',
       name: 'home-representant',
-      // beforeEnter: checkUser,
       component: HomeRepresentant
-    },
-    {
-      path: '/historique-sms',
-      name: 'historique-sms',
-      // beforeEnter: checkUser,
-      component: SmsRepresentant
+    }, {
+      path: '/lieux-de-votes',
+      name: 'lieux-de-votes',
+      component: LieuxVotes
+    }, {
+      path: '/liste-representant',
+      name: 'liste-representant',
+      component: ListeRepresentant
+    }, {
+      path: '/liste-candidats',
+      name: 'liste-candidats',
+      component: ListeCandidats
     },
     {
       path: '/messagerie',
       name: 'messagerie',
-      // beforeEnter: checkUser,
-      component: HomeMessagerie
+      component: Messagerie
     },
     {
       path: '/404',

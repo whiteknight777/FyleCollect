@@ -124,8 +124,8 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
 // Config API
-const apiDomain = "http://31.207.34.70/fylecollect_api/web/app_dev.php/";
-const localDomain = "http://localhost/API-REST/web/app_dev.php/";
+let apiDomain = "http://31.207.34.70/fylecollect_api/web/app_dev.php/";
+let localDomain = "http://localhost/API-REST/web/app_dev.php/";
 
 export default {
   name: "RepresentantInterface",
@@ -171,6 +171,9 @@ export default {
               label: "Nombre de voix",
               data: [],
               backgroundColor: [
+                "#4CAF50", // Green
+                "#FFC107", // Green
+                "#607D8B", // Green
                 "#90CAF9", // Green
                 "#C5CAE9", // Green
                 "#009688", // Green
@@ -178,10 +181,53 @@ export default {
                 "#FB8C00", // Green
                 "#4CAF50", // Green
                 "#FFC107", // Green
+                "#C5CAE9", // Green
+                "#009688", // Green
+                "#01579B", // Green
+                "#FB8C00", // Green
+                "#607D8B", // Green
+                "#90CAF9", // Green
+                "#FB8C00", // Green
+                "#C5CAE9", // Green
+                "#009688", // Green
+                "#01579B", // Green
+                "#FB8C00", // Green
+                "#4CAF50", // Green
+                "#FFC107", // Green
+                "#C5CAE9", // Green
+                "#009688", // Green
+                "#FB8C00", // Green
+                "#01579B", // Green
+                "#FB8C00", // Green
+                "#4CAF50", // Green
+                "#FFC107", // Green
                 "#607D8B" // Green
               ],
               borderColor: [
+                "#4CAF50", // Green
+                "#FFC107", // Green
+                "#607D8B", // Green
                 "#90CAF9", // Green
+                "#C5CAE9", // Green
+                "#009688", // Green
+                "#01579B", // Green
+                "#FB8C00", // Green
+                "#4CAF50", // Green
+                "#FFC107", // Green
+                "#C5CAE9", // Green
+                "#009688", // Green
+                "#01579B", // Green
+                "#FB8C00", // Green
+                "#FB8C00", // Green
+                "#607D8B", // Green
+                "#90CAF9", // Green
+                "#C5CAE9", // Green
+                "#009688", // Green
+                "#01579B", // Green
+                "#FB8C00", // Green
+                "#4CAF50", // Green
+                "#FB8C00", // Green
+                "#FFC107", // Green
                 "#C5CAE9", // Green
                 "#009688", // Green
                 "#01579B", // Green
@@ -222,9 +268,32 @@ export default {
             {
               data: [0],
               backgroundColor: [
+                "#4CAF50", // Green
+                "#FFC107", // Green
+                "#607D8B", // Green
                 "#90CAF9", // Green
                 "#C5CAE9", // Green
                 "#009688", // Green
+                "#01579B", // Green
+                "#FB8C00", // Green
+                "#4CAF50", // Green
+                "#FFC107", // Green
+                "#C5CAE9", // Green
+                "#009688", // Green
+                "#01579B", // Green
+                "#FB8C00", // Green
+                "#FB8C00", // Green
+                "#607D8B", // Green
+                "#90CAF9", // Green
+                "#C5CAE9", // Green
+                "#009688", // Green
+                "#01579B", // Green
+                "#FB8C00", // Green
+                "#4CAF50", // Green
+                "#FFC107", // Green
+                "#C5CAE9", // Green
+                "#009688", // Green
+                "#FB8C00", // Green
                 "#01579B", // Green
                 "#FB8C00", // Green
                 "#4CAF50", // Green
@@ -360,13 +429,13 @@ export default {
             this.nomCandidat = response.data.resp_representant[0].nomCandidat;
 
             // Créons un tableau pour gérer l'animation des nombres
-            let newData = new Array();
-            newData[0] = new Array("votant", this.nbVotant);
-            newData[1] = new Array("voix", this.nbVote);
-            newData[2] = new Array("bulletin", this.nbBulletinNul);
-            for (let item of newData) {
-              this.animateValue(item[0], 0, item[1], 4000);
-            }
+            // let newData = new Array();
+            // newData[0] = new Array("votant", this.nbVotant);
+            // newData[1] = new Array("voix", this.nbVote);
+            // newData[2] = new Array("bulletin", this.nbBulletinNul);
+            // for (let item of newData) {
+            //   this.animateValue(item[0], 0, item[1], 4000);
+            // }
 
             // Marquons que la requete à été un succes
             this.log.statBureau = true;

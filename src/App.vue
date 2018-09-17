@@ -53,4 +53,7 @@ export default {
     inset 0 0 0 6px rgb(110, 110, 110);
   border-radius: 3px;
 }
+a {
+  color: #212121 !important;
+}
 </style>

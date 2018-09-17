@@ -64,6 +64,25 @@
                     outline
                     required
                   ></v-text-field>
+                  <div class="v-input v-text-field v-text-field--enclosed v-text-field--outline v-input--is-label-active v-input--is-dirty">
+                    <div class="v-input__control">
+                        <div class="v-input__slot">
+                          <div class="v-text-field__slot">
+                            <label aria-hidden="true" class="v-label v-label--active" style="left: 0px; right: auto; position: absolute;">
+                              Télécharger pv
+                            </label>
+                            <input type="file" style="margin-botom:45px">
+                            <br><br><br>
+                          </div>
+                        </div>
+                        <div class="v-text-field__details">
+                          <div class="v-messages">
+                            <div class="v-messages__wrapper">
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                  </div>
                 </v-flex>
 
                  <v-flex xs12 md12 lg12>
@@ -103,6 +122,7 @@ export default {
       sound: true,
       widgets: false,
       nb_votant: Number,
+      file: File,
       nb_bulletin_null: Number,
       valid: false,
       loader: null,
@@ -125,7 +145,7 @@ export default {
           }
         })
         .then(response => {
-          // console.log(response.data);
+          console.log(response.data);
           this.$emit("saveBureauDataForm");
         });
     }

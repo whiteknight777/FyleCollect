@@ -185,7 +185,7 @@
   
     <!-- CONTENT  -->
     <v-content>
-      <messagerieInterface :user=userinfo></messagerieInterface>
+      <listeLieux :user=userinfo></listeLieux>
     </v-content>
     <!-- END CONTENT  -->
   
@@ -282,22 +282,23 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
-import messagerieInterface from "./MessagerieInterface.vue";
+import listeLieux from "./ListeLieux.vue";
 import validationModal from "../../../components/ValidationModal";
 import snackbar from "../../../components/Snackbar";
 
 export default {
-  name: "HomeMessagerie",
+  name: "HomeLieux",
   components: {
     validationModal,
     snackbar,
-    messagerieInterface
+    listeLieux
   },
   data() {
     return {
       userinfo: this.getUserConnected(),
+      open: true,
       validation: false,
-      active: 6,
+      active: 2,
       notifications: false,
       sound: true,
       widgets: false,
@@ -447,6 +448,10 @@ export default {
   margin: auto;
   padding: 24px;
   width: 101%;
+}
+.active-sub-item {
+  background: #efefef;
+  border-left: 10px solid dimgray;
 }
 a {
   color: #212121 !important;

@@ -5,16 +5,16 @@
         <v-layout row wrap>
           <!--  Stat bar -->
           <v-flex xs4 md3 lg3>
-            <v-card style="min-height: 100%">
+            <v-card style="min-height: 605px">
               <v-toolbar color="light-blue" dark>
 
                 <v-toolbar-title>Messagerie</v-toolbar-title>
 
                 <v-spacer></v-spacer>
 
-                <v-btn icon @click="dialog = true">
+                <!-- <v-btn icon @click="dialog = true">
                   <v-icon>add</v-icon>
-                </v-btn>
+                </v-btn> -->
 
                 <v-btn icon>
                   <v-icon>refresh</v-icon>
@@ -28,12 +28,33 @@
 
               <v-subheader inset>Menu</v-subheader>
 
+
+                <v-list-tile
+                  avatar
+                  @click="openNewSmsForm"
+                >
+                  <v-list-tile-avatar>
+                    <v-icon :class="'orange lighten-1 white--text'">textsms</v-icon>
+                  </v-list-tile-avatar>
+
+                  <v-list-tile-content>
+                    <v-list-tile-title>Envoyer Sms</v-list-tile-title>
+                    <v-list-tile-sub-title>Envoyer un message</v-list-tile-sub-title>
+                  </v-list-tile-content>
+
+                  <v-list-tile-action>
+                    <v-btn icon ripple>
+                      <span color="grey lighten-1">32</span>
+                    </v-btn>
+                  </v-list-tile-action>
+                </v-list-tile>
+
                 <v-list-tile
                   avatar
                   @click=""
                 >
                   <v-list-tile-avatar>
-                    <v-icon :class="'orange lighten-1 white--text'">email</v-icon>
+                    <v-icon :class="'blue lighten-1 white--text'">email</v-icon>
                   </v-list-tile-avatar>
 
                   <v-list-tile-content>
@@ -57,7 +78,7 @@
                   </v-list-tile-avatar>
 
                   <v-list-tile-content>
-                    <v-list-tile-title>Envoyés</v-list-tile-title>
+                    <v-list-tile-title>Sms Envoyés</v-list-tile-title>
                     <v-list-tile-sub-title>Messages envoyés</v-list-tile-sub-title>
                   </v-list-tile-content>
 
@@ -73,12 +94,12 @@
                   @click=""
                 >
                   <v-list-tile-avatar>
-                    <v-icon :class="'red lighten-1 white--text'">delete</v-icon>
+                    <v-icon :class="'red lighten-1 white--text'">list_alt</v-icon>
                   </v-list-tile-avatar>
 
                   <v-list-tile-content>
-                    <v-list-tile-title>Corbeille</v-list-tile-title>
-                    <v-list-tile-sub-title>Messages supprimés</v-list-tile-sub-title>
+                    <v-list-tile-title>Contacts</v-list-tile-title>
+                    <v-list-tile-sub-title>Mes contacts</v-list-tile-sub-title>
                   </v-list-tile-content>
 
                   <v-list-tile-action>
@@ -102,8 +123,8 @@
                   </v-list-tile-avatar>
 
                   <v-list-tile-content>
-                    <v-list-tile-title>Tout mes contacts</v-list-tile-title>
-                    <v-list-tile-sub-title>Tout afficher</v-list-tile-sub-title>
+                    <v-list-tile-title>Groupes</v-list-tile-title>
+                    <v-list-tile-sub-title>Classer vos contacts</v-list-tile-sub-title>
                   </v-list-tile-content>
 
                   <v-list-tile-action>
@@ -113,188 +134,18 @@
                   </v-list-tile-action>
                 </v-list-tile>
 
-                <v-list-tile
-                  avatar
-                  @click=""
-                >
-                  <v-list-tile-avatar>
-                    <v-icon :class="'grey lighten-1 white--text'">folder</v-icon>
-                  </v-list-tile-avatar>
-
-                  <v-list-tile-content>
-                    <v-list-tile-title>QG</v-list-tile-title>
-                    <v-list-tile-sub-title>Membres du QG</v-list-tile-sub-title>
-                  </v-list-tile-content>
-
-                  <v-list-tile-action>
-                    <v-btn icon ripple>
-                      <span color="grey lighten-1">34</span>
-                    </v-btn>
-                  </v-list-tile-action>
-                </v-list-tile>
-
-                <v-list-tile
-                  avatar
-                  @click=""
-                >
-                  <v-list-tile-avatar>
-                    <v-icon :class="'grey lighten-1 white--text'">folder</v-icon>
-                  </v-list-tile-avatar>
-
-                  <v-list-tile-content>
-                    <v-list-tile-title>Représentant</v-list-tile-title>
-                    <v-list-tile-sub-title>Représentants Bureaux</v-list-tile-sub-title>
-                  </v-list-tile-content>
-
-                  <v-list-tile-action>
-                    <v-btn icon ripple>
-                      <span color="grey lighten-1">3</span>
-                    </v-btn>
-                  </v-list-tile-action>
-                </v-list-tile>
-
-
               </v-list>
             </v-card>
           </v-flex>
 
 
-        <!-- ############## LISTE DE TOUT LES CONTACTS  ################## -->
-          <v-flex xs4 md3 lg3 v-if="toutAfficher === true">
-            <v-card style="min-height: 100%">
-              <!-- <v-toolbar light>
-
-                <v-form>
-                  <v-text-field
-                    
-                    label="Recherche..."
-                    style="width: 200px;margin-top: 12px;"
-                  ></v-text-field>
-                </v-form>
-                <v-spacer></v-spacer>
-
-                <v-btn icon>
-                  <v-icon>add</v-icon>
-                </v-btn>
-
-              </v-toolbar> -->
-              <v-fab-transition>
-              <v-btn
-                v-show="toutAfficher === true"
-                color="pink"
-                fab
-                dark
-                small
-                absolute
-                top
-                right
-                @click="toutAfficher = !toutAfficher"
-              >
-                <v-icon>clear</v-icon>
-              </v-btn>
-            </v-fab-transition>
-              <v-list two-line subheader>
-
-
-              <v-subheader inset>
-                Tout mes contacts
-              </v-subheader>
-
-                <v-list-tile
-                  v-for="item in contacts"
-                  :key="item.title"
-                  avatar
-                  @click=""
-                >
-                  <v-list-tile-avatar>
-                    <v-icon :class="'blue lighten-1 white--text'">person_pin</v-icon>
-                  </v-list-tile-avatar>
-
-                  <v-list-tile-content>
-                    <v-list-tile-title>{{ item.name }}</v-list-tile-title>
-                    <v-list-tile-sub-title>{{ item.contact }}</v-list-tile-sub-title>
-                  </v-list-tile-content>
-
-                </v-list-tile>
-
-              </v-list>
-            </v-card>
-          </v-flex>
-
-
-        <!-- ############## LISTE DES MSG PETIT BLOCK ################## -->
-          <v-flex xs4 md6 lg6 v-if="toutAfficher === true">
-            <v-card style="min-height: 100%">
-               <v-card-title>
-                Messages reçus
-                <v-spacer></v-spacer>
-                <v-text-field
-                  v-model="search"
-                  append-icon="search"
-                  label="Rechercher"
-                  single-line
-                  hide-details
-                ></v-text-field>
-              </v-card-title>
-
-              <v-data-table
-                v-model="selected"
-                :headers="headers"
-                :items="listMessage"
-                :search="search"
-                :pagination.sync="pagination"
-                item-key="name"
-                class="elevation-1"
-              >
-                <template slot="headers" slot-scope="props">
-                  <tr style="text-align: left;">
-                    <th>
-                      <v-checkbox
-                        :input-value="props.all"
-                        :indeterminate="props.indeterminate"
-                        primary
-                        hide-details
-                        @click.native="toggleAll"
-                      ></v-checkbox>
-                    </th>
-                    <th
-                      v-for="header in props.headers"
-                      :key="header.text"
-                      :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
-                      @click="changeSort(header.value)"
-                    >
-                      <v-icon small>arrow_upward</v-icon>
-                      {{ header.text }}
-                    </th>
-                  </tr>
-                </template>
-                <template slot="items" slot-scope="props">
-                  <tr :active="props.item.selected" style="cursor:pointer" @click="[props.item.selected = !props.item.selected, content = true]">
-                    <td>
-                      <v-checkbox
-                        :input-value="props.item.selected"
-                        primary
-                        hide-details
-                      ></v-checkbox>
-                    </td>
-                    <td>{{ props.item.content }}</td>
-                    <td class="text-xs-left">{{ props.item.destinataire }}</td>
-                    <td class="text-xs-left">{{ props.item.dateReception }}</td>
-                  </tr>
-                </template>
-                <v-alert slot="no-results" :value="true" color="error" icon="warning">
-                  Aucun élément ne correspond à votre recherche.
-                </v-alert>
-              </v-data-table>
-            </v-card>
-          </v-flex>
 
           
         <!-- ############## LISTE DES MSG GRAND BLOCK ################## -->
-          <v-flex xs4 md9 lg9 v-else="toutAfficher === false">
+          <v-flex xs4 md9 lg9 v-if="smsReçu == true">
              <v-card style="min-height: 100%">
                <v-card-title>
-                Messages reçus
+                BOÎTE DE RECEPTION
                 <v-spacer></v-spacer>
                 <v-text-field
                   v-model="search"
@@ -312,6 +163,7 @@
                 :search="search"
                 :pagination.sync="pagination"
                 item-key="name"
+                hide-actions
                 class="elevation-1"
               >
                 <template slot="headers" slot-scope="props">
@@ -337,7 +189,7 @@
                   </tr>
                 </template>
                 <template slot="items" slot-scope="props">
-                  <tr :active="props.item.selected" style="cursor:pointer" @click="[props.item.selected = !props.item.selected, content = true]">
+                  <tr :active="props.item.selected" style="cursor:pointer" @click="[props.item.selected = !props.item.selected, content = true, props.expanded = !props.expanded]">
                     <td>
                       <v-checkbox
                         :input-value="props.item.selected"
@@ -350,6 +202,11 @@
                     <td class="text-xs-left">{{ props.item.dateReception }}</td>
                   </tr>
                 </template>
+                <template slot="expand" slot-scope="props">
+                  <v-card flat>
+                    <v-card-text>Peek-a-boo!</v-card-text>
+                  </v-card>
+                </template>
                 <v-alert slot="no-results" :value="true" color="error" icon="warning">
                   Aucun élément ne correspond à votre recherche.
                 </v-alert>
@@ -358,6 +215,102 @@
           </v-flex>
 
 
+        <!-- ############## LISTE DES MSG GRAND BLOCK ################## -->
+          <v-flex xs4 md9 lg9 v-if="sendSms === true">
+             <v-card style="min-height: 100%">
+               <v-card-title>
+                <h3 style="text-decoration:underline">ENVOYEZ UN NOUVEAU SMS</h3>
+                <v-spacer></v-spacer>
+                <v-btn color="error" 
+                :loading="loading"
+                :disabled="loading"
+                fab small @click.native="closeNewSmsForm" 
+                style="margin-top:30px">
+                <v-icon dark>clear</v-icon>
+                <!-- <span slot="loader">Loading...</span> -->
+                </v-btn>
+              </v-card-title>
+
+                  
+              <v-container grid-list-md text-xs-center>
+                  <v-form id="newSms" v-model="valid">
+                    <v-switch
+                      :label="single ? 'single' : 'multiple'"
+                      v-model="single"
+                    ></v-switch>
+                  <v-layout row wrap>
+                    <v-flex xs12 md12 lg12 >
+                      <v-text-field
+                        v-if="single === true"
+                        v-model="destinataire"
+                        type="number"
+                        label="Destinataire"
+                        placeholder="225 XXXXXXXX"
+                        prepend-icon="dialpad"
+                        regular
+                        min=0
+                        required
+                      ></v-text-field>
+                    <v-select
+                        v-if="single === false"
+                        v-model="selectedContact"
+                        :items="destinataires"
+                        prepend-icon="dialpad"
+                        label="Mes contacts"
+                        multiple
+                      >
+                        <v-list-tile
+                          slot="prepend-item"
+                          ripple
+                          @click="toggle"
+                        >
+                          <v-list-tile-action>
+                            <v-icon :color="'indigo darken-4'">person_pin</v-icon>
+                          </v-list-tile-action>
+                          <v-list-tile-title>Tout selectionner</v-list-tile-title>
+                        </v-list-tile>
+                        <v-divider
+                          slot="prepend-item"
+                          class="mt-2"
+                        ></v-divider>
+                        <v-divider
+                          slot="append-item"
+                          class="mb-2"
+                        ></v-divider>
+                        <v-list-tile
+                          slot="append-item"
+                          disabled
+                        >
+                        </v-list-tile>
+                      </v-select>
+
+                      
+                    <v-textarea
+                      v-model="sms"
+                      name="input-7-1"
+                      prepend-icon="textsms"
+                      label="Saisissez le sms"
+                      value="The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through."
+                     
+                    ></v-textarea>
+                    </v-flex>
+
+                    <v-flex xs12 md12 lg12>
+                      <v-btn color="primary" 
+                      :loading="loading"
+                      :disabled="loading"
+                      block large @click.native="sendMySms" 
+                      style="margin-top:30px">
+                      Enregistrer
+                      <!-- <span slot="loader">Loading...</span> -->
+                      </v-btn>
+                    </v-flex>
+                    
+                    </v-layout>
+                  </v-form>
+              </v-container>
+            </v-card>
+          </v-flex>
 
         <!-- ############## MODAL PERMETTANT D'AJOUTER DE NOUVEAU ELEMENTS ################## -->
         <div>
@@ -457,78 +410,6 @@
           </template>
         </div>
 
-        <!-- ############## MODAL AFFICHANT LE CONTENU D'UN MSG ################## -->
-        <v-navigation-drawer
-        v-model="content"
-        right
-        absolute
-        temporary
-          >
-          <v-list class="pa-1">
-            <v-list-tile avatar>
-              <v-list-tile-avatar>
-                <v-icon style="font-size:50px">person_pin</v-icon>
-              </v-list-tile-avatar>
-
-              <v-list-tile-content>
-                <v-list-tile-title>Jean François</v-list-tile-title>
-              </v-list-tile-content>
-              
-              <v-list-tile-content style="display:inline;">
-                <v-btn fab dark small color="error" @click="[content = !content, unToggleAll()]" style="float:right">
-                  <v-icon dark>delete</v-icon>
-                </v-btn>
-              </v-list-tile-content>
-            </v-list-tile>
-          </v-list>
-
-          <v-list class="pt-0" dense>
-            <v-divider></v-divider>
-
-            <v-list-tile
-              @click=""
-            >
-                <v-list-tile-action 
-                style="padding-left:13px">
-                  <v-icon>phone</v-icon>
-                </v-list-tile-action>
-
-                <v-list-tile-content>
-                  <v-list-tile-title>Telephone: <b>09290508</b></v-list-tile-title>
-                </v-list-tile-content>
-              </v-list-tile>
-              
-              <v-divider></v-divider>
-            </v-list>
-
-          <v-list class="pt-0" dense>
-              <v-list-tile
-                @click=""
-              >
-                <v-list-tile-action 
-                style="padding-left:13px">
-                  <v-icon>event_note</v-icon>
-                </v-list-tile-action>
-
-                <v-list-tile-content>
-                  <v-list-tile-title>Date d'envoi: <b>05/09/2018 - 17h30</b></v-list-tile-title>
-                </v-list-tile-content>
-              </v-list-tile>
-              
-              <v-divider></v-divider>
-            </v-list>
-
-              <v-flex xs12 md12 lg12 style="padding-left:20px; padding-top:20px; padding-right:20px; text-align:justify;">
-                <h4>Message : </h4>
-                <p style="padding-top:10px">
-                  Some Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                  Tempore quasi autem ad quidem cupiditate quisquam repellendus tenetur illum et.
-                  Deserunt rerum praesentium adipisci quasi reiciendis dolorum voluptatibus 
-                  corporis dicta blanditiis?
-                </p>
-              </v-flex>
-          
-        </v-navigation-drawer>
 
         </v-layout>
   
@@ -537,15 +418,39 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
+import snackbar from "../../../components/Snackbar";
+const apiDomain = "http://31.207.34.70/fylecollect_api/web/app_dev.php/";
+const localDomain = "http://localhost/API-REST/web/app_dev.php/";
+
 export default {
   name: "MessagerieInterface",
-  components: {},
+  props: {
+    user: Object
+  },
+  components: {
+    snackbar
+  },
   data() {
     return {
-      toutAfficher: false,
+      single: true,
+      smsReçu: true,
+      sendSms: false,
       content: false,
       search: "",
       dialog: false,
+      destinataire: "",
+      destinataires: ["09290508", "77575649", "48608618", "03170001"],
+      selectedContact: [],
+      sms: "",
+      valid: false,
+      loader: null,
+      loading: false,
+      snackbar: false,
+      y: "top",
+      x: "right",
+      mode: "",
+      timeout: 6000,
+      text: "",
       contacts: [
         {
           name: "Kouakou Celestin",
@@ -620,6 +525,100 @@ export default {
         item.selected = false;
       }
     },
+    openNewSmsForm() {
+      this.smsReçu = false;
+      this.sendSms = true;
+    },
+    closeNewSmsForm() {
+      this.smsReçu = true;
+      this.sendSms = false;
+    },
+    sendMySms() {
+      this.loader = "loading";
+
+      // console.log(this.selectedContact);
+      // console.log(this.sms);
+      if (this.single === true) {
+        // let form = document.getElementById("newSms");
+        // let data = new FormData(form);
+        // data.append("idUtilisateur", this.user.idUtilisateur);
+        // data.append("destinataire", this.destinataire);
+        // data.append("sms", this.sms);
+        this.axios
+          .get(
+            "http://www.fylesms.com/envoisms.php?login=FYLECOLLECT&spe=254&cds=4855315673F&numero=" +
+              this.destinataire +
+              "&message=" +
+              this.sms,
+            {
+              headers: {
+                "Content-type": "application/x-www-form-urlencoded"
+              }
+            }
+          )
+          .then(response => {
+            this.text = "Sms envoyé avec succès";
+            this.snackbar = true;
+
+            //Vidons les champs
+            this.destinataire = "";
+            this.sms = "";
+
+            //Fermons le formulaire
+            this.closeNewSmsForm();
+          });
+      } else {
+        // let form = document.getElementById("newSms");
+        // let data = new FormData(form);
+        // data.append("idUtilisateur", this.user.idUtilisateur);
+        // data.append("destinataires[]", this.selectedContact);
+        // data.append("sms", this.sms);
+        for (let tel of this.selectedContact) {
+          // console.log(tel);
+          this.axios
+            .get(
+              "http://www.fylesms.com/envoisms.php?login=FYLECOLLECT&spe=254&cds=4855315673F&numero=" +
+                tel +
+                "&message=" +
+                this.sms,
+              {
+                headers: {
+                  "Content-type": "application/x-www-form-urlencoded"
+                }
+              }
+            )
+            .then(response => {
+              this.text = "Sms envoyé avec succès";
+              this.snackbar = true;
+
+              //Vidons les champs
+              this.destinataire = "";
+              this.sms = "";
+
+              //Fermons le formulaire
+              this.closeNewSmsForm();
+            });
+        }
+      }
+
+      // this.axios
+      //   .post(localDomain + "api/send/sms", data, {
+      //     headers: {
+      //       "Content-type": "application/x-www-form-urlencoded"
+      //     }
+      //   })
+      //   .then(response => {
+      //     this.text = "Sms envoyé avec succès";
+      //     this.snackbar = true;
+
+      //     //Vidons les champs
+      //     this.destinataire = "";
+      //     this.sms = "";
+
+      //     //Fermons le formulaire
+      //     this.closeNewSmsForm();
+      //   });
+    },
     changeSort(column) {
       if (this.pagination.sortBy === column) {
         this.pagination.descending = !this.pagination.descending;
@@ -627,6 +626,30 @@ export default {
         this.pagination.sortBy = column;
         this.pagination.descending = false;
       }
+    },
+    toggle() {
+      this.$nextTick(() => {
+        if (this.checkedContact) {
+          this.selectedContact = [];
+        } else {
+          this.selectedContact = this.destinataire.slice();
+        }
+      });
+    }
+  },
+  watch: {
+    loader() {
+      const l = this.loader;
+      this[l] = !this[l];
+
+      setTimeout(() => (this[l] = false), 3000);
+
+      this.loader = null;
+    }
+  },
+  computed: {
+    checkedContact() {
+      return this.selectedContact.length === this.destinataire.length;
     }
   },
   mounted() {}
@@ -674,5 +697,9 @@ a {
 }
 .text-xs-right {
   text-align: left !important;
+}
+a {
+  color: #212121 !important;
+  text-decoration: none;
 }
 </style>

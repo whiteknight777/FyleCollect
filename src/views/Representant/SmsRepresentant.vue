@@ -414,7 +414,7 @@ export default {
     },
     getCandidatsSuivis(userinfo) {
       this.axios
-        .get(localDomain + "get/candidats/" + userinfo.idClient, {
+        .get(apiDomain + "get/candidats/" + userinfo.idClient, {
           headers: {
             "Content-type": "application/x-www-form-urlencoded"
           }

@@ -85,7 +85,7 @@
           </v-list-tile>
         </v-list>
 
-        <v-list class="pa-0">
+        <!-- <v-list class="pa-0">
            <v-list-tile @click="active = 4" class="" :class="{'active-item': active === 4}">
             <v-list-tile-action>
               <v-icon> move_to_inbox </v-icon>
@@ -98,7 +98,7 @@
             </router-link>
   
           </v-list-tile>
-        </v-list>
+        </v-list> -->
         <!-- FIN LEFT MENU -->
 
     </v-navigation-drawer>
@@ -514,12 +514,8 @@ export default {
   font-size: 30px;
   font-weight: 600;
 }
-.container {
-  -webkit-box-flex: 1;
-  -ms-flex: 1 1 100%;
-  flex: 1 1 100%;
-  margin: auto;
-  padding: 24px;
-  width: 101%;
+a {
+  color: #212121 !important;
+  text-decoration: none;
 }
 </style>

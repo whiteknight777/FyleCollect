@@ -150,12 +150,12 @@ export default {
       Bg: Bg1,
       error: false,
       errorMsg: "Erreur Utilisateur inconnue...",
-      email: "kouao.hypolite@gmail.com",
+      email: "",
       emailRules: [
         v => !!v || "E-mail obligatoire",
         v => /.+@.+[(.)].+/.test(v) || "E-mail doit être valide"
       ],
-      password: "1234",
+      password: "",
       select: null,
       //   items: ["Item 1", "Item 2", "Item 3", "Item 4"],
       checkbox: false,
@@ -175,17 +175,18 @@ export default {
         let data = new FormData(form);
         data.append("email", this.email);
         data.append("password", this.password);
+        this.snackbar = false;
         // let data = [username => this.username, password => this.password];
         // console.log(form);
         this.axios
-          .post(localDomain + "api/checkuser", data, {
+          .post(apiDomain + "api/checkuser", data, {
             headers: {
               "Content-type": "application/x-www-form-urlencoded"
             }
           })
           .then(response => {
             // console.log(response.data);
-            console.log(this.$router.history.current.path);
+            // console.log(this.$router.history.current.path);
             if (response.data.statusRequete == 100) {
               // Récupération des données récupérée
               data = JSON.stringify(response.data.response);
@@ -200,7 +201,11 @@ export default {
               }
             }
             if (response.data.statusRequete == 200) {
+              // if (!this.snackbar) {
               this.snackbar = true;
+              // } else {
+              //   this.snackbar = false;
+              // }
               this.text = "Erreur Utilisateur inconnue";
             }
           });

@@ -58,106 +58,45 @@
         </v-list>
 
         <v-list class="pa-0">
-          <v-list-group
-            no-action
-          >
-          
-            <v-list-tile slot="activator">
-              <v-list-tile-action>
-                <v-icon>how_to_vote</v-icon>
-              </v-list-tile-action>
+           <v-list-tile @click="active = 2" class="" :class="{'active-item active-color': active === 2 }">
+            <v-list-tile-action>
+              <v-icon>how_to_vote</v-icon>
+            </v-list-tile-action>
 
+            <router-link to="/lieux-de-votes">
               <v-list-tile-content>
-                <v-list-tile-title>Centres de votes</v-list-tile-title>
+                <v-list-tile-title  class="" :class="{'active-color': active === 2}">Lieux de votes</v-list-tile-title>
               </v-list-tile-content>
-            </v-list-tile>
-
-            <v-list-tile @click="">
-              <v-list-tile-content>
-                <v-list-tile-title>Liste Centre</v-list-tile-title>
-              </v-list-tile-content>
-
-            </v-list-tile>
-
-            <v-list-tile
-              @click=""
-            >
-              <v-list-tile-content>
-                <v-list-tile-title>Ajouter Centre</v-list-tile-title>
-              </v-list-tile-content>
-
-            </v-list-tile>
-          </v-list-group>
-        </v-list>
-
-         <v-list class="pa-0">
-          <v-list-group
-            no-action
-          >
-          
-            <v-list-tile slot="activator">
-              <v-list-tile-action>
-                <v-icon>group</v-icon>
-              </v-list-tile-action>
-
-              <v-list-tile-content>
-                <v-list-tile-title>Représentants</v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-
-            <v-list-tile
-              @click=""
-            >
-              <v-list-tile-content>
-                <v-list-tile-title>Liste Représentants</v-list-tile-title>
-              </v-list-tile-content>
-
-            </v-list-tile>
-
-            <v-list-tile
-              @click=""
-            >
-              <v-list-tile-content>
-                <v-list-tile-title>Ajouter Réprésentant</v-list-tile-title>
-              </v-list-tile-content>
-
-            </v-list-tile>
-          </v-list-group>
+            </router-link>
+          </v-list-tile>
         </v-list>
 
         <v-list class="pa-0">
-          <v-list-group
-            no-action
-          >
-          
-            <v-list-tile slot="activator">
-              <v-list-tile-action>
-                <v-icon>contacts</v-icon>
-              </v-list-tile-action>
+           <v-list-tile @click="active = 3" class="" :class="{'active-item active-color': active === 3 }">
+            <v-list-tile-action>
+              <v-icon>group</v-icon>
+            </v-list-tile-action>
 
+            <router-link to="/liste-representant">
               <v-list-tile-content>
-                <v-list-tile-title>Candidats</v-list-tile-title>
+                <v-list-tile-title  class="" :class="{'active-color': active === 3}">Représentants</v-list-tile-title>
               </v-list-tile-content>
-            </v-list-tile>
+            </router-link>
+          </v-list-tile>
+        </v-list>
 
-            <v-list-tile
-              @click=""
-            >
+        <v-list class="pa-0">
+           <v-list-tile @click="active = 4" class="" :class="{'active-item active-color': active === 4 }">
+            <v-list-tile-action>
+              <v-icon>contacts</v-icon>
+            </v-list-tile-action>
+
+            <router-link to="/liste-candidats">
               <v-list-tile-content>
-                <v-list-tile-title>Liste Candidats</v-list-tile-title>
+                <v-list-tile-title  class="" :class="{'active-color': active === 4}">Candidats</v-list-tile-title>
               </v-list-tile-content>
-
-            </v-list-tile>
-
-            <v-list-tile
-              @click=""
-            >
-              <v-list-tile-content>
-                <v-list-tile-title>Ajouter Candidat</v-list-tile-title>
-              </v-list-tile-content>
-
-            </v-list-tile>
-          </v-list-group>
+            </router-link>
+          </v-list-tile>
         </v-list>
 
         <v-list class="pa-0">
@@ -167,25 +106,27 @@
             </v-list-tile-action>
   
             <v-list-tile-content>
-              <v-list-tile-title>Classement</v-list-tile-title>
+              <v-list-tile-title>Détails Résultats</v-list-tile-title>
             </v-list-tile-content>
   
           </v-list-tile>
         </v-list>
         
         <v-list class="pa-0">
-          <router-link to="/messagerie">
             <v-list-tile @click="active = 6" class="" :class="{'active-item': active === 6}">
               <v-list-tile-action>
                 <v-icon> mail </v-icon>
               </v-list-tile-action>
     
-              <v-list-tile-content>
-                <v-list-tile-title>Messagerie</v-list-tile-title>
-              </v-list-tile-content>
+              <router-link to="/messagerie">
+                  <v-list-tile-content @click="active = 6">
+                    <v-list-tile-title class="" :class="{'active-color': active === 6}">
+                      Messagerie 
+                    </v-list-tile-title>
+                  </v-list-tile-content>
+              </router-link>
     
             </v-list-tile>
-          </router-link>
         </v-list>
 
         <v-list class="pa-0">
@@ -505,7 +446,12 @@ export default {
   -ms-flex: 1 1 100%;
   flex: 1 1 100%;
   margin: auto;
-  padding: 24px;
+  padding-top: 18px;
   width: 101%;
+}
+@media only screen and (min-width: 960px) {
+  .container {
+    max-width: 1071px;
+  }
 }
 </style>
