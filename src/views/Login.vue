@@ -179,7 +179,7 @@ export default {
         // let data = [username => this.username, password => this.password];
         // console.log(form);
         this.axios
-          .post(apiDomain + "api/checkuser", data, {
+          .post(localDomain + "api/checkuser", data, {
             headers: {
               "Content-type": "application/x-www-form-urlencoded"
             }

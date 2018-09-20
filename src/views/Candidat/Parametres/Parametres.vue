@@ -14,10 +14,10 @@
               <v-breadcrumbs-item
                 :disabled="false"
               >
-                Liste des représentants
+                Liste des paramètres
               </v-breadcrumbs-item>
               
-            <v-btn
+            <!-- <v-btn
               :loading="loading"
               :disabled="loading"
               color="green darken-1"
@@ -27,88 +27,184 @@
             >
               Ajouter représentant
               <v-icon right dark>person_pin</v-icon>
-            </v-btn>
+            </v-btn> -->
             </v-breadcrumbs>
 
             <template>
               <v-card>
-                <v-card-title class="blue-grey lighten-4">
-                  <v-spacer></v-spacer>
-                  <v-autocomplete
-                    :loading="loading"
-                    :items="representants"
-                    :search-input.sync="search"
-                    v-model="select"
-                    cache-items
-                    class="mx-3"
-                    flat
-                    hide-no-data
-                    hide-details
-                    label="Rechercher un representant"
-                    solo-inverted
-                    @blur="checkValue"
-                  ></v-autocomplete>
-                  <v-btn 
-                  icon
-                  fab
-                  small
-                  v-if="clear === true" 
-                  @click="clearResearch">
-                    <v-icon>clear</v-icon>
-                  </v-btn>
-                </v-card-title>
-                 <table class="v-datatable v-table">
-                      <thead>
-                        <tr>
-                          <th class="text-xs-left">#</th>
-                          <th class="text-xs-left">Nom & prénoms</th>
-                          <th class="text-xs-left">Email</th>
-                          <th class="text-xs-left">Contact</th>
-                          <th class="text-xs-left">Lieu de vote</th>
-                          <th class="text-xs-left">Bureau</th>
-                          <th class="text-xs-left">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="(item, i) of items" :key="i">
-                          <td class="text-xs-left">
-                            <v-icon medium>person_pin</v-icon>
-                          </td>
-                          <td class="text-xs-left" style="padding-top: 25px;padding-bottom: 25px;width:170px">{{ item.nomprenom }}</td>
-                          <td class="text-xs-left">{{ item.email }}</td>
-                          <td class="text-xs-left">{{ item.contact }}</td>
-                          <td class="text-xs-left">{{ item.lieu }}</td>
-                          <td class="text-xs-left">{{ item.bureau }}</td>
-                          <td class="text-xs-left">
-                            <v-btn 
-                              small
-                              ripple
-                              fab
-                              color="orange lighten-1"
-                              dark
-                              @click="updateRepresentant = true">
-                              <v-icon
-                              >
-                                create
-                              </v-icon>
-                              </v-btn>
+                <v-list
+                    subheader
+                    three-line
+                  >
+                    <v-subheader>Comptes & Paramètres Fyle SMS</v-subheader>
 
-                              <v-btn 
-                              small
-                              ripple
-                              fab
-                              color="red lighten-1"
-                              dark
-                              @click="supprimer = true">
-                              <v-icon
-                              >
-                                clear
-                              </v-icon>
-                              </v-btn>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                    <v-list-tile>
+                      <v-list-tile-content>
+                        <v-list-tile-title>Compte Client</v-list-tile-title>
+                        <v-list-tile-sub-title>L'ensemble des comptes du candidat sont rattaché aux client</v-list-tile-sub-title>
+                      </v-list-tile-content>
+                      <v-list-tile-action>
+                        <v-text-field
+                          label="Code Client"
+                          type="text"
+                          readonly=""
+                          value="#CL-009FC"
+                          box
+                          min=0
+                          required
+                        ></v-text-field>
+                      </v-list-tile-action>
+                    </v-list-tile>
+
+                    <v-list-tile>
+                      <v-list-tile-content>
+                        <v-list-tile-title>Compte FyleSMS</v-list-tile-title>
+                        <v-list-tile-sub-title>Compte permettant d'utiliser l'API de Fyle SMS</v-list-tile-sub-title>
+                      </v-list-tile-content>
+                      <v-list-tile-action>
+                        <v-text-field
+                          label="Code Fyle SMS"
+                          type="text"
+                          readonly=""
+                          value="JM-GAUZE"
+                          box
+                          min=0
+                          required
+                        ></v-text-field>
+                      </v-list-tile-action>
+                    </v-list-tile>
+
+                    <v-list-tile>
+                      <v-list-tile-content>
+                        <v-list-tile-title>Donnée CDS</v-list-tile-title>
+                        <v-list-tile-sub-title>Paramètre compte Fyle SMS</v-list-tile-sub-title>
+                      </v-list-tile-content>
+                      <v-list-tile-action>
+                        <v-text-field
+                          label="Code Fyle SMS"
+                          type="text"
+                          readonly=""
+                          value="419976388"
+                          box
+                          min=0
+                          required
+                        ></v-text-field>
+                      </v-list-tile-action>
+                    </v-list-tile>
+
+                    <v-list-tile>
+                      <v-list-tile-content>
+                        <v-list-tile-title>Donnée SPE</v-list-tile-title>
+                        <v-list-tile-sub-title>Paramètre compte Fyle SMS</v-list-tile-sub-title>
+                      </v-list-tile-content>
+                      <v-list-tile-action>
+                        <v-text-field
+                          label="Code Fyle SMS"
+                          type="text"
+                          readonly=""
+                          value="254"
+                          box
+                          min=0
+                          required
+                        ></v-text-field>
+                      </v-list-tile-action>
+                    </v-list-tile>
+
+                  </v-list>
+
+                  <v-divider></v-divider>
+
+                  <v-list
+                    subheader
+                    three-line
+                  >
+                    <v-subheader>Syntaxes</v-subheader>
+
+                    <v-list-tile>
+                      <v-list-tile-content>
+                        <v-list-tile-title>Syntaxe Résultats de votes</v-list-tile-title>
+                        <v-list-tile-sub-title>Syntaxe permettant l'envoi d'un sms pour enregistrer les résultats de votes</v-list-tile-sub-title>
+                      </v-list-tile-content>
+                      <v-list-tile-action>
+                        <v-text-field
+                          label="Syntaxe Résultats de votes"
+                          type="text"
+                          readonly=""
+                          value="JM-GAUZERV RV1*RV2*RV3*RV4"
+                          box
+                          style="width:300px"
+                          required
+                        ></v-text-field>
+                      </v-list-tile-action>
+                    </v-list-tile>
+
+                  <v-list-tile>
+                      <v-list-tile-content>
+                        <v-list-tile-title>Syntaxe Résultats du bureau de vote</v-list-tile-title>
+                        <v-list-tile-sub-title>Syntaxe permettant l'envoi d'un sms pour enregistrer les résultats du bureau de vote</v-list-tile-sub-title>
+                      </v-list-tile-content>
+                      <v-list-tile-action>
+                        <v-text-field
+                          label="Syntaxe Résultats du bureau de vote"
+                          type="text"
+                          readonly=""
+                          value="JM-GAUZERB NBVOTANT*NB-BULLETIN-NULL"
+                          box
+                          style="width:400px"
+                          required
+                        ></v-text-field>
+                      </v-list-tile-action>
+                    </v-list-tile>
+
+                  </v-list>
+
+                  <v-divider></v-divider>
+
+
+                  <v-list
+                    subheader
+                    three-line
+                  >
+                    <v-subheader>General</v-subheader>
+                    <v-list-tile @click="">
+                      <v-list-tile-action>
+                        <v-checkbox
+                          v-model="notifications"
+                        ></v-checkbox>
+                      </v-list-tile-action>
+
+                      <v-list-tile-content @click.prevent="notifications = !notifications">
+                        <v-list-tile-title>Notifications</v-list-tile-title>
+                        <v-list-tile-sub-title>Notify me about updates to apps or games that I downloaded</v-list-tile-sub-title>
+                      </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile @click="">
+                      <v-list-tile-action>
+                        <v-checkbox
+                          v-model="sound"
+                        ></v-checkbox>
+                      </v-list-tile-action>
+
+                      <v-list-tile-content @click.prevent="sound = !sound">
+                        <v-list-tile-title>Sound</v-list-tile-title>
+                        <v-list-tile-sub-title>Auto-update apps at any time. Data charges may apply</v-list-tile-sub-title>
+                      </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile @click="">
+                      <v-list-tile-action>
+                        <v-checkbox
+                          v-model="widgets"
+                        ></v-checkbox>
+                      </v-list-tile-action>
+
+                      <v-list-tile-content @click.prevent="widgets = !widgets">
+                        <v-list-tile-title>Auto-add widgets</v-list-tile-title>
+                        <v-list-tile-sub-title>Automatically add home screen widgets</v-list-tile-sub-title>
+                      </v-list-tile-content>
+                    </v-list-tile>
+                  </v-list>
               </v-card>
             </template>
           </v-flex>
@@ -267,7 +363,7 @@ const apiDomain = "http://31.207.34.70/fylecollect_api/web/app_dev.php/";
 const localDomain = "http://localhost/API-REST/web/app_dev.php/";
 
 export default {
-  name: "ListeRepresentant",
+  name: "Parametres",
   props: {
     user: Object
   },
@@ -276,6 +372,9 @@ export default {
   },
   data() {
     return {
+      notifications: false,
+      sound: true,
+      widgets: false,
       supprimer: false,
       addCentre: false,
       updateRepresentant: false,
@@ -303,157 +402,45 @@ export default {
         { text: "Action", value: "bureau" }
       ],
       listeRepresentants: [
-        // {
-        //   value: false,
-        //   nomprenom: "Representant 1",
-        //   email: "email@gmail.com",
-        //   contact: "09228877",
-        //   lieu: "LYCEE TECHNIQUE",
-        //   bureau: "Bureau 1"
-        // },
-        // {
-        //   value: false,
-        //   nomprenom: "Representant 2",
-        //   email: "email@gmail.com",
-        //   contact: "08228877",
-        //   lieu: "GS DEUX PLATEAU SUD 1-2",
-        //   bureau: "Bureau 1"
-        // },
-        // {
-        //   value: false,
-        //   nomprenom: "Representant 3",
-        //   email: "email@gmail.com",
-        //   contact: "07228877",
-        //   lieu: "ECOLE DE LA GENDARMERIE",
-        //   bureau: "Bureau 1"
-        // },
-        // {
-        //   value: false,
-        //   nomprenom: "Representant 4",
-        //   email: "email@gmail.com",
-        //   contact: "09222877",
-        //   lieu: "ECOLE DE POLICE",
-        //   bureau: "Bureau 1"
-        // }
-      ],
-      representants: [],
-      items: [],
-      search: null,
-      select: null
+        {
+          value: false,
+          nomprenom: "Representant 1",
+          email: "email@gmail.com",
+          contact: "09228877",
+          lieu: "LYCEE TECHNIQUE",
+          bureau: "Bureau 1"
+        },
+        {
+          value: false,
+          nomprenom: "Representant 2",
+          email: "email@gmail.com",
+          contact: "08228877",
+          lieu: "GS DEUX PLATEAU SUD 1-2",
+          bureau: "Bureau 1"
+        },
+        {
+          value: false,
+          nomprenom: "Representant 3",
+          email: "email@gmail.com",
+          contact: "07228877",
+          lieu: "ECOLE DE LA GENDARMERIE",
+          bureau: "Bureau 1"
+        },
+        {
+          value: false,
+          nomprenom: "Representant 4",
+          email: "email@gmail.com",
+          contact: "09222877",
+          lieu: "ECOLE DE POLICE",
+          bureau: "Bureau 1"
+        }
+      ]
     };
   },
-  methods: {
-    getListeRepresentant() {
-      this.axios
-        .get(localDomain + "representants/listAll/" + this.user.idCandidat, {
-          headers: {
-            "Content-type": "application/x-www-form-urlencoded"
-          }
-        })
-        .then(response => {
-          let data = response.data;
-
-          if (data.statusRequete == 100) {
-            this.listeRepresentants = data.listeRepresentants;
-            this.items = this.listeRepresentants;
-
-            this.getNamesRepresentant();
-          }
-
-          if (data.statusRequete == 200) {
-            this.listeRepresentants = [];
-            this.items = this.listeRepresentants;
-          }
-        });
-    },
-    querySelections(v) {
-      this.loading = true;
-      // Simulated ajax query
-      setTimeout(() => {
-        this.items = this.listeRepresentants.filter(e => {
-          return (
-            (e.nomprenom || "").toLowerCase().indexOf((v || "").toLowerCase()) >
-              -1 ||
-            (e.email || "").toLowerCase().indexOf((v || "").toLowerCase()) >
-              -1 ||
-            (e.contact || "").toLowerCase().indexOf((v || "").toLowerCase()) >
-              -1 ||
-            (e.lieu || "").toLowerCase().indexOf((v || "").toLowerCase()) >
-              -1 ||
-            (e.bureau || "").toLowerCase().indexOf((v || "").toLowerCase()) > -1
-          );
-        });
-        this.loading = false;
-      }, 500);
-    },
-    checkValue() {
-      // console.log("test");
-      if (this.search === null && this.select === "") {
-        this.clear = false;
-        // console.log("test");
-        this.items = this.listeRepresentants.filter(e => {
-          return (
-            (e.name || "")
-              .toLowerCase()
-              .indexOf((this.search || "").toLowerCase()) > -1
-          );
-        });
-      }
-      if (this.search === undefined && this.select === null) {
-        this.clear = false;
-      }
-    },
-    resetItem() {
-      this.items = this.listeRepresentants;
-    },
-    clearResearch() {
-      this.clear = false;
-      this.select = null;
-      this.search = null;
-      this.resetItem();
-    },
-    getNamesRepresentant() {
-      for (let item of this.listeRepresentants) {
-        this.representants.push(item.nomprenom);
-      }
-    }
-  },
-  watch: {
-    search(val) {
-      // val && val !== this.select && this.querySelections(val);
-      if (val !== this.select) {
-        this.querySelections(val);
-        this.clear = true;
-      }
-      if (val === "") {
-        this.select = null;
-        this.clear = false;
-      }
-    },
-    select(val) {
-      if (this.search === null && val === null) {
-        this.items = this.listeRepresentants;
-        this.clear = false;
-      }
-      if (this.search === "" && val === "") {
-        this.items = this.listeRepresentants;
-        this.clear = false;
-      }
-      if (val !== "" && val !== undefined && val !== null) {
-        this.items = [];
-        this.items = this.listeRepresentants.filter(e => {
-          if (e.nomprenom === val) {
-            return e;
-          }
-        });
-        this.clear = true;
-      }
-    }
-  },
+  methods: {},
+  watch: {},
   computed: {},
-  mounted() {
-    this.getListeRepresentant();
-  }
+  mounted() {}
 };
 </script>
 
@@ -490,11 +477,6 @@ a {
   background: #b7b7b7;
   -webkit-box-shadow: inset 1px 1px 0 0 rgb(137, 131, 117),
     inset -1px -1px 0 0 rgb(224, 220, 210);
-}
-::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  background: rgb(101, 101, 101);
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
 }
 .number-card {
   color: #4caf50 !important;

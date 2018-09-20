@@ -17,26 +17,12 @@
                 Liste candidats
               </v-breadcrumbs-item>
               
-            <!-- <v-btn
-              :loading="loading"
-              :disabled="loading"
-              color="green darken-1"
-              class="white--text"
-              @click.native="addCentre = true"
-              style="right: 45px;position: absolute;top: 30px;"
-            >
-              Ajouter représentant
-              <v-icon right dark>person_pin</v-icon>
-            </v-btn> -->
             </v-breadcrumbs>
-
-            <template>
-            </template>
 
             <template>
               <v-tabs
                 centered
-                color="blue-grey lighten-3"
+                color="blue-grey lighten-4"
                 dark
                 icons-and-text
               >
@@ -109,63 +95,40 @@
                   <v-card >
                     <v-card-title>
                       <v-spacer></v-spacer>
-                      <v-text-field
-                        v-model="search"
-                        append-icon="search"
-                        label="Rechercher un candidat"
-                        single-line
-                        hide-details
-                      ></v-text-field>
+                      <v-btn 
+                      small
+                      ripple
+                      color="green lighten-1"
+                      dark
+                      @click="changeOrder = true">
+                      <v-icon
+                      >
+                        keyboard_arrow_up
+                      </v-icon>
+                      Modifier ordre des candidats
+                      </v-btn>
                     </v-card-title>
 
-                    <v-data-table
-                      :headers="headers2"
-                      :items="CandidatSuivis"
-                      :search="search"
-                      v-if="loading === true"
-                    >
-                      <template slot="items" slot-scope="props">
-                        <td class="text-xs-left">
-                          <v-icon large>person_pin</v-icon>
-                        </td>
-                        <td class="text-xs-left" style="padding-top: 25px;padding-bottom: 25px;">{{ props.item.nomprenom }}</td>
-                        <td class="text-xs-left">{{ props.item.partis }}</td>
-                        <td class="text-xs-left">{{ props.item.ordre }}</td>
-                        <!-- <td class="text-xs-left">{{ CandidatSuivis.indexOf(props.item) }}</td> -->
-                        <td class="text-xs-left">
-                          <v-btn 
-                            small
-                            ripple
-                            fab
-                            color="green lighten-1"
-                            dark
-                            v-if="props.item.ordre !== '1'"
-                            @click="promoteCandidat(CandidatSuivis.indexOf(props.item))">
-                            <v-icon
-                            >
-                              keyboard_arrow_up
-                            </v-icon>
-                            </v-btn>
-
-                            <v-btn 
-                            small
-                            ripple
-                            fab
-                            color="red lighten-1"
-                            dark
-                            v-if="CandidatSuivis.indexOf(props.item) !== (CandidatSuivis.length - 1)"
-                            @click="">
-                            <v-icon
-                            >
-                              keyboard_arrow_down
-                            </v-icon>
-                            </v-btn>
-                        </td>
-                      </template>
-                      <v-alert slot="no-results" :value="true" color="error" icon="warning">
-                        Aucun résultat pour cette recherche "{{ search }}".
-                      </v-alert>
-                    </v-data-table>
+                    <table class="v-datatable v-table">
+                      <thead>
+                        <tr>
+                          <th class="text-xs-left">#</th>
+                          <th class="text-xs-left">Nom & prénoms</th>
+                          <th class="text-xs-left">Partis</th>
+                          <th class="text-xs-left">Ordre</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="item of CandidatSuivis">
+                          <td class="text-xs-left">
+                            <v-icon large>person_pin</v-icon>
+                          </td>
+                          <td class="text-xs-left" style="padding-top: 25px;padding-bottom: 25px;">{{ item.nomprenom }}</td>
+                          <td class="text-xs-left">{{ item.partis }}</td>
+                          <td class="text-xs-left">{{ item.ordre }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </v-card>
 
                 </v-tab-item>
@@ -174,69 +137,60 @@
                   <v-card >
                     <v-card-title>
                       <v-spacer></v-spacer>
-                      <v-text-field
-                        v-model="search"
-                        append-icon="search"
-                        label="Rechercher un candidat"
-                        single-line
-                        hide-details
-                      ></v-text-field>
+                      <v-btn 
+                      small
+
+                      :loading="loading"
+                      :disabled="loading"
+                      color="green lighten-1"
+                    style="color:white"
+                      @click="refreshData">
+                      <v-icon>
+                        refresh
+                      </v-icon>
+                      Actualiser
+                      </v-btn>
                     </v-card-title>
-
-                    <v-data-table
-                      :headers="headers2"
-                      :items="CandidatSuivis"
-                      :search="search"
-                    >
-                      <template slot="items" slot-scope="props">
-                        <td class="text-xs-left">
-                          <v-icon large>person_pin</v-icon>
-                        </td>
-                        <td class="text-xs-left" style="padding-top: 25px;padding-bottom: 25px;">{{ props.item.nomprenom }}</td>
-                        <td class="text-xs-left">{{ props.item.email }}</td>
-                        <td class="text-xs-left">{{ props.item.contact }}</td>
-                        <td class="text-xs-left">{{ props.item.lieu }}</td>
-                        <td class="text-xs-left">{{ props.item.bureau }}</td>
-                        <td class="text-xs-left">
-                          <v-btn 
-                            small
-                            ripple
-                            fab
-                            color="orange lighten-1"
-                            dark
-                            @click="updateRepresentant = true">
-                            <v-icon
-                            >
-                              create
-                            </v-icon>
-                            </v-btn>
-
-                            <v-btn 
-                            small
-                            ripple
-                            fab
-                            color="red lighten-1"
-                            dark
-                            @click="supprimer = true">
-                            <v-icon
-                            >
-                              clear
-                            </v-icon>
-                            </v-btn>
-                        </td>
-                      </template>
-                      <v-alert slot="no-results" :value="true" color="error" icon="warning">
-                        Aucun résultat pour cette recherche "{{ search }}".
-                      </v-alert>
-                    </v-data-table>
+                    
+                    <table class="v-datatable v-table">
+                      <thead>
+                        <tr>
+                          <th class="text-xs-left">#</th>
+                          <th class="text-xs-left">Nom & prénoms</th>
+                          <th class="text-xs-left">Partis</th>
+                          <th class="text-xs-left">Pourcentage voix</th>
+                          <th class="text-xs-left">Classement</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="(item, i) of ClassementCandidat" :key="i">
+                          <td class="text-xs-left">
+                            <v-icon large>person_pin</v-icon>
+                          </td>
+                          <td class="text-xs-left" style="padding-top: 25px;padding-bottom: 25px;">{{ item.nomprenom }}</td>
+                          <td class="text-xs-left">{{ item.partis }}</td>
+                          <td class="text-xs-left">
+                            <span>
+                            <v-spacer></v-spacer>
+                            {{item.voix}} %
+                            <v-spacer></v-spacer>
+                            </span>
+                            <v-progress-linear :aria-label="item.voix+'%'" v-model="item.voix" color="green"></v-progress-linear>
+                          </td>
+                          <td class="text-xs-left">{{ item.classement }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    
                   </v-card>
 
+                   
                 </v-tab-item>
               </v-tabs>
             </template>
           </v-flex>
 
-          <!-- AJOUTER REPRESENTANT -->
+          <!-- AJOUTER CANDIDAT -->
 
           <template>
             <v-layout row justify-center>
@@ -285,7 +239,7 @@
             </v-layout>
           </template>
 
-          <!-- EDITER REPRESENTANT  -->
+          <!-- EDITER CANDIDAT  -->
 
           <template>
             <v-layout row justify-center>
@@ -376,6 +330,56 @@
             </v-layout>
           </template>
 
+          <!-- MODIFIER ORDRE CANDIDAT  -->
+
+          <template>
+            <v-layout row justify-center>
+              <v-dialog v-model="changeOrder" persistent max-width="500px">
+                <form id="changeOrderCandidat">
+                  <v-card>
+                    <v-card-title>
+                      <span class="headline">Modifier ordre candidats</span>
+                    </v-card-title>
+                    <v-card-text>
+                      <v-container grid-list-md>
+                        <v-layout wrap>
+                          <v-flex xs12>
+                           <v-combobox
+                              v-model="NewOrderCandidatSuivis"
+                              :items="OrdreCandidatSuivis"
+                              label="Candidats Suivis"
+                              chips
+                              clearable
+                              prepend-icon="account_circle"
+                              multiple
+                            >
+                              <template slot="selection" slot-scope="data">
+                                <v-chip
+                                  :selected="data.selected"
+                                  close
+                                >
+                                  <strong>{{ data.item }}</strong>&nbsp;
+                                  <!-- <span>(interest)</span> -->
+                                </v-chip>
+                              </template>
+                            </v-combobox>
+                          </v-flex>
+                        </v-layout>
+                      </v-container>
+                      <!-- <small>*indicates required field</small> -->
+                    </v-card-text>
+                    <v-card-actions style="padding-bottom: 15px;padding-right: 35px;">
+                      <v-spacer></v-spacer>
+                      <v-btn color="red darken-2" small @click.native="changeOrder = false" dark>Annuler</v-btn>
+                      <v-btn color="green darken-1" small @click.native="changeOrderCandidat" dark>Enregistrer</v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </form>
+              </v-dialog>
+            </v-layout>
+          </template>
+
+
         </v-layout>
       </v-container>
     </v-slide-y-transition>
@@ -400,6 +404,7 @@ export default {
   data() {
     return {
       suivre: false,
+      changeOrder: false,
       addCentre: false,
       updateRepresentant: false,
       snackbar: false,
@@ -408,7 +413,8 @@ export default {
       mode: "",
       timeout: 6000,
       text: "",
-      loading: true,
+      loader: null,
+      loading: false,
       clear: false,
       search: "",
       headers1: [
@@ -448,18 +454,6 @@ export default {
           favorite: true
         }
       ],
-      headers2: [
-        {
-          text: "#",
-          align: "left",
-          sortable: false,
-          value: "#"
-        },
-        { text: "Nom & prénoms", value: "nomprenom" },
-        { text: "Partis ", value: "partis" },
-        { text: "Ordre ", value: "partis" },
-        { text: "Action", value: "bureau" }
-      ],
       CandidatSuivis: [
         {
           value: false,
@@ -476,43 +470,88 @@ export default {
           favorite: true
         }
       ],
-      OrdreCandidatSuivis: []
+      ClassementCandidat: [
+        {
+          value: false,
+          nomprenom: "Candidat 2",
+          ordre: "1",
+          partis: "INDEPENDANT",
+          voix: "52",
+          classement: "1",
+          favorite: true
+        },
+        {
+          value: false,
+          nomprenom: "Candidat 4",
+          ordre: "2",
+          partis: "UPCI",
+          voix: "28",
+          classement: "2",
+          favorite: true
+        }
+      ],
+      OrdreCandidatSuivis: [],
+      NewOrderCandidatSuivis: []
     };
   },
   methods: {
-    promoteCandidat(rawId) {
-      this.loading = false;
-      // Récupérons le candidat à déplacer vers le haut
-      let candidat = this.CandidatSuivis[rawId];
+    changeOrderCandidat() {
+      // Préparons le nouveau tableau
+      let newTab = [];
 
-      // Récupérons le candidat à déplacer vers le bas
-      let candidatToSwitch = this.CandidatSuivis[rawId - 1];
+      // Faisons une boucle à partir du nouvel ordre
+      for (let item of this.NewOrderCandidatSuivis) {
+        // Récupérons l'objet du candidat
+        let candidat = this.CandidatSuivis.find(e => e.nomprenom === item);
 
-      // Récupérons la position de chaque candidats
-      let orderCandidat = candidat.ordre;
-      let newOrderCandidat = candidatToSwitch.ordre;
+        // Modifions l'ordre des candidats
+        candidat.ordre = this.NewOrderCandidatSuivis.indexOf(item) + 1;
 
-      // Assignons les nouveaux ordres aux candidats
-      candidat.ordre = newOrderCandidat;
-      candidatToSwitch.ordre = orderCandidat;
+        // Rajoutons les candidat selon le nouvelle ordre
+        newTab.push(candidat);
+      }
 
-      // Changeons maintenant la position des candidats dans le tableau
-      this.CandidatSuivis[rawId - 1] = candidat;
-      this.CandidatSuivis[rawId] = candidatToSwitch;
+      // Vidons la table des candidat suivis
+      this.CandidatSuivis.slice(0, 0);
 
-      //Trion les candidats par ordre croissant
-      // this.CandidatSuivis.sort(function(a, b) {
-      //   return parseInt(a.ordre) - parseInt(b.ordre);
-      // });
+      // Remplissons la table des candidats suivis selon le nouvel ordre
+      this.CandidatSuivis = newTab;
+      // for (let item of newTab) {
+      //   this.CandidatSuivis.push(item);
+      // }
 
-      console.log(this.CandidatSuivis);
-      // setInterval((this.loading = true), 10000);
-      this.loading = true;
+      this.OrdreCandidatSuivis = [];
+      for (let item of this.CandidatSuivis) {
+        this.OrdreCandidatSuivis.push(item.nomprenom);
+      }
+
+      this.NewOrderCandidatSuivis = this.OrdreCandidatSuivis;
+      this.changeOrder = false;
+      // console.log(newTab);
+      // console.log(this.CandidatSuivis);
+      // console.log(this.NewOrderCandidatSuivis);
+    },
+    refreshData() {
+      this.loader = "loading";
     }
   },
-  watch: {},
+  watch: {
+    loader() {
+      const l = this.loader;
+      this[l] = !this[l];
+
+      setTimeout(() => (this[l] = false), 3000);
+
+      this.loader = null;
+    }
+  },
   computed: {},
-  mounted() {}
+  mounted() {
+    for (let item of this.CandidatSuivis) {
+      this.OrdreCandidatSuivis.push(item.nomprenom);
+    }
+    this.NewOrderCandidatSuivis = this.OrdreCandidatSuivis;
+  }
 };
 </script>
 
@@ -561,5 +600,41 @@ a {
 a {
   color: #212121 !important;
   text-decoration: none;
+}
+.custom-loader {
+  animation: loader 1s infinite;
+  display: flex;
+}
+@-moz-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

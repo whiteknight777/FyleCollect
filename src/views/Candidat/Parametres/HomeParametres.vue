@@ -85,7 +85,7 @@
           </v-list-tile>
         </v-list>
 
-         <v-list class="pa-0">
+        <v-list class="pa-0">
            <v-list-tile @click="active = 4" class="" :class="{'active-item active-color': active === 4 }">
             <v-list-tile-action>
               <v-icon>contacts</v-icon>
@@ -144,7 +144,7 @@
             </v-list-tile>
           </router-link>
         </v-list>
-        
+
         <!-- FIN LEFT MENU -->
 
     </v-navigation-drawer>
@@ -189,7 +189,7 @@
   
     <!-- CONTENT  -->
     <v-content>
-      <messagerieInterface :user=userinfo></messagerieInterface>
+      <parametres :user=userinfo></parametres>
     </v-content>
     <!-- END CONTENT  -->
   
@@ -286,22 +286,23 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
-import messagerieInterface from "./MessagerieInterface.vue";
+import parametres from "./Parametres.vue";
 import validationModal from "../../../components/ValidationModal";
 import snackbar from "../../../components/Snackbar";
 
 export default {
-  name: "HomeMessagerie",
+  name: "HomeParametres",
   components: {
     validationModal,
     snackbar,
-    messagerieInterface
+    parametres
   },
   data() {
     return {
       userinfo: this.getUserConnected(),
+      open: true,
       validation: false,
-      active: 6,
+      active: 7,
       notifications: false,
       sound: true,
       widgets: false,
@@ -451,6 +452,10 @@ export default {
   margin: auto;
   padding: 24px;
   width: 101%;
+}
+.active-sub-item {
+  background: #efefef;
+  border-left: 10px solid dimgray;
 }
 a {
   color: #212121 !important;

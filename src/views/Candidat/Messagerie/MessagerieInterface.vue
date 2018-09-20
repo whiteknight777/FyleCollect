@@ -1,25 +1,74 @@
 <template>
+  <v-container fluid grid-list-md>
     <v-slide-y-transition mode="out-in">
-  
+      <v-container grid-list-md text-xs-center>
         <!-- ############## MENU MESSAGERIE ################## -->
         <v-layout row wrap>
+          <v-flex xs12>
+            <v-breadcrumbs divider="/" style="margin-bottom:20px">
+              <v-breadcrumbs-item
+                :disabled="true"
+              >
+                Tableau de bord
+              </v-breadcrumbs-item>
+              <v-breadcrumbs-item
+                :disabled="false"
+              >
+                Messagerie
+              </v-breadcrumbs-item>
+
+              <!-- <v-divider></v-divider> -->
+
+              <v-btn
+              fab
+              small
+              color="orange darken-4"
+              class="white--text"
+              @click.native="addCentre = true"
+              style="right: 45px;position: absolute;top: 30px;"
+            >
+              
+              <v-icon dark>person_add</v-icon>
+            </v-btn>
+
+            <v-btn
+              fab
+              small
+              color="green darken-1"
+              class="white--text"
+              @click.native="addCentre = true"
+              style="right: 105px;position: absolute;top: 30px;"
+            >
+              
+              <v-icon dark>create_new_folder</v-icon>
+            </v-btn>
+
+            <!-- <v-btn
+              fab
+              small
+              color="orange darken-4"
+              class="white--text"
+              @click.native="addCentre = true"
+              style="right: 165px;position: absolute;top: 30px;"
+            >
+             
+              <v-icon dark>person_add</v-icon>
+            </v-btn> -->
+            </v-breadcrumbs>
+          </v-flex>
           <!--  Stat bar -->
           <v-flex xs4 md3 lg3>
             <v-card style="min-height: 605px">
-              <v-toolbar color="light-blue" dark>
+              <!-- <v-toolbar color="light-blue" dark>
 
                 <v-toolbar-title>Messagerie</v-toolbar-title>
 
                 <v-spacer></v-spacer>
 
-                <!-- <v-btn icon @click="dialog = true">
-                  <v-icon>add</v-icon>
-                </v-btn> -->
-
                 <v-btn icon>
                   <v-icon>refresh</v-icon>
                 </v-btn>
-              </v-toolbar>
+              </v-toolbar> -->
 
 
 
@@ -42,11 +91,11 @@
                     <v-list-tile-sub-title>Envoyer un message</v-list-tile-sub-title>
                   </v-list-tile-content>
 
-                  <v-list-tile-action>
-                    <v-btn icon ripple>
+                  <!-- <v-list-tile-action>
+                    <v-btn icon >
                       <span color="grey lighten-1">32</span>
                     </v-btn>
-                  </v-list-tile-action>
+                  </v-list-tile-action> -->
                 </v-list-tile>
 
                 <v-list-tile
@@ -138,9 +187,6 @@
             </v-card>
           </v-flex>
 
-
-
-          
         <!-- ############## LISTE DES MSG GRAND BLOCK ################## -->
           <v-flex xs4 md9 lg9 v-if="smsReçu == true">
              <v-card style="min-height: 100%">
@@ -190,14 +236,14 @@
                 </template>
                 <template slot="items" slot-scope="props">
                   <tr :active="props.item.selected" style="cursor:pointer" @click="[props.item.selected = !props.item.selected, content = true, props.expanded = !props.expanded]">
-                    <td>
+                    <td style="padding-top: 20px;padding-bottom: 20px;">
                       <v-checkbox
                         :input-value="props.item.selected"
                         primary
                         hide-details
                       ></v-checkbox>
                     </td>
-                    <td>{{ props.item.content }}</td>
+                    <td class="text-xs-left">{{ props.item.content }}</td>
                     <td class="text-xs-left">{{ props.item.destinataire }}</td>
                     <td class="text-xs-left">{{ props.item.dateReception }}</td>
                   </tr>
@@ -413,7 +459,9 @@
 
         </v-layout>
   
+      </v-container>
     </v-slide-y-transition>
+  </v-container>
 </template>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -485,7 +533,29 @@ export default {
       listMessage: [
         {
           value: false,
-          content: "Some lorem ipsum Some...",
+          content:
+            "Some lorem ipsum Some Some lorem ipsum SomeSome lorem ipsum Some",
+          destinataire: "Jean François",
+          dateReception: "05/09/2018 - 15:20",
+          selected: false
+        },
+        {
+          value: false,
+          content: "Some lorem ipsum...",
+          destinataire: "Jean François",
+          dateReception: "05/09/2018 - 15:20",
+          selected: false
+        },
+        {
+          value: false,
+          content: "Some lorem ipsum...",
+          destinataire: "Jean François",
+          dateReception: "05/09/2018 - 15:20",
+          selected: false
+        },
+        {
+          value: false,
+          content: "Some lorem ipsum...",
           destinataire: "Jean François",
           dateReception: "05/09/2018 - 15:20",
           selected: false
@@ -701,5 +771,8 @@ a {
 a {
   color: #212121 !important;
   text-decoration: none;
+}
+.container.grid-list-md .layout .flex {
+  padding: 0px;
 }
 </style>

@@ -101,15 +101,16 @@
 
 
         <v-list class="pa-0">
-          <v-list-tile avatar @click="">
+           <v-list-tile @click="active = 5" class="" :class="{'active-item active-color': active === 5 }">
             <v-list-tile-action>
-              <v-icon> notes </v-icon>
+              <v-icon>notes</v-icon>
             </v-list-tile-action>
-  
-            <v-list-tile-content>
-              <v-list-tile-title>Détails Résultats</v-list-tile-title>
-            </v-list-tile-content>
-  
+
+            <router-link to="/liste-resultats">
+              <v-list-tile-content>
+                <v-list-tile-title  class="" :class="{'active-color': active === 5}">Détails Résultats</v-list-tile-title>
+              </v-list-tile-content>
+            </router-link>
           </v-list-tile>
         </v-list>
         
@@ -130,16 +131,19 @@
         </v-list>
 
         <v-list class="pa-0">
-          <v-list-tile avatar @click="">
-            <v-list-tile-action>
-              <v-icon> settings </v-icon>
-            </v-list-tile-action>
-  
-            <v-list-tile-content>
-              <v-list-tile-title>Paramêtres</v-list-tile-title>
-            </v-list-tile-content>
-  
-          </v-list-tile>
+          
+          <router-link to="/parametres">
+            <v-list-tile @click="active = 7" class="" :class="{'active-item': active === 7}">
+              <v-list-tile-action>
+                <v-icon> settings </v-icon>
+              </v-list-tile-action>
+    
+              <v-list-tile-content>
+                <v-list-tile-title class="" :class="{'active-color': active === 7}">Paramêtres</v-list-tile-title>
+              </v-list-tile-content>
+    
+            </v-list-tile>
+          </router-link>
         </v-list>
         
         <!-- FIN LEFT MENU -->
