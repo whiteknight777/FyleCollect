@@ -1,4 +1,14 @@
 <template>
+<div>
+  <div class="loading" v-if="loadingPage === true">
+    <v-progress-circular
+      :size="70"
+      :width="7"
+      color="primary"
+      indeterminate
+      style="position:fixed; margin-left:540px; margin-top:270px"
+    ></v-progress-circular>
+  </div>
   <v-container fluid grid-list-md>
     <v-slide-y-transition mode="out-in">
       <v-container grid-list-md text-xs-center>
@@ -17,21 +27,47 @@
                 Liste des résultats
               </v-breadcrumbs-item>
               
-            <v-btn
-              :loading="loading"
-              :disabled="loading"
+              <v-autocomplete
+                :loading="loading"
+                :items="listeLieux"
+                :search-input.sync="search"
+                v-model="select"
+                class="md2 mx-3"
+                flat
+                hide-no-data
+                hide-details
+                label="Rechercher un lieu de vote"
+                solo-inverted
+                style="width:400px;"
+                @blur="checkValue"
+              ></v-autocomplete>
+              <v-btn 
+              icon
+              fab
+              small
+              v-if="clear === true" 
+              dark
+              color="deep-orange darken-3"
+              @click="clearResearch">
+              <v-icon>clear</v-icon>
+              </v-btn>
+
+              <v-btn
+              absolute
+              fixed
+              dark
+              fab
+              bottom
+              right
               color="green darken-1"
-              class="white--text"
-              @click.native=""
-              style="right: 45px;position: absolute;top: 30px;"
+              style="bottom: 20px;"
             >
-              Imprimer
-              <v-icon right dark>print</v-icon>
+              <v-icon>print</v-icon>
             </v-btn>
             </v-breadcrumbs>
 
 
-            <v-card v-for="(item, i) of lieux" :key="i">
+            <v-card v-for="(item, i) of items" :key="i">
               <v-toolbar color="blue-grey lighten-4">
                 <v-card-title style="padding-left:0px;">
                   <v-card-text style="padding-left:0px;">{{item.name}}</v-card-text>
@@ -44,8 +80,8 @@
                     <!-- <th class="text-xs-left">#</th> -->
                     <th class="text-xs-left">Bureau</th>
                     <th class="text-xs-left">Representant</th>
+                    <th class="text-xs-left">Nombre de votant</th>
                     <th class="text-xs-left">Bulletin Null</th>
-                    <th class="text-xs-left">Nombre de voix</th>
                     <th class="text-xs-left" width=170>Action</th>
                   </tr>
                 </thead>
@@ -55,10 +91,10 @@
                       {{ bureau.name }}
                     </td>
                     <td class="text-xs-left" style="padding-top: 25px;padding-bottom: 25px;">{{ bureau.representant }}</td>
-                    <td class="text-xs-left">{{ bureau.nbBulletinNull }}</td>
                     <td class="text-xs-left">
                       {{ bureau.nbVotant }}
                     </td>
+                    <td class="text-xs-left">{{ bureau.nbBulletinNull }}</td>
                     <td class="text-xs-left">
                       <v-btn 
                       small
@@ -67,7 +103,7 @@
                       :disabled="loading"
                       color="green lighten-1"
                       style="color:white"
-                      @click="checkData = true">
+                      @click="openStatBureau(bureau.id)">
                       <v-icon>
                         list
                       </v-icon>
@@ -97,11 +133,11 @@
 
           <template>
             <v-layout row justify-center>
-              <v-dialog v-model="checkData" persistent max-width="500px">
+              <v-dialog v-model="checkData" persistent max-width="650px">
                   <v-toolbar tabs>
                     <!-- <v-toolbar-side-icon></v-toolbar-side-icon> -->
 
-                    <v-toolbar-title>Statistiques du bureau 1</v-toolbar-title>
+                    <v-toolbar-title v-if="checkData">Résultats du {{bureauSelected.name}}</v-toolbar-title>
 
                     <v-spacer></v-spacer>
 
@@ -130,17 +166,34 @@
                     </v-tabs>
                   </v-toolbar>
 
-                  <v-tabs-items v-model="tab" class="white elevation-1">
+                  <v-tabs-items v-model="tab" class="white elevation-1" v-if="checkData">
 
                     <v-tab-item id="mobile-tabs-5-1">
                       <form id="addStatBureau">
                         <v-container grid-list-md style="padding: 40px;">
                           <v-layout wrap>
+                            <v-flex d-flex>
+                            <v-switch
+                              v-if="dejaValiderStatsBureau === false"
+                              :label="validerStatsBureau === false ? 'Enregistrer / Modifier les stats du Bureau' : 'Valider les stats du Bureau'"
+                              v-model="validerStatsBureau"
+                              color="green"
+                            ></v-switch>
+                            <v-alert
+                              v-else
+                              :value="true"
+                              type="success"
+                              style="margin-bottom: 20px"
+                            >
+                              Les statistiques de ce bureau ont été validées.
+                            </v-alert>
+                          </v-flex>
                             <v-flex xs12>
                               <v-text-field 
                               label="Nombre de votants" 
                               type="number"
-                              placeholder="0"
+                              :disabled="validerStatsBureau === true || bureauSelected.valider === true"
+                              v-model="nbVotant"
                               min=0
                               outline
                               required></v-text-field>
@@ -148,8 +201,9 @@
                             <v-flex xs12>
                             <v-text-field
                               type="number"
+                              :disabled="validerStatsBureau === true || bureauSelected.valider === true"
                               label="Nombre de bulletin null"
-                              placeholder="0"
+                              v-model="nbBulletinNull"
                               min=0
                               outline
                               required
@@ -159,10 +213,22 @@
                               <v-btn color="primary" 
                               :loading="loading"
                               :disabled="loading"
-                              block large @click.native="" 
+                              v-if="validerStatsBureau === false"
+                              block large 
+                              @click.native="updateStatsBureau" 
                               style="margin-top:30px">
                               Enregistrer
-                              <!-- <span slot="loader">Loading...</span> -->
+                              </v-btn>
+                              
+                              <v-btn color="green" 
+                              :loading="loading"
+                              :disabled="loading"
+                              v-if="dejaValiderStatsBureau === false && validerStatsBureau === true"
+                              block large 
+                              dark
+                              @click.native="confirmerValidationStatsBureau" 
+                              style="margin-top:30px">
+                              Valider statistique
                               </v-btn>
                             </v-flex>
                           </v-layout>
@@ -174,12 +240,29 @@
                       <form id="addStatCandidat">
                         <v-container grid-list-md style="padding: 40px;">
                           <v-layout wrap>
+                            <v-flex xs12 d-flex>
+                            <v-switch
+                              v-if="dejaValiderResultatCandidat === false"
+                              :label="validerResultatCandidat === false ? 'Enregistrer / Modifier les résultats des candidats' : 'Valider les résultats des candidats'"
+                              v-model="validerResultatCandidat"
+                              color="green"
+                            ></v-switch>
+                            <v-alert
+                              v-else
+                              :value="true"
+                              type="success"
+                              style="margin-bottom: 20px"
+                            >
+                              Les résultats de vote de ce bureau ont été validés.
+                            </v-alert>
+                            </v-flex>
                             <v-flex xs12 md6 lg6 :key="i" v-for="(data2, i) in candidatSuivis" style="display: inherit">
                               <v-text-field
                                 :id="'candidat-'+data2.id"
                                 v-model="data2.nbVoix"
                                 :label="data2.name"
                                 type="number"
+                                :disabled="validerResultatCandidat === true || data2.valider === true"
                                 placeholder="Nombre de voix"
                                 outline
                                 min=0
@@ -190,10 +273,22 @@
                               <v-btn color="primary" 
                               :loading="loading"
                               :disabled="loading"
-                              block large @click.native="" 
+                              v-if="validerResultatCandidat === false"
+                              block large 
+                              @click.native="updateStatsCandidatBureau" 
                               style="margin-top:30px">
                               Enregistrer
-                              <!-- <span slot="loader">Loading...</span> -->
+                              </v-btn>
+                              
+                              <v-btn color="green" 
+                              :loading="loading"
+                              :disabled="loading"
+                              v-if="dejaValiderResultatCandidat === false && validerResultatCandidat === true"
+                              block large 
+                              dark
+                              @click.native="confirmerValidationResultatsBureau" 
+                              style="margin-top:30px">
+                              Valider résultats
                               </v-btn>
                             </v-flex>
                           </v-layout>
@@ -231,6 +326,16 @@
       </v-container>
     </v-slide-y-transition>
   </v-container>
+
+    <snackbar
+    v-if="snackbar" 
+    :text="text"
+    :y="y"
+    :x="x"
+    >
+    </snackbar>
+
+</div>
 </template>
 
 
@@ -251,6 +356,11 @@ export default {
   data() {
     return {
       loaded: false,
+      loadingPage: false,
+      validerStatsBureau: false,
+      validerResultatCandidat: false,
+      dejaValiderStatsBureau: false,
+      dejaValiderResultatCandidat: false,
       tab: null,
       supprimer: false,
       checkData: false,
@@ -264,147 +374,15 @@ export default {
       loading: false,
       clear: false,
       items: [],
-      representants: [
-        "REP 1",
-        "REP 2",
-        "REP 3",
-        "REP 4",
-        "REP 5",
-        "REP 6",
-        "REP 7",
-        "REP 8",
-        "REP 9"
-      ],
-      lieux: [
-        {
-          name: "LYCEE TECHNIQUE",
-          localisation: "COCODY, CITE DES ARTS",
-          nbInscrit: "3977",
-          bv: [
-            {
-              id: 1,
-              name: "BUREAU 1",
-              representant: "FRANCK YAO",
-              nbVotant: "598",
-              nbBulletinNull: "32",
-              contact: "08123344",
-              rv: [
-                { name: "candidat 1", nbVoix: "250" },
-                { name: "candidat 2", nbVoix: "250" },
-                { name: "candidat 3", nbVoix: "250" },
-                { name: "candidat 4", nbVoix: "250" },
-                { name: "candidat 5", nbVoix: "250" },
-                { name: "candidat 6", nbVoix: "250" },
-                { name: "candidat 7", nbVoix: "250" },
-                { name: "candidat 8", nbVoix: "250" }
-              ]
-            },
-            {
-              id: 2,
-              name: "BUREAU 2",
-              representant: "PAT KOFFI",
-              nbVotant: "398",
-              nbBulletinNull: "22",
-              contact: "08123344",
-              rv: [
-                { name: "candidat 1", nbVoix: "250" },
-                { name: "candidat 2", nbVoix: "250" },
-                { name: "candidat 3", nbVoix: "250" },
-                { name: "candidat 4", nbVoix: "250" },
-                { name: "candidat 5", nbVoix: "250" },
-                { name: "candidat 6", nbVoix: "250" },
-                { name: "candidat 7", nbVoix: "250" },
-                { name: "candidat 8", nbVoix: "250" }
-              ]
-            },
-            {
-              id: 3,
-              name: "BUREAU 3",
-              representant: "ZAMBLE YVES",
-              nbVotant: "898",
-              nbBulletinNull: "132",
-              contact: "08123344",
-              rv: [
-                { name: "candidat 1", nbVoix: "250" },
-                { name: "candidat 2", nbVoix: "250" },
-                { name: "candidat 3", nbVoix: "250" },
-                { name: "candidat 4", nbVoix: "250" },
-                { name: "candidat 5", nbVoix: "250" },
-                { name: "candidat 6", nbVoix: "250" },
-                { name: "candidat 7", nbVoix: "250" },
-                { name: "candidat 8", nbVoix: "250" }
-              ]
-            }
-          ]
-        },
-        {
-          name: "GS DEUX PLATEAU SUD 1-2",
-          localisation: "2 PLATEAUX ANGRE",
-          nbInscrit: "2377",
-          bv: [
-            {
-              id: 1,
-              name: "BUREAU 1",
-              representant: "FRANCK YAO",
-              nbVotant: "598",
-              nbBulletinNull: "32",
-              contact: "08123344",
-              rv: [
-                { name: "candidat 1", nbVoix: "250" },
-                { name: "candidat 2", nbVoix: "250" },
-                { name: "candidat 3", nbVoix: "250" },
-                { name: "candidat 4", nbVoix: "250" },
-                { name: "candidat 5", nbVoix: "250" },
-                { name: "candidat 6", nbVoix: "250" },
-                { name: "candidat 7", nbVoix: "250" },
-                { name: "candidat 8", nbVoix: "250" }
-              ]
-            },
-            {
-              id: 2,
-              name: "BUREAU 2",
-              representant: "PAT KOFFI",
-              nbVotant: "398",
-              nbBulletinNull: "22",
-              contact: "08123344",
-              rv: [
-                { name: "candidat 1", nbVoix: "250" },
-                { name: "candidat 2", nbVoix: "250" },
-                { name: "candidat 3", nbVoix: "250" },
-                { name: "candidat 4", nbVoix: "250" },
-                { name: "candidat 5", nbVoix: "250" },
-                { name: "candidat 6", nbVoix: "250" },
-                { name: "candidat 7", nbVoix: "250" },
-                { name: "candidat 8", nbVoix: "250" }
-              ]
-            },
-            {
-              id: 3,
-              name: "BUREAU 3",
-              representant: "ZAMBLE YVES",
-              nbVotant: "898",
-              nbBulletinNull: "132",
-              contact: "08123344",
-              rv: [
-                { name: "candidat 1", nbVoix: "250" },
-                { name: "candidat 2", nbVoix: "250" },
-                { name: "candidat 3", nbVoix: "250" },
-                { name: "candidat 4", nbVoix: "250" },
-                { name: "candidat 5", nbVoix: "250" },
-                { name: "candidat 6", nbVoix: "250" },
-                { name: "candidat 7", nbVoix: "250" },
-                { name: "candidat 8", nbVoix: "250" }
-              ]
-            }
-          ]
-        }
-      ],
-      candidatSuivis: [
-        { id: 1, name: "Candidat 1", nbVoix: 0 },
-        { id: 2, name: "Candidat 2", nbVoix: 0 },
-        { id: 3, name: "Candidat 3", nbVoix: 0 },
-        { id: 4, name: "Candidat 4", nbVoix: 0 }
-      ],
+      lieux: [],
+      nbVotant: 0,
+      bureauSelected: null,
+      nbBulletinNull: 0,
+      candidatSuivis: [],
+      listeLieux: [],
+      items: [],
+      select: null,
+      search: null,
       pieData: {
         id: 2,
         // legend: "Graphique des votes par bureau de vote",
@@ -458,6 +436,18 @@ export default {
     };
   },
   methods: {
+    querySelections(v) {
+      this.loading = true;
+      // Simulated ajax query
+      setTimeout(() => {
+        this.items = this.lieux.filter(e => {
+          return (
+            (e.name || "").toLowerCase().indexOf((v || "").toLowerCase()) > -1
+          );
+        });
+        this.loading = false;
+      }, 500);
+    },
     createChart(chartId, chartData) {
       const ctx = document.getElementById("chart" + chartId);
       const myChart = new Chart(ctx, {
@@ -466,15 +456,319 @@ export default {
         options: chartData.options
       });
     },
+    checkValue() {
+      // console.log("test");
+      if (this.search === null && this.select === "") {
+        this.clear = true;
+        this.items = this.lieux.filter(e => {
+          return (
+            (e.name || "")
+              .toLowerCase()
+              .indexOf((this.search || "").toLowerCase()) > -1
+          );
+        });
+      }
+      if (this.search === undefined && this.select === null) {
+        this.clear = false;
+      }
+    },
+    resetItem() {
+      this.items = this.lieux;
+    },
+    clearResearch() {
+      this.clear = false;
+      this.select = null;
+      this.search = null;
+      this.resetItem();
+    },
+    getNamesCentres() {
+      for (let item of this.lieux) {
+        this.listeLieux.push(item.name);
+      }
+    },
     launchChart() {
       this.createChart(this.pieData.id, this.pieData);
-      // this.loaded = true;
-      // console.log(document.getElementById("chart"));
+    },
+    getAllData() {
+      this.loadingPage = true;
+      this.axios
+        .get(localDomain + "resultats/listAll/" + this.user.idCandidat, {
+          headers: {
+            "Content-type": "application/x-www-form-urlencoded"
+          }
+        })
+        .then(response => {
+          let data = response.data;
+
+          if (data.statusRequete == 100) {
+            this.lieux = data.listeCentres;
+            this.items = this.lieux;
+            this.getNamesCentres();
+          }
+
+          this.loadingPage = false;
+        });
+    },
+    openStatBureau(idBureau) {
+      // Récupérons les statistiques de ce bureau
+      let lieuSelected = this.lieux.filter(e => {
+        let listeBureau = e.bv;
+        for (let bureau of listeBureau) {
+          if (bureau.id === idBureau) {
+            this.bureauSelected = bureau;
+            if (this.bureauSelected.valider === true) {
+              this.validerStatsBureau = true;
+              this.dejaValiderStatsBureau = true;
+            } else {
+              this.validerStatsBureau = false;
+              this.dejaValiderStatsBureau = false;
+            }
+
+            return e;
+          }
+        }
+      });
+
+      // Vérifions si les stats candidats bureaux ont été validées
+      let statsCandidatsBureaux = this.bureauSelected.rv;
+      let nbValider = 0;
+      for (let resultat of statsCandidatsBureaux) {
+        if (resultat.valider === true) {
+          nbValider++;
+        }
+      }
+      // Vérifions maintenant si tout les résultats ont été validés
+      if (nbValider === this.bureauSelected.nbRV) {
+        this.validerResultatCandidat = true;
+        this.dejaValiderResultatCandidat = true;
+      } else {
+        this.validerResultatCandidat = false;
+        this.dejaValiderResultatCandidat = false;
+      }
+
+      // Nombre de votant du bureau
+      this.nbVotant = this.bureauSelected.nbVotant;
+      this.nbBulletinNull = this.bureauSelected.nbBulletinNull;
+
+      // Liste des candidats suivis et leur résultats
+      this.candidatSuivis = this.bureauSelected.rv;
+      this.checkData = true;
+    },
+    updateStatsBureau() {
+      this.checkData = false;
+      this.snackbar = false;
+      this.loadingPage = true;
+
+      let form = document.getElementById("addStatBureau");
+      let data = new FormData(form);
+      data.append("idBureau", this.bureauSelected.id);
+      data.append("nbVotant", this.nbVotant);
+      data.append("nbBn", this.nbBulletinNull);
+      data.append("idCandidat", this.user.idCandidat);
+
+      this.axios
+        .post(localDomain + "statsbureaux/edit/info", data, {
+          headers: {
+            "Content-type": "application/x-www-form-urlencoded"
+          }
+        })
+        .then(response => {
+          let data = response.data;
+
+          if (data.statusRequete == 100) {
+            this.lieux.filter(e => {
+              let listeBureau = e.bv;
+              for (let bureau of listeBureau) {
+                if (bureau.id === this.bureauSelected.id) {
+                  bureau.nbVotant = this.nbVotant;
+                  bureau.nbBulletinNull = this.nbBulletinNull;
+                }
+              }
+            });
+            this.items = this.lieux;
+            this.listeLieux = [];
+            this.getNamesCentres();
+
+            this.text = "Modification effectuée";
+            this.snackbar = true;
+            this.loadingPage = false;
+          }
+        });
+    },
+    updateStatsCandidatBureau() {
+      this.checkData = false;
+      this.snackbar = false;
+      this.loadingPage = true;
+
+      let form = document.getElementById("addStatCandidat");
+      let data = new FormData(form);
+      data.append("idBureau", this.bureauSelected.id);
+      data.append("idCandidat", this.user.idCandidat);
+      // Envoyons le tableau de candidat suivis
+      for (let a = 0; a < this.candidatSuivis.length; a++) {
+        data.append(
+          "candidat_" + this.candidatSuivis[a].id,
+          this.candidatSuivis[a].nbVoix
+        );
+      }
+
+      this.axios
+        .post(localDomain + "statscandidatsbureaux/edit/info", data, {
+          headers: {
+            "Content-type": "application/x-www-form-urlencoded"
+          }
+        })
+        .then(response => {
+          let data = response.data;
+
+          if (data.statusRequete == 100) {
+            this.lieux.filter(e => {
+              let listeBureau = e.bv;
+              for (let bureau of listeBureau) {
+                if (bureau.id === this.bureauSelected.id) {
+                  bureau.rv = this.candidatSuivis;
+                }
+              }
+            });
+            this.items = this.lieux;
+            this.listeLieux = [];
+            this.getNamesCentres();
+
+            this.text = "Modification effectuée";
+            this.snackbar = true;
+            this.loadingPage = false;
+          }
+        });
+    },
+    confirmerValidationStatsBureau() {
+      this.checkData = false;
+      this.snackbar = false;
+      this.loadingPage = true;
+
+      let form = document.getElementById("addStatBureau");
+      let data = new FormData(form);
+      data.append("idBureau", this.bureauSelected.id);
+      data.append("nbVotant", this.nbVotant);
+      data.append("nbBn", this.nbBulletinNull);
+      data.append("idCandidat", this.user.idCandidat);
+
+      this.axios
+        .post(localDomain + "statsbureaux/valider/info", data, {
+          headers: {
+            "Content-type": "application/x-www-form-urlencoded"
+          }
+        })
+        .then(response => {
+          let data = response.data;
+
+          if (data.statusRequete == 100) {
+            this.lieux.filter(e => {
+              let listeBureau = e.bv;
+              for (let bureau of listeBureau) {
+                if (bureau.id === this.bureauSelected.id) {
+                  bureau.nbVotant = this.nbVotant;
+                  bureau.nbBulletinNull = this.nbBulletinNull;
+                  bureau.valider = true;
+                }
+              }
+            });
+
+            this.items = this.lieux;
+            this.listeLieux = [];
+            this.getNamesCentres();
+
+            this.text = "Modification effectuée";
+            this.snackbar = true;
+            this.loadingPage = false;
+          }
+        });
+    },
+    confirmerValidationResultatsBureau() {
+      this.checkData = false;
+      this.snackbar = false;
+      this.loadingPage = true;
+
+      let form = document.getElementById("addStatCandidat");
+      let data = new FormData(form);
+      data.append("idBureau", this.bureauSelected.id);
+      data.append("idCandidat", this.user.idCandidat);
+      // Envoyons le tableau de candidat suivis
+      for (let a = 0; a < this.candidatSuivis.length; a++) {
+        data.append(
+          "candidat_" + this.candidatSuivis[a].id,
+          this.candidatSuivis[a].nbVoix
+        );
+      }
+
+      this.axios
+        .post(localDomain + "statscandidatsbureaux/valider/info", data, {
+          headers: {
+            "Content-type": "application/x-www-form-urlencoded"
+          }
+        })
+        .then(response => {
+          let data = response.data;
+
+          if (data.statusRequete == 100) {
+            this.lieux.filter(e => {
+              let listeBureau = e.bv;
+              for (let bureau of listeBureau) {
+                if (bureau.id === this.bureauSelected.id) {
+                  bureau.rv = this.candidatSuivis;
+                  for (let resultat of bureau.rv) {
+                    resultat.valider = true;
+                  }
+                }
+              }
+            });
+
+            this.items = this.lieux;
+            this.listeLieux = [];
+            this.getNamesCentres();
+
+            this.text = "Modification effectuée";
+            this.snackbar = true;
+            this.loadingPage = false;
+          }
+        });
     }
   },
-  watch: {},
+  watch: {
+    search(val) {
+      // val && val !== this.select && this.querySelections(val);
+      if (val !== this.select) {
+        this.querySelections(val);
+        this.clear = true;
+      }
+      if (val === "") {
+        this.select = null;
+        this.clear = false;
+      }
+    },
+    select(val) {
+      if (this.search === null && val === null) {
+        this.items = this.lieux;
+        this.clear = false;
+      }
+      if (this.search === null && val === "") {
+        this.items = this.lieux;
+        this.clear = false;
+      }
+      if (val !== "" && val !== undefined && val !== null) {
+        this.items = [];
+        this.items = this.lieux.filter(e => {
+          if (e.name === val) {
+            return e;
+          }
+        });
+        this.clear = true;
+      }
+    }
+  },
   computed: {},
-  mounted() {}
+  mounted() {
+    this.getAllData();
+  }
 };
 </script>
 
@@ -497,7 +791,13 @@ li {
 a {
   color: #42b983;
 }
-
+.application
+  .theme--light.v-text-field--solo-inverted.v-text-field--solo
+  .v-input__slot,
+.theme--light .v-text-field--solo-inverted.v-text-field--solo .v-input__slot {
+  background: rgba(0, 0, 0, 0.16);
+  width: 450px;
+}
 .card-icon-block {
   position: absolute;
   left: 15px;

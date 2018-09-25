@@ -1,4 +1,14 @@
 <template>
+<div>
+  <div class="loading" v-if="loadingPage === true">
+    <v-progress-circular
+      :size="70"
+      :width="7"
+      color="primary"
+      indeterminate
+      style="position:fixed; margin-left:540px; margin-top:270px"
+    ></v-progress-circular>
+  </div>
     <v-layout row wrap>
     
         <v-flex xs12 md12 lg12>
@@ -131,6 +141,7 @@
     >
     </snackbar>
     </v-layout>
+</div>
 </template>
 <script>
 import Bg1 from "../assets/Bg-4.png";
@@ -147,9 +158,10 @@ export default {
 
   data() {
     return {
+      loadingPage: false,
       Bg: Bg1,
       error: false,
-      errorMsg: "Erreur Utilisateur inconnue...",
+      errorMsg: "Erreur de connexion... Utilisateur inconnue",
       email: "",
       emailRules: [
         v => !!v || "E-mail obligatoire",
@@ -170,6 +182,8 @@ export default {
   methods: {
     submit() {
       if (this.$refs.form.validate()) {
+        this.snackbar = false;
+        this.loadingPage = true;
         // Native form submission is not yet supported
         let form = document.getElementById("login");
         let data = new FormData(form);
@@ -194,6 +208,7 @@ export default {
               sessionStorage.setItem("userConnected", data);
               let user = JSON.parse(sessionStorage.getItem("userConnected"));
               // Vérification & redirection sur la bonne page
+              this.loadingPage = false;
               if (user.grades == 2) {
                 this.$router.push("/dashboard-candidat");
               } else if (user.grades == 3) {
@@ -201,12 +216,9 @@ export default {
               }
             }
             if (response.data.statusRequete == 200) {
-              // if (!this.snackbar) {
+              this.loadingPage = false;
               this.snackbar = true;
-              // } else {
-              //   this.snackbar = false;
-              // }
-              this.text = "Erreur Utilisateur inconnue";
+              this.errorMsg = "Erreur de connexion... Utilisateur inconnue";
             }
           });
       }
@@ -215,6 +227,13 @@ export default {
 };
 </script>
 <style>
+.loading {
+  position: absolute;
+  width: 100%;
+  z-index: 2;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.14);
+}
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {
   .bg-login {

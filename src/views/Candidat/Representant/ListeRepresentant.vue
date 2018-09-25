@@ -1,4 +1,14 @@
 <template>
+<div>
+  <div class="loading" v-if="loadingPage === true">
+    <v-progress-circular
+      :size="70"
+      :width="7"
+      color="primary"
+      indeterminate
+      style="position:fixed; margin-left:540px; margin-top:270px"
+    ></v-progress-circular>
+  </div>
   <v-container fluid grid-list-md>
     <v-slide-y-transition mode="out-in">
       <v-container grid-list-md text-xs-center>
@@ -22,7 +32,7 @@
               :disabled="loading"
               color="green darken-1"
               class="white--text"
-              @click.native="addCentre = true"
+              @click.native="addRepresentant = true"
               style="right: 45px;position: absolute;top: 30px;"
             >
               Ajouter représentant
@@ -33,13 +43,13 @@
             <template>
               <v-card>
                 <v-card-title class="blue-grey lighten-4">
+                  <span>Liste des représentants ({{items.length}})</span>
                   <v-spacer></v-spacer>
                   <v-autocomplete
                     :loading="loading"
                     :items="representants"
                     :search-input.sync="search"
                     v-model="select"
-                    cache-items
                     class="mx-3"
                     flat
                     hide-no-data
@@ -86,7 +96,7 @@
                               fab
                               color="orange lighten-1"
                               dark
-                              @click="updateRepresentant = true">
+                              @click="editRepresentant(item.id)">
                               <v-icon
                               >
                                 create
@@ -99,7 +109,7 @@
                               fab
                               color="red lighten-1"
                               dark
-                              @click="supprimer = true">
+                              @click="deleteRepresentant(item.id)">
                               <v-icon
                               >
                                 clear
@@ -117,8 +127,8 @@
 
           <template>
             <v-layout row justify-center>
-              <v-dialog v-model="addCentre" persistent max-width="500px">
-                <form id="addCentre">
+              <v-dialog v-model="addRepresentant" persistent max-width="500px">
+                <form id="addRepresentant" ref="form" lazy-validation>
                   <v-card>
                     <v-card-title>
                       <span class="headline">Ajouter un représentant</span>
@@ -128,6 +138,7 @@
                         <v-layout wrap>
                           <v-flex xs12>
                             <v-text-field 
+                            v-model="newNomprenom"
                             label="Nom & Prénom(s)" 
                             prepend-icon="account_circle"
                             required>
@@ -135,14 +146,19 @@
                           </v-flex>
                           <v-flex xs12>
                             <v-text-field 
+                            v-model="newEmail"
                             label="Email" 
+                            :rules="emailRules"
                             prepend-icon="alternate_email"
                             required>
                             </v-text-field>
                           </v-flex>
                           <v-flex xs12>
                             <v-text-field 
+                            v-model="newContact"
                             label="Contact" 
+                            :counter="8"
+                            :rules="contactRules"
                             prepend-icon="dialpad"
                             required>
                             </v-text-field>
@@ -153,8 +169,8 @@
                     </v-card-text>
                     <v-card-actions style="padding-bottom: 15px;padding-right: 35px;">
                       <v-spacer></v-spacer>
-                      <v-btn color="red darken-2" small @click.native="addCentre = false" dark>Annuler</v-btn>
-                      <v-btn color="green darken-1" small @click.native="addCentre = false" dark>Enregistrer</v-btn>
+                      <v-btn color="red darken-2" small @click.native="addRepresentant = false" dark>Annuler</v-btn>
+                      <v-btn color="green darken-1" small @click.native="addNewRepresentant" dark v-if="valid === true">Enregistrer</v-btn>
                     </v-card-actions>
                   </v-card>
                 </form>
@@ -177,6 +193,7 @@
                         <v-layout wrap>
                           <v-flex xs12>
                             <v-text-field 
+                            v-model="newNomprenom"
                             label="Nom & Prénom(s)" 
                             prepend-icon="account_circle"
                             required>
@@ -184,6 +201,8 @@
                           </v-flex>
                           <v-flex xs12>
                             <v-text-field 
+                            v-model="newEmail"
+                            :rules="emailRules"
                             label="Email" 
                             prepend-icon="alternate_email"
                             required>
@@ -191,6 +210,9 @@
                           </v-flex>
                           <v-flex xs12>
                             <v-text-field 
+                            v-model="newContact"
+                            :counter="8"
+                            :rules="contactRules"
                             label="Contact" 
                             prepend-icon="dialpad"
                             required>
@@ -203,7 +225,7 @@
                     <v-card-actions style="padding-bottom: 15px;padding-right: 35px;">
                       <v-spacer></v-spacer>
                       <v-btn color="red darken-2" small @click.native="updateRepresentant = false" dark>Annuler</v-btn>
-                      <v-btn color="green darken-1" small @click.native="updateRepresentant = false" dark>Enregistrer</v-btn>
+                      <v-btn color="green darken-1" small @click.native="updateRepresentantData" dark v-if="valid === true">Enregistrer</v-btn>
                     </v-card-actions>
                   </v-card>
                 </form>
@@ -217,7 +239,7 @@
             <v-layout row justify-center>
               <v-dialog
                 v-model="supprimer"
-                max-width="290"
+                max-width="350"
               >
                 <v-card>
                   <v-card-title class="headline" style="text-align:center">Voulez-vous vraiment supprimer ce représentant ?</v-card-title>
@@ -242,7 +264,7 @@
                       color="green ligthen-1"
                       small
                       dark
-                      @click="supprimer = false"
+                      @click="confirmDeleteRepresentant"
                     >
                       Supprimer
                     </v-btn>
@@ -257,6 +279,15 @@
       </v-container>
     </v-slide-y-transition>
   </v-container>
+
+    <snackbar
+    v-if="snackbar" 
+    :text="text"
+    :y="y"
+    :x="x"
+    >
+    </snackbar>
+</div>
 </template>
 
 
@@ -277,8 +308,23 @@ export default {
   data() {
     return {
       supprimer: false,
-      addCentre: false,
+      valid: false,
+      loadingPage: false,
+      addRepresentant: false,
       updateRepresentant: false,
+      newNomprenom: "",
+      newEmail: "",
+      newContact: "",
+      representantId: "",
+      emailRules: [
+        v => !!v || "E-mail obligatoire",
+        v => /.+@.+[(.)].+/.test(v) || "E-mail doit être valide"
+      ],
+      contactRules: [
+        v => !!v || "Contact obligatoire",
+        v => /[0-9]{7}.+/.test(v) || "Saisissez un contact valide",
+        v => (v && v.length <= 8) || "Votre numéro doit contenir 8 chiffres"
+      ],
       snackbar: false,
       y: "top",
       x: "right",
@@ -288,54 +334,7 @@ export default {
       loading: false,
       clear: false,
       search: "",
-      headers: [
-        {
-          text: "#",
-          align: "left",
-          sortable: false,
-          value: "#"
-        },
-        { text: "Nom & prénoms", value: "nomprenom" },
-        { text: "Email", value: "email" },
-        { text: "Contact", value: "contact" },
-        { text: "Lieu de vote", value: "lieu" },
-        { text: "Bureau", value: "bureau" },
-        { text: "Action", value: "bureau" }
-      ],
-      listeRepresentants: [
-        // {
-        //   value: false,
-        //   nomprenom: "Representant 1",
-        //   email: "email@gmail.com",
-        //   contact: "09228877",
-        //   lieu: "LYCEE TECHNIQUE",
-        //   bureau: "Bureau 1"
-        // },
-        // {
-        //   value: false,
-        //   nomprenom: "Representant 2",
-        //   email: "email@gmail.com",
-        //   contact: "08228877",
-        //   lieu: "GS DEUX PLATEAU SUD 1-2",
-        //   bureau: "Bureau 1"
-        // },
-        // {
-        //   value: false,
-        //   nomprenom: "Representant 3",
-        //   email: "email@gmail.com",
-        //   contact: "07228877",
-        //   lieu: "ECOLE DE LA GENDARMERIE",
-        //   bureau: "Bureau 1"
-        // },
-        // {
-        //   value: false,
-        //   nomprenom: "Representant 4",
-        //   email: "email@gmail.com",
-        //   contact: "09222877",
-        //   lieu: "ECOLE DE POLICE",
-        //   bureau: "Bureau 1"
-        // }
-      ],
+      listeRepresentants: [],
       representants: [],
       items: [],
       search: null,
@@ -344,6 +343,7 @@ export default {
   },
   methods: {
     getListeRepresentant() {
+      this.loadingPage = true;
       this.axios
         .get(localDomain + "representants/listAll/" + this.user.idCandidat, {
           headers: {
@@ -358,6 +358,7 @@ export default {
             this.items = this.listeRepresentants;
 
             this.getNamesRepresentant();
+            this.loadingPage = false;
           }
 
           if (data.statusRequete == 200) {
@@ -365,6 +366,143 @@ export default {
             this.items = this.listeRepresentants;
           }
         });
+    },
+    addNewRepresentant() {
+      if (this.valid === true) {
+        this.addRepresentant = false;
+        this.loadingPage = true;
+        this.snackbar = false;
+        let form = document.getElementById("addRepresentant");
+        let data = new FormData(form);
+        data.append("idCandidat", this.user.idCandidat);
+        data.append("nomprenom", this.newNomprenom);
+        data.append("email", this.newEmail);
+        data.append("contact", this.newContact);
+
+        this.axios
+          .post(localDomain + "representants/add/new", data, {
+            headers: {
+              "Content-type": "application/x-www-form-urlencoded"
+            }
+          })
+          .then(response => {
+            let data = response.data;
+
+            if (data.statusRequete == 100) {
+              this.listeRepresentants.push(data.newRepresentant);
+              this.items = this.listeRepresentants;
+
+              this.getNamesRepresentant();
+              this.loadingPage = false;
+              this.text = "Nouveau representant ajouté";
+              this.snackbar = true;
+
+              // Réinitialisons les variables
+              this.newNomprenom = "";
+              this.newEmail = "";
+              this.newContact = "";
+              this.valid = false;
+            }
+          });
+      }
+    },
+    updateRepresentantData() {
+      if (this.valid === true) {
+        this.updateRepresentant = false;
+        this.loadingPage = true;
+        this.snackbar = false;
+        let form = document.getElementById("updateRepresentant");
+        let data = new FormData(form);
+        data.append("idRepresentant", this.representantId);
+        data.append("nomprenom", this.newNomprenom);
+        data.append("email", this.newEmail);
+        data.append("contact", this.newContact);
+
+        this.axios
+          .post(localDomain + "representants/edit/info", data, {
+            headers: {
+              "Content-type": "application/x-www-form-urlencoded"
+            }
+          })
+          .then(response => {
+            let data = response.data;
+
+            if (data.statusRequete == 100) {
+              // Recupérons les nouvelles données
+              let representant = data.newInfo;
+
+              // Recherchons dans notre liste le representant modifier
+              this.items.filter(e => {
+                if (e.id === representant.id) {
+                  e.nomprenom = representant.nomprenom;
+                  e.email = representant.email;
+                  e.contact = representant.contact;
+                  e.lieu = representant.lieu;
+                  e.bureau = representant.bureau;
+                }
+              });
+
+              this.representants = [];
+              this.getNamesRepresentant();
+              this.loadingPage = false;
+              this.text = "Modification(s) enreggistrée(s)";
+              this.snackbar = true;
+
+              // Réinitialisons les variables
+              this.newNomprenom = "";
+              this.newEmail = "";
+              this.newContact = "";
+              this.valid = false;
+            }
+          });
+      }
+    },
+    confirmDeleteRepresentant() {
+      this.supprimer = false;
+      this.loadingPage = true;
+      this.snackbar = false;
+      this.axios
+        .get(localDomain + "representants/delete/" + this.representantId, {
+          headers: {
+            "Content-type": "application/x-www-form-urlencoded"
+          }
+        })
+        .then(response => {
+          let data = response.data;
+
+          if (data.statusRequete == 100) {
+            // Recherchons dans notre liste le representant supprimer
+            this.items.filter(e => {
+              if (e.id === this.representantId) {
+                let key = this.items.indexOf(e);
+                // bureauName = bureau.name;
+                return this.items.splice(key, 1);
+              }
+            });
+            this.listeRepresentants = this.items;
+            this.representants = [];
+            this.getNamesRepresentant();
+            this.loadingPage = false;
+            this.text = "suppression(s) effectuée(s)";
+            this.snackbar = true;
+          }
+        });
+    },
+    editRepresentant(idRepresentant) {
+      this.representantId = idRepresentant;
+      // Recherchons le representant ayant cette id
+      let representant = this.items.filter(e => {
+        if (e.id === idRepresentant) return e;
+      });
+
+      this.newNomprenom = representant[0].nomprenom;
+      this.newEmail = representant[0].email;
+      this.newContact = representant[0].contact;
+      this.updateRepresentant = true;
+    },
+    deleteRepresentant(idRepresentant) {
+      this.supprimer = true;
+      this.representantId = idRepresentant;
     },
     querySelections(v) {
       this.loading = true;
@@ -448,6 +586,60 @@ export default {
         });
         this.clear = true;
       }
+    },
+    newContact(v) {
+      // Vérifions si le numéro est correct
+      if (!/[0-9]{7}.+/.test(v)) this.valid = false;
+
+      // Vérifions si le champ n'est pas vide
+      if (v.length === 0) this.valid = false;
+
+      // Vérifions si le champ comporte uniquement 8 chiffres
+      if ((v && v.length < 8) || (v && v.length > 8)) this.valid = false;
+
+      // Vérifions si le tout est ok
+      if (
+        this.newNomprenom.length > 0 &&
+        v.length > 0 &&
+        this.newEmail.length > 0 &&
+        /[0-9]{7}.+/.test(v) === true &&
+        v.length < 9
+      ) {
+        this.valid = true;
+      } else this.valid = false;
+    },
+    newEmail(v) {
+      // Vérifions si l'email est correct
+      if (!/.+@.+[(.)].+/.test(v)) this.valid = false;
+
+      // Vérifions si le champ n'est pas vide
+      if (v.length === 0) this.valid = false;
+
+      // Vérifions si le tout est ok
+      if (
+        this.newContact.length > 0 &&
+        v.length > 0 &&
+        this.newNomprenom.length > 0 &&
+        /.+@.+[(.)].+/.test(v) === true
+      ) {
+        this.valid = true;
+      } else this.valid = false;
+    },
+    newNomprenom(v) {
+      // Vérifions si le champ n'est pas vide
+      if (v.length === 0) this.valid = false;
+
+      // Vérifions si le tout est ok
+      if (
+        this.newContact.length < 9 &&
+        this.newContact.length > 0 &&
+        v.length > 0 &&
+        this.newEmail.length > 0 &&
+        /[0-9]{7}.+/.test(this.newContact) === true &&
+        /.+@.+[(.)].+/.test(this.newEmail) === true
+      )
+        this.valid = true;
+      else this.valid = false;
     }
   },
   computed: {},
@@ -507,5 +699,12 @@ a {
 a {
   color: #212121 !important;
   text-decoration: none;
+}
+.loading {
+  position: absolute;
+  width: 100%;
+  z-index: 2;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.14);
 }
 </style>

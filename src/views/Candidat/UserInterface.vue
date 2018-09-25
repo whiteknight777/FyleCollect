@@ -848,7 +848,6 @@ export default {
                 newLabel.push(centre.libelleCentre);
                 newData.push(centre.nbVote);
               }
-
               // Renseignons les données du candidats récupérées dans le graphe en bar
               if (
                 this.compareArray(newLabel, this.oldLabel) === false &&
@@ -1156,17 +1155,19 @@ export default {
       }
     },
     compareArray(a1, a2) {
+      let equal = false;
       if (a1.length != a2.length) {
-        return false;
+        equal = false;
       } else {
         for (var a = 0; a < a1.length; ++a) {
           if (a1[a] != a2[a]) {
-            return false;
+            equal = false;
           } else {
-            return true;
+            equal = true;
           }
         }
       }
+      return equal;
     }
   },
   watch: {

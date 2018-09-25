@@ -66,7 +66,7 @@
                           label="Code Fyle SMS"
                           type="text"
                           readonly=""
-                          value="JM-GAUZE"
+                          value="KONE-MOISE"
                           box
                           min=0
                           required
@@ -84,7 +84,25 @@
                           label="Code Fyle SMS"
                           type="text"
                           readonly=""
-                          value="419976388"
+                          value="53978998"
+                          box
+                          min=0
+                          required
+                        ></v-text-field>
+                      </v-list-tile-action>
+                    </v-list-tile>
+
+                    <v-list-tile>
+                      <v-list-tile-content>
+                        <v-list-tile-title>Mot clée FC</v-list-tile-title>
+                        <v-list-tile-sub-title>Mot clée permettant d'envoyer des données de vote par SMS</v-list-tile-sub-title>
+                      </v-list-tile-content>
+                      <v-list-tile-action>
+                        <v-text-field
+                          label="Code Fyle SMS"
+                          type="text"
+                          readonly=""
+                          value="KONE-M"
                           box
                           min=0
                           required
@@ -102,7 +120,7 @@
                           label="Code Fyle SMS"
                           type="text"
                           readonly=""
-                          value="254"
+                          value="225"
                           box
                           min=0
                           required
@@ -130,7 +148,7 @@
                           label="Syntaxe Résultats de votes"
                           type="text"
                           readonly=""
-                          value="JM-GAUZERV RV1*RV2*RV3*RV4"
+                          value="KONE-MRV RV1*RV2*RV3*RV4"
                           box
                           style="width:300px"
                           required
@@ -148,7 +166,7 @@
                           label="Syntaxe Résultats du bureau de vote"
                           type="text"
                           readonly=""
-                          value="JM-GAUZERB NBVOTANT*NB-BULLETIN-NULL"
+                          value="KONE-MRB NBVOTANT*NB-BULLETIN-NULL"
                           box
                           style="width:400px"
                           required

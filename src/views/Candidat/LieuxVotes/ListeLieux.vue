@@ -108,7 +108,6 @@
                   :items="listeLieux"
                   :search-input.sync="search"
                   v-model="select"
-                  cache-items
                   class="mx-3"
                   flat
                   hide-no-data
@@ -141,17 +140,13 @@
                       avatar
                       ripple
                     >
-                      <v-list-tile-content>
+                      <v-list-tile-content >
                         <v-list-tile-title style="font-size: small;"><v-icon>where_to_vote</v-icon> {{item.name}}</v-list-tile-title>
                       </v-list-tile-content>
-                      
-                      <v-list-tile-content>
-                        <v-list-tile-sub-title class="text--primary" style="font-size: small;">{{item.localisation}}</v-list-tile-sub-title>
-                      </v-list-tile-content>
 
-                      <v-list-tile-content>
+                      <v-list-tile-action>
                         <v-list-tile-sub-title>Nombre Inscrit : <b>{{item.nbInscrit}}</b></v-list-tile-sub-title>
-                      </v-list-tile-content>
+                      </v-list-tile-action>
                       
 
                     </v-list-tile>
@@ -301,6 +296,7 @@
                               item-value="lieux"
                               item-text="text"
                               label="Lieux de votes"
+                              v-model="select"
                               @change="checkLieuSelected"
                               chips
                               clearable
@@ -592,7 +588,7 @@
   </v-container>
 
 
-      <snackbar
+    <snackbar
     v-if="snackbar" 
     :text="text"
     :y="y"
@@ -716,6 +712,7 @@ export default {
       }
     },
     getLieuxVotes() {
+      this.loadingPage = true;
       this.axios
         .get(localDomain + "centres/listAll/" + this.user.idCandidat, {
           headers: {
@@ -736,6 +733,7 @@ export default {
           }
 
           this.getNamesCentres();
+          this.loadingPage = false;
         });
     },
     getListeRepresentant(data) {
@@ -766,6 +764,9 @@ export default {
               this.representants.push(data.representant);
               this.repBureauPosition = this.representants.length - 1;
               this.representant = this.representants[this.repBureauPosition];
+              this.RepSelected = this.representantsInfos.filter(e => {
+                if (e.nomprenom === this.representant) return e;
+              });
             } else {
               this.representant = "";
             }
@@ -846,14 +847,16 @@ export default {
                 }
               }
             });
+            this.editBureau = false;
+            this.loadingPage = false;
+            this.text = "Modification(s) enregistrée(s)";
+            this.snackbar = true;
           }
         });
-      this.editBureau = false;
-      this.loadingPage = false;
-      this.snackbar = true;
-      this.text = "Modification(s) enregistrée(s)";
     },
     editInfoCentre() {
+      this.editLieux = false;
+      this.loadingPage = true;
       this.snackbar = false;
       let form = document.getElementById("editLieux");
       let data = new FormData(form);
@@ -870,18 +873,25 @@ export default {
         })
         .then(response => {
           let data = response.data;
-
+          let oldname = "";
           if (data.statusRequete == 100) {
             // Recherchons le lieux qui à été modifié
             // Mettons à jours les nouvelles valeures
             this.lieux.filter(e => {
               if (e.id === data.idCentre) {
                 e.localisation = data.localisation;
+                // Récupérons l'ancien nom
+                oldname = e.name;
+                // Modifions le par le nouveau
                 e.name = data.name;
                 e.nbInscrit = data.nbInscrit;
               }
             });
-            this.editLieux = false;
+
+            this.listeLieux = [];
+            this.getNamesCentres();
+
+            this.loadingPage = false;
             this.text = "Modification enregistrée";
             this.snackbar = true;
           }
@@ -914,13 +924,16 @@ export default {
             // Rajoutons au tableau le nouvel element
             this.items.push(data.newCentre);
             this.getNamesCentres();
+
+            this.loadingPage = false;
+            this.text =
+              "Nouveau lieu de vote ajouté (" + this.newLibelleLieux + ")";
+            this.snackbar = true;
           }
         });
-      this.loadingPage = false;
-      this.snackbar = true;
-      this.text = "Modification(s) enregistrée(s)";
     },
     addNewBureau() {
+      this.addBureau = false;
       this.loadingPage = true;
       this.snackbar = false;
       let form = document.getElementById("addBureau");
@@ -948,12 +961,13 @@ export default {
                 e.bv.push(data.newBureau);
               }
             });
+
+            this.loadingPage = false;
+            this.text =
+              "Nouveau bureau de vote ajouté (" + this.newLibelleBureau + ")";
+            this.snackbar = true;
           }
         });
-      this.addBureau = false;
-      this.loadingPage = false;
-      this.snackbar = true;
-      this.text = "Modification(s) enregistrée(s)";
     },
     cancelEdit() {
       this.editBureau = false;
@@ -964,6 +978,7 @@ export default {
       this.supprimer = true;
     },
     confirmDeleteBureau() {
+      this.snackbar = false;
       this.supprimer = false;
       this.loadingPage = true;
       this.axios
@@ -979,10 +994,12 @@ export default {
             // Retirons du tableau la valeure supprimée
             // Recherchons premièrement le bureau qui à été supprimé
             // Supprimons l'element qui a cette clée
+            let bureauName = "";
             this.items = this.items.filter(e => {
               for (let bureau of e.bv) {
-                if (bureau.id !== this.idBureau) {
+                if (bureau.id === this.idBureau) {
                   let key = e.bv.indexOf(bureau);
+                  bureauName = bureau.name;
                   return e.bv.splice(key, 1);
                 }
               }
@@ -990,8 +1007,8 @@ export default {
 
             this.loadingPage = false;
             this.clear = true;
+            this.text = "Suppression du bureau de vote (" + bureauName + ")";
             this.snackbar = true;
-            this.text = "Modification(s) enregistrée(s)";
           }
         });
     },
@@ -1016,12 +1033,14 @@ export default {
 
           if (data.statusRequete == 100) {
             this.getLieuxVotes();
-
-            this.LieuxSelected = "";
             this.loadingPage = false;
             this.clear = true;
+            this.text =
+              "Suppression du lieu de vote (" +
+              this.LieuxSelected[0].name +
+              ")";
             this.snackbar = true;
-            this.text = "Modification(s) enregistrée(s)";
+            this.LieuxSelected = "";
           }
         });
     },
@@ -1065,6 +1084,10 @@ export default {
       if (v === false) {
         this.RepSelected = [];
         this.representant = "";
+      } else {
+        this.RepSelected = this.representantsInfos.filter(e => {
+          if (e.nomprenom === this.representant) return e;
+        });
       }
     }
   },
@@ -1094,7 +1117,6 @@ li {
 a {
   color: #42b983;
 }
-
 .card-icon-block {
   position: absolute;
   left: 15px;
