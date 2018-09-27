@@ -554,6 +554,9 @@ export default {
     localStorage.setItem("interval", this.interval);
     // Fonction déclenchant les vérifications en BD
     this.interval;
+  },
+  beforeDestroy() {
+    window.clearInterval(this.interval);
   }
 };
 </script>

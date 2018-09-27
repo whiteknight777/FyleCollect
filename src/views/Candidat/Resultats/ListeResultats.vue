@@ -82,6 +82,7 @@
                     <th class="text-xs-left">Representant</th>
                     <th class="text-xs-left">Nombre de votant</th>
                     <th class="text-xs-left">Bulletin Null</th>
+                    <th class="text-xs-left">Statut Résultat</th>
                     <th class="text-xs-left" width=170>Action</th>
                   </tr>
                 </thead>
@@ -96,12 +97,44 @@
                     </td>
                     <td class="text-xs-left">{{ bureau.nbBulletinNull }}</td>
                     <td class="text-xs-left">
+                      <v-chip color="green" text-color="white" v-if="bureau.validerTout">
+                        <v-avatar>
+                          <v-icon>check_circle</v-icon>
+                        </v-avatar>
+                        Validé complètement
+                      </v-chip>
+                      <v-chip color="deep orange" text-color="white" v-else-if="bureau.valider === true && bureau.validerResultatCandidat === false">
+                        <v-avatar>
+                          <v-icon>refresh</v-icon>
+                        </v-avatar>
+                        En cours de validation 
+                      </v-chip>
+                      <v-chip color="deep orange" text-color="white" v-else-if="bureau.validerResultatCandidat === true && bureau.valider === false">
+                        <v-avatar>
+                          <v-icon>refresh</v-icon>
+                        </v-avatar>
+                        En cours de validation 
+                      </v-chip>
+                      <v-chip color="deep orange" text-color="white" v-else-if="bureau.valider === true && bureau.validerResultatCandidat === true && bureau.pvSend === false">
+                        <v-avatar>
+                          <v-icon>attach_file</v-icon>
+                        </v-avatar>
+                        En attente du pv
+                      </v-chip>
+                      <v-chip color="red" text-color="white" v-else>
+                        <v-avatar>
+                          <v-icon>error</v-icon>
+                        </v-avatar>
+                        En attente 
+                      </v-chip>
+                    </td>
+                    <td class="text-xs-left">
                       <v-btn 
                       small
                       fab
                       :loading="loading"
                       :disabled="loading"
-                      color="green lighten-1"
+                      color="info lighten-1"
                       style="color:white"
                       @click="openStatBureau(bureau.id)">
                       <v-icon>
@@ -114,13 +147,14 @@
                       fab
                       :loading="loading"
                       :disabled="loading"
-                      color="primary lighten-1"
+                      color="orange accent-3"
                       style="color:white"
-                      @click="">
+                      @click="openPv(bureau.id)">
                       <v-icon>
                         attachment
                       </v-icon>
                       </v-btn>
+                    
                     </td>
                   </tr>
                 </tbody>
@@ -209,6 +243,55 @@
                               required
                             ></v-text-field>
                             </v-flex>
+                            <div class="v-input v-text-field v-text-field--enclosed v-text-field--outline v-input--is-label-active v-input--is-dirty">
+                              <div class="v-input__control">
+                                  <div class="v-input__slot">
+                                    <div class="v-text-field__slot">
+                                      <label aria-hidden="true" class="v-label v-label--active" style="left: 0px; right: auto; position: absolute;">
+                                        Importer nouveau pv
+                                      </label>
+                                      <input type="file" disabled ref="file" v-if="pvSend === true && bureauSelected.pvInfoBureau.id !== undefined && dejaValiderStatsBureau === true" style="margin-botom:45px" @change="getUploadedFile">
+                                      <input type="file" disabled ref="file" v-else-if="pvSend === true && bureauSelected.pvInfoBureau.id !== undefined && dejaValiderStatsBureau === true && validerStatsBureau === true" style="margin-botom:45px" @change="getUploadedFile">
+                                      <input type="file" ref="file" v-else-if="pvSend === true && bureauSelected.pvInfoBureau.id !== undefined && dejaValiderStatsBureau === false" style="margin-botom:45px" @change="getUploadedFile">
+                                      <input type="file" disabled ref="file" v-else-if="pvSend === true && bureauSelected.pvInfoBureau.id !== undefined && validerStatsBureau === true" style="margin-botom:45px" @change="getUploadedFile">
+                                      <input type="file" ref="file" v-else-if="pvSend === false && dejaValiderStatsBureau === false && validerStatsBureau === false" style="margin-botom:45px" @change="getUploadedFile">
+                                      <input type="file" ref="file" v-else="pvSend === false && dejaValiderStatsBureau === false && validerStatsBureau === true" style="margin-botom:45px" @change="getUploadedFile">
+                                      <br><br><br>
+                                      <v-btn
+                                        color="primary"
+                                        v-if="pvSend === true && bureauSelected.pvInfoBureau.id !== undefined"
+                                        small
+                                        dark
+                                        @click="checkOldPv(bureauSelected.pvInfoBureau.path)"
+                                        style="padding: 20px 16px 45px;"
+                                      >
+                                      <v-icon> attach_file</v-icon>
+                                        consulter PV
+                                      </v-btn>
+                                    </div>
+                                  </div>
+                                  <div class="v-text-field__details">
+                                    <div class="v-messages">
+                                      <div class="v-messages__wrapper">
+                                      </div>
+                                    </div>
+                                  </div>
+                              </div>
+                            </div>
+                            <v-flex xs12 md12 lg12>
+                              <v-btn color="primary" 
+                              :loading="loading"
+                              :disabled="loading"
+                              block 
+                              large 
+                              v-if="checkPvEtat"
+                              @click.native="sendFileBureau" 
+                              style="margin-top:30px">
+                              Importer pv
+                              </v-btn>
+                              
+                            </v-flex>
+
                             <v-flex xs12 md12 lg12>
                               <v-btn color="primary" 
                               :loading="loading"
@@ -306,7 +389,7 @@
                                 </section>
                                 <div style="padding:10px;">
                                 
-                                <canvas :id="'chart'+pieData.id" :width="400" :height="432" style="padding-bottom: 3px;"></canvas>
+                                <canvas :id="'chart'+pieData.id" :width="'400px'" :height="'432px'" style="padding-bottom: 3px;"></canvas>
                                 </div>
                             </v-card>
                           </v-flex>
@@ -327,13 +410,25 @@
     </v-slide-y-transition>
   </v-container>
 
-    <snackbar
-    v-if="snackbar" 
-    :text="text"
-    :y="y"
-    :x="x"
+    <v-snackbar
+      v-model="snackbar"
+      :bottom="y === 'bottom'"
+      :left="x === 'left'"
+      :multi-line="mode === 'multi-line'"
+      :right="x === 'right'"
+      :timeout="timeout"
+      :top="y === 'top'"
+      :vertical="mode === 'vertical'"
     >
-    </snackbar>
+      {{ text }} 
+      <v-btn
+        color="pink"
+        flat
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
 
 </div>
 </template>
@@ -361,11 +456,14 @@ export default {
       validerResultatCandidat: false,
       dejaValiderStatsBureau: false,
       dejaValiderResultatCandidat: false,
+      pvSend: null,
+      pvInfo: [],
       tab: null,
       supprimer: false,
       checkData: false,
       updateBureau: false,
       snackbar: false,
+      mode: "",
       y: "top",
       x: "right",
       mode: "",
@@ -383,6 +481,7 @@ export default {
       items: [],
       select: null,
       search: null,
+      selectedFile: null,
       pieData: {
         id: 2,
         // legend: "Graphique des votes par bureau de vote",
@@ -489,6 +588,93 @@ export default {
     launchChart() {
       this.createChart(this.pieData.id, this.pieData);
     },
+    getUploadedFile(e) {
+      this.selectedFile = e.target.files[0];
+      if (
+        this.selectedFile.type !== "application/pdf" &&
+        "image/jpeg" &&
+        "image/png" &&
+        "image/jpg"
+      ) {
+        this.text =
+          "Erreur format de fichier... Veuillez choisir un format pdf ou image";
+        this.snackbar = true;
+        this.selectedFile = null;
+        e.target.value = null;
+      }
+    },
+    sendFileBureau() {
+      if (this.selectedFile === null) {
+        this.text = "Aucun fichier n'a été sélectionné...";
+        this.snackbar = true;
+      } else {
+        this.checkData = false;
+        this.loadingPage = true;
+        let data = new FormData();
+        data.append("file", this.selectedFile);
+        data.append("idBureau", this.bureauSelected.id);
+        data.append("idClient", this.user.idClient);
+
+        this.axios
+          .post(localDomain + "statsbureaux/send/file", data, {
+            headers: {
+              "Content-type": "multipart/form-data"
+            }
+          })
+          .then(response => {
+            let data = response.data;
+
+            if (data.statusRequete == 100) {
+              this.lieux.filter(e => {
+                let listeBureau = e.bv;
+                for (let bureau of listeBureau) {
+                  if (bureau.id === this.bureauSelected.id) {
+                    bureau.pvSend = data.bureauInfo.pvSend;
+                    bureau.pvInfoBureau = data.bureauInfo.pvInfoBureau;
+                    // Vérifions si les stats candidats bureaux ont été validées
+                    let statsCandidatsBureaux = bureau.rv;
+                    let nbValider = 0;
+                    for (let resultat of statsCandidatsBureaux) {
+                      if (resultat.valider === true) {
+                        nbValider++;
+                      }
+                    }
+
+                    // Vérifions si tout les résultats on été validés
+                    if (nbValider === bureau.nbRV) {
+                      bureau.validerResultatCandidat = true;
+                    }
+                    // Vérifions si tout les résultats on été validés
+                    if (
+                      bureau.validerResultatCandidat === true &&
+                      bureau.valider === true &&
+                      bureau.pvSend === true
+                    ) {
+                      bureau.validerTout = true;
+                    }
+                  }
+                }
+              });
+              this.items = this.lieux;
+              this.listeLieux = [];
+              this.getNamesCentres();
+
+              this.loadingPage = false;
+              this.text = "Pv enregistré avec succès";
+              this.snackbar = true;
+              this.selectedFile = null;
+            }
+          })
+          .catch(response => {
+            let data = response.data;
+
+            this.loadingPage = false;
+            this.text = "Une érreur est survenu lors de l'envoi du pv... ";
+            this.snackbar = true;
+            this.selectedFile = null;
+          });
+      }
+    },
     getAllData() {
       this.loadingPage = true;
       this.axios
@@ -502,6 +688,30 @@ export default {
 
           if (data.statusRequete == 100) {
             this.lieux = data.listeCentres;
+            // Vérifions si toutes les infos ont été validées
+            this.lieux.filter(e => {
+              for (let bureau of e.bv) {
+                let statsCandidatsBureaux = bureau.rv;
+                let nbValider = 0;
+                for (let resultat of statsCandidatsBureaux) {
+                  if (resultat.valider === true) {
+                    nbValider++;
+                  }
+                }
+                // Vérifions si tout les résultats on été validés
+                if (nbValider === bureau.nbRV) {
+                  bureau.validerResultatCandidat = true;
+                }
+                // Vérifions si tout les résultats on été validés
+                if (
+                  bureau.validerResultatCandidat === true &&
+                  bureau.valider === true &&
+                  bureau.pvSend === true
+                ) {
+                  bureau.validerTout = true;
+                }
+              }
+            });
             this.items = this.lieux;
             this.getNamesCentres();
           }
@@ -516,6 +726,9 @@ export default {
         for (let bureau of listeBureau) {
           if (bureau.id === idBureau) {
             this.bureauSelected = bureau;
+            this.pvSend = bureau.pvSend;
+
+            // Vérifions si les données du bureau sont validées
             if (this.bureauSelected.valider === true) {
               this.validerStatsBureau = true;
               this.dejaValiderStatsBureau = true;
@@ -541,9 +754,20 @@ export default {
       if (nbValider === this.bureauSelected.nbRV) {
         this.validerResultatCandidat = true;
         this.dejaValiderResultatCandidat = true;
+        this.bureauSelected.validerResultatCandidat = true;
       } else {
         this.validerResultatCandidat = false;
         this.dejaValiderResultatCandidat = false;
+        this.bureauSelected.validerResultatCandidat = false;
+      }
+
+      // Vérifions si tout les résultats on été validés
+      if (
+        this.bureauSelected.validerResultatCandidat === true &&
+        this.bureauSelected.valider === true &&
+        this.bureauSelected.pvSend === true
+      ) {
+        this.bureauSelected.validerTout = true;
       }
 
       // Nombre de votant du bureau
@@ -553,6 +777,35 @@ export default {
       // Liste des candidats suivis et leur résultats
       this.candidatSuivis = this.bureauSelected.rv;
       this.checkData = true;
+      // this.createChart(this.pieData.id, this.pieData);
+    },
+    openPv(idBureau) {
+      this.lieux.filter(e => {
+        let listeBureau = e.bv;
+        for (let bureau of listeBureau) {
+          if (bureau.id === idBureau) {
+            this.bureauSelected = bureau;
+            this.snackbar = false;
+          }
+        }
+      });
+
+      // Récupérons les infos sur le pv
+      // Vérifions si le pv à été envoyé
+      if (this.bureauSelected.pvSend) {
+        this.pvInfo = this.bureauSelected.pvInfoBureau;
+        let url = this.pvInfo.path;
+        let win = window.open(url, "_blank");
+        win.focus();
+      } else {
+        // Informons l'utilsateur que ce bureau n'a aucun pv rattaché
+        this.text = "Aucun pv n'a été ajouté à ce bureau";
+        this.snackbar = true;
+      }
+    },
+    checkOldPv(url) {
+      let win = window.open(url, "_blank");
+      win.focus();
     },
     updateStatsBureau() {
       this.checkData = false;
@@ -565,11 +818,17 @@ export default {
       data.append("nbVotant", this.nbVotant);
       data.append("nbBn", this.nbBulletinNull);
       data.append("idCandidat", this.user.idCandidat);
+      // Vérifions si une nouvelle image à été chargée
+      if (this.selectedFile !== null || this.selectedFile !== undefined) {
+        data.append("file", this.selectedFile);
+      } else {
+        data.append("file", "");
+      }
 
       this.axios
         .post(localDomain + "statsbureaux/edit/info", data, {
           headers: {
-            "Content-type": "application/x-www-form-urlencoded"
+            "Content-type": "multipart/form-data"
           }
         })
         .then(response => {
@@ -582,6 +841,8 @@ export default {
                 if (bureau.id === this.bureauSelected.id) {
                   bureau.nbVotant = this.nbVotant;
                   bureau.nbBulletinNull = this.nbBulletinNull;
+                  bureau.pvSend = data.bureauInfo.pvSend;
+                  bureau.pvInfoBureau = data.bureauInfo.pvInfoBureau;
                 }
               }
             });
@@ -593,6 +854,16 @@ export default {
             this.snackbar = true;
             this.loadingPage = false;
           }
+        })
+        .catch(response => {
+          let data = response.data;
+          console.log(data);
+
+          this.loadingPage = false;
+          this.text =
+            "Une érreur est survenu lors de la modification des données... ";
+          this.snackbar = true;
+          this.selectedFile = null;
         });
     },
     updateStatsCandidatBureau() {
@@ -652,6 +923,13 @@ export default {
       data.append("nbBn", this.nbBulletinNull);
       data.append("idCandidat", this.user.idCandidat);
 
+      // Vérifions si une nouvelle image à été chargée
+      if (this.selectedFile !== null || this.selectedFile !== undefined) {
+        data.append("file", this.selectedFile);
+      } else {
+        data.append("file", "");
+      }
+
       this.axios
         .post(localDomain + "statsbureaux/valider/info", data, {
           headers: {
@@ -669,6 +947,23 @@ export default {
                   bureau.nbVotant = this.nbVotant;
                   bureau.nbBulletinNull = this.nbBulletinNull;
                   bureau.valider = true;
+
+                  // Vérifions si les stats candidats bureaux ont été validées
+                  let statsCandidatsBureaux = bureau.rv;
+                  let nbValider = 0;
+                  for (let resultat of statsCandidatsBureaux) {
+                    if (resultat.valider === true) {
+                      nbValider++;
+                    }
+                  }
+
+                  if (
+                    nbValider === bureau.nbRV &&
+                    bureau.valider === true &&
+                    bureau.pvSend === true
+                  ) {
+                    bureau.validerTout = true;
+                  }
                 }
               }
             });
@@ -715,8 +1010,18 @@ export default {
               for (let bureau of listeBureau) {
                 if (bureau.id === this.bureauSelected.id) {
                   bureau.rv = this.candidatSuivis;
+                  let nbValider = 0;
                   for (let resultat of bureau.rv) {
                     resultat.valider = true;
+                    nbValider++;
+                  }
+
+                  if (
+                    nbValider === bureau.nbRV &&
+                    bureau.valider === true &&
+                    bureau.pvSend === true
+                  ) {
+                    bureau.validerTout = true;
                   }
                 }
               }
@@ -765,7 +1070,34 @@ export default {
       }
     }
   },
-  computed: {},
+  computed: {
+    checkPvEtat() {
+      if (this.pvSend === false && this.dejaValiderStatsBureau === true) {
+        return true;
+      }
+      if (
+        this.pvSend === false &&
+        this.validerStatsBureau === true &&
+        this.dejaValiderStatsBureau === false
+      ) {
+        return false;
+      }
+    },
+    disabledPV() {
+      if (this.pvSend === false && this.dejaValiderStatsBureau === true) {
+        return false;
+      }
+      if (this.pvSend === false && this.validerStatsBureau === true) {
+        return false;
+      }
+      if (this.pvSend === false && this.dejaValiderStatsBureau === false) {
+        return false;
+      }
+      if (this.pvSend === false && this.validerStatsBureau === true) {
+        return false;
+      }
+    }
+  },
   mounted() {
     this.getAllData();
   }
@@ -823,5 +1155,9 @@ a {
 a {
   color: #212121 !important;
   text-decoration: none;
+}
+.v-btn--floating.v-btn--small .v-icon {
+  font-size: 18px;
+  margin-left: -4px;
 }
 </style>

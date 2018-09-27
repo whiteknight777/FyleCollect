@@ -51,6 +51,7 @@
                     type="number"
                     label="Nombre de votants"
                     placeholder="0"
+                    :disabled="dataSend"
                     min=0
                     outline
                     required
@@ -60,10 +61,20 @@
                     type="number"
                     label="Nombre de bulletin null"
                     placeholder="0"
+                    :disabled="dataSend"
                     min=0
                     outline
                     required
                   ></v-text-field>
+                  <div>
+                    <v-alert
+                      v-model="alert"
+                      dismissible
+                      transition="scale-transition"
+                    >
+                      {{text}}
+                    </v-alert>
+                  </div>
                   <div class="v-input v-text-field v-text-field--enclosed v-text-field--outline v-input--is-label-active v-input--is-dirty">
                     <div class="v-input__control">
                         <div class="v-input__slot">
@@ -71,8 +82,19 @@
                             <label aria-hidden="true" class="v-label v-label--active" style="left: 0px; right: auto; position: absolute;">
                               Télécharger pv
                             </label>
-                            <input type="file" style="margin-botom:45px">
+                            <input type="file" style="margin-botom:45px" @change="getUploadedFile">
                             <br><br><br>
+                            <v-btn
+                              color="primary"
+                              v-if="pvSend === true"
+                              small
+                              dark
+                              @click="checkOldPv(pvPath)"
+                              style="padding: 20px 16px 45px;"
+                            >
+                            <v-icon> attach_file</v-icon>
+                              consulter PV
+                            </v-btn>
                           </div>
                         </div>
                         <div class="v-text-field__details">
@@ -122,10 +144,15 @@ export default {
       sound: true,
       widgets: false,
       nb_votant: Number,
-      file: File,
       nb_bulletin_null: Number,
       valid: false,
       loader: null,
+      selectedFile: null,
+      alert: false,
+      text: "",
+      pvSend: false,
+      pvPath: "",
+      dataSend: false,
       loading: false
     };
   },
@@ -138,16 +165,45 @@ export default {
       data.append("idClient", this.userinfo.idClient);
       data.append("nbVotant", this.nb_votant);
       data.append("nbBulletinNul", this.nb_bulletin_null);
+      // Vérifions si une nouvelle image à été chargée
+      if (this.selectedFile !== null || this.selectedFile !== undefined) {
+        data.append("file", this.selectedFile);
+      } else {
+        data.append("file", "");
+      }
       this.axios
         .post(localDomain + "statsbureaux/add", data, {
           headers: {
-            "Content-type": "application/json"
+            "Content-type": "multipart/form-data"
           }
         })
         .then(response => {
-          console.log(response.data);
+          // console.log(response.data);
+          this.pvSend = data.pvSend;
+          this.pvPath = data.pvPath;
+          this.dataSend = data.dataSend;
           this.$emit("saveBureauDataForm");
         });
+    },
+    getUploadedFile(e) {
+      this.alert = false;
+      this.selectedFile = e.target.files[0];
+      if (
+        this.selectedFile.type !== "application/pdf" &&
+        "image/jpeg" &&
+        "image/png" &&
+        "image/jpg"
+      ) {
+        this.text =
+          "Erreur format de fichier... Veuillez choisir un format pdf ou image";
+        this.alert = true;
+        this.selectedFile = null;
+        e.target.value = null;
+      }
+    },
+    checkOldPv(url) {
+      let win = window.open(url, "_blank");
+      win.focus();
     }
   },
   watch: {

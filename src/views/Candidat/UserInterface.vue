@@ -438,7 +438,7 @@ export default {
         },
         options: {
           responsive: true,
-          lineTension: 2,
+          lineTension: 1,
           maintainAspectRatio: false,
           scales: {
             yAxes: [
