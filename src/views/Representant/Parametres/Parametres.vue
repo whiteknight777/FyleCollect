@@ -73,7 +73,7 @@
                       </v-list-tile-content>
                       <v-list-tile-action>
                         <v-text-field
-                          label="Compte FyleSMS"
+                          label="Code Fyle SMS"
                           type="text"
                           readonly=""
                           :value="parameters.loginFyleSms"
@@ -91,7 +91,7 @@
                       </v-list-tile-content>
                       <v-list-tile-action>
                         <v-text-field
-                          label="Donnée CDS"
+                          label="Code Fyle SMS"
                           type="text"
                           readonly=""
                           :value="parameters.cds"
@@ -104,12 +104,12 @@
 
                     <v-list-tile>
                       <v-list-tile-content>
-                        <v-list-tile-title>Mot clé FC</v-list-tile-title>
+                        <v-list-tile-title>Mot clée FC</v-list-tile-title>
                         <v-list-tile-sub-title>Mot clée permettant d'envoyer des données de vote par SMS</v-list-tile-sub-title>
                       </v-list-tile-content>
                       <v-list-tile-action>
                         <v-text-field
-                          label="Mot clée FC"
+                          label="Code Fyle SMS"
                           type="text"
                           readonly=""
                           :value="parameters.motCle"
@@ -127,7 +127,7 @@
                       </v-list-tile-content>
                       <v-list-tile-action>
                         <v-text-field
-                          label="Donnée SPE"
+                          label="Code Fyle SMS"
                           type="text"
                           readonly=""
                           :value="parameters.spe"
@@ -354,7 +354,6 @@ export default {
         });
     },
     updateMyPass() {
-      console.log("test");
       this.loadingPage = true;
       this.snackbar = false;
       let valid = false;
@@ -369,7 +368,7 @@ export default {
       }
 
       let data = new FormData();
-      data.append("idCandidat", this.user.idCandidat);
+      data.append("idRepresentant", this.user.idRepresentant);
       data.append("newPassword", this.newPass);
       data.append("gradeUser", this.user.grades);
 
@@ -382,7 +381,6 @@ export default {
           })
           .then(response => {
             let data = response.data;
-
             if (data.statusRequete == 100) {
               // Recupérons les différents paramètres
               this.user.password = this.newPass;
@@ -394,6 +392,11 @@ export default {
               this.text = "Mot de passe modifé avec succcès";
               this.snackbar = true;
             }
+          })
+          .catch(response => {
+            this.loadingPage = false;
+            this.text = "Une erreur s'est produite... Veuillez rééssayer";
+            this.snackbar = true;
           });
       } else {
         // Vérifions si nous avons saisie le bon mot de passe

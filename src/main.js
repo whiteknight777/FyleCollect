@@ -5,7 +5,6 @@ import './plugins/vuetify'
 import router from './router'
 import Chart from 'chart.js';
 import store from './store'
-// import axios from './axios'
 // import VueAxios from 'vue-cli-plugin-axios'
 
 import App from './App.vue'

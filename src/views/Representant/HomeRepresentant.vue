@@ -85,20 +85,22 @@
           </v-list-tile>
         </v-list>
 
-        <!-- <v-list class="pa-0">
-           <v-list-tile @click="active = 4" class="" :class="{'active-item': active === 4}">
+        <v-list class="pa-0">
+           <v-list-tile @click="active = 2" class="" :class="{'active-item': active === 2}">
             <v-list-tile-action>
-              <v-icon> move_to_inbox </v-icon>
+                <v-icon>settings</v-icon>
             </v-list-tile-action>
-  
-           <router-link to="/historique-sms">
-              <v-list-tile-content @click="active = 4">
-                <v-list-tile-title  class="" :class="{'active-color': active === 4}">Historique Sms</v-list-tile-title>
+
+            <router-link to="/parametres-representant">
+              <v-list-tile-content @click="active = 2">
+                <v-list-tile-title  class="" :class="{'active-color': active === 2}">
+                  Parametres
+                </v-list-tile-title>
               </v-list-tile-content>
             </router-link>
-  
+
           </v-list-tile>
-        </v-list> -->
+        </v-list>
         <!-- FIN LEFT MENU -->
 
     </v-navigation-drawer>
@@ -118,7 +120,7 @@
   
       <v-spacer></v-spacer>
 
-      <v-form>
+      <!-- <v-form>
         <v-text-field
           
           label="Recherche..."
@@ -132,7 +134,7 @@
 
       <v-btn icon @click.stop="rightDrawer = !rightDrawer">
         <v-icon>sort</v-icon>
-      </v-btn>
+      </v-btn> -->
 
       <v-btn icon @click.stop="checkLogout">
         <v-icon>settings_power</v-icon>
@@ -148,7 +150,7 @@
     <!-- END CONTENT  -->
   
     <!-- RIGHT MODAL  -->
-    <v-navigation-drawer temporary :right="right" v-model="rightDrawer" fixed app width=250>
+    <!-- <v-navigation-drawer temporary :right="right" v-model="rightDrawer" fixed app width=250>
 
       <v-list
           subheader
@@ -219,7 +221,7 @@
         </v-list>
 
     
-    </v-navigation-drawer>
+    </v-navigation-drawer> -->
     <!-- END RIGTH MODAL  -->
      <snackbar
     v-if="snackbar" 
@@ -275,9 +277,7 @@ import RepresentantInterface from "./RepresentantInterface.vue";
 import snackbar from "../../components/Snackbar";
 import FormStatCandidats from "../../components/FormStatCandidats";
 import FormStatsBureau from "../../components/FormStatsBureau";
-
-const apiDomain = "http://31.207.34.70/fylecollect_api/web/app_dev.php/";
-const localDomain = "http://localhost/API-REST/web/app_dev.php/";
+import apiConfig from "../../apiConfig";
 
 export default {
   name: "HomeRepresentant",
@@ -409,9 +409,9 @@ export default {
       this.text = "Les données du bureau ont été enregistrées avec succès";
       this.successForm2 = true;
     },
-    getCandidatsSuivis(userinfo) {
+    getCandidatsSuivis() {
       this.axios
-        .get(localDomain + "get/candidats/" + userinfo.idCandidat, {
+        .get(apiConfig.baseURL + "get/candidats/" + this.userinfo.idCandidat, {
           headers: {
             "Content-type": "application/x-www-form-urlencoded"
           }
@@ -435,11 +435,11 @@ export default {
     }
   },
   mounted() {
-    let userinfo = this.getUserConnected();
-    if (userinfo === null) {
+    // let userinfo = this.getUserConnected();
+    if (this.userinfo === null) {
       this.router.push("/");
     } else {
-      this.getCandidatsSuivis(userinfo);
+      this.getCandidatsSuivis();
     }
   }
 };

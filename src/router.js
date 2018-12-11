@@ -8,6 +8,7 @@ import ListeResultats from './views/Candidat/Resultats/HomeResultats.vue'
 import Messagerie from './views/Candidat/Messagerie/HomeMessagerie.vue'
 import Parametres from './views/Candidat/Parametres/HomeParametres.vue'
 import HomeRepresentant from './views/Representant/HomeRepresentant.vue'
+import ParametresRepresentant from './views/Representant/Parametres/HomeParametres.vue'
 import Login from './views/Login.vue'
 import NotFound from './views/404.vue'
 
@@ -29,6 +30,11 @@ export default new Router({
       path: '/dashboard-representant',
       name: 'home-representant',
       component: HomeRepresentant
+    },
+    {
+      path: '/parametres-representant',
+      name: 'parametres_representant',
+      component: ParametresRepresentant
     },
     {
       path: '/lieux-de-votes',

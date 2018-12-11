@@ -95,9 +95,9 @@
     
                             <v-form id="login" ref="form" style="width:100%">
     
-                                <v-text-field v-model="email" :rules="emailRules" label="Email" required></v-text-field>
+                                <v-text-field v-model="email" :rules="emailRules" label="Email" required @keyup.enter="submit"></v-text-field>
     
-                                <v-text-field v-model="password" type="password" label="Password" required></v-text-field>
+                                <v-text-field v-model="password" type="password" label="Password" required @keyup.enter="submit"></v-text-field>
     
                                 <!-- <v-select v-model="select" :items="items" :rules="[v => !!v || 'Item is required']" label="Item" required></v-select> -->
     
@@ -105,7 +105,7 @@
     
     
                                 <!-- <v-flex xs12 md12 lg12> -->
-                                    <v-btn block @click.prevent="submit" class="blue accent-2" dark>
+                                    <v-btn block @click.prevent="submit" color="blue accent-2" dark>
                                         Connexion
                                     </v-btn>
                                 <!-- </v-flex> -->
@@ -146,9 +146,7 @@
 <script>
 import Bg1 from "../assets/Bg-4.png";
 import snackbar from "../components/Snackbar";
-
-const apiDomain = "http://31.207.34.70/fylecollect_api/web/app_dev.php/";
-const localDomain = "http://localhost/API-REST/web/app_dev.php/";
+import apiConfig from "../apiConfig";
 
 export default {
   name: "Login",
@@ -193,7 +191,7 @@ export default {
         // let data = [username => this.username, password => this.password];
         // console.log(form);
         this.axios
-          .post(localDomain + "api/checkuser", data, {
+          .post(apiConfig.baseURL + "api/checkuser", data, {
             headers: {
               "Content-type": "application/x-www-form-urlencoded"
             }
@@ -217,9 +215,16 @@ export default {
             }
             if (response.data.statusRequete == 200) {
               this.loadingPage = false;
+              this.errorMsg =
+                "Erreur... Veuillez vérifier votre password & votre email";
               this.snackbar = true;
-              this.errorMsg = "Erreur de connexion... Utilisateur inconnue";
             }
+          })
+          .catch(response => {
+            this.loadingPage = false;
+            this.errorMsg =
+              "Problème de connexion au serveur... Veuillez réessayer";
+            this.snackbar = true;
           });
       }
     }

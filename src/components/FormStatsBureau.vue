@@ -129,8 +129,7 @@
 </v-container>
 </template>
 <script>
-const apiDomain = "http://31.207.34.70/fylecollect_api/web/app_dev.php/";
-const localDomain = "http://localhost/API-REST/web/app_dev.php/";
+import apiConfig from "../apiConfig";
 
 export default {
   name: "FormStatsBureau",
@@ -172,7 +171,7 @@ export default {
         data.append("file", "");
       }
       this.axios
-        .post(localDomain + "statsbureaux/add", data, {
+        .post(apiConfig.baseURL + "statsbureaux/add", data, {
           headers: {
             "Content-type": "multipart/form-data"
           }
@@ -186,17 +185,36 @@ export default {
         });
     },
     getUploadedFile(e) {
+      // this.alert = false;
+      // this.selectedFile = e.target.files[0];
+      // if (
+      //   this.selectedFile.type !== "application/pdf" ||
+      //   "image/jpeg" ||
+      //   "image/png"
+      // ) {
+      //   this.text =
+      //     "Erreur format de fichier... Veuillez choisir un format pdf ou image";
+      //   this.alert = true;
+      //   this.selectedFile = null;
+      //   e.target.value = null;
+      // }
       this.alert = false;
       this.selectedFile = e.target.files[0];
+      let error = true;
       if (
-        this.selectedFile.type !== "application/pdf" &&
-        "image/jpeg" &&
-        "image/png" &&
-        "image/jpg"
+        this.selectedFile.type !== "application/pdf" ||
+        "image/jpeg" ||
+        "image/png"
       ) {
+        error = false;
+      } else {
+        error = true;
+      }
+
+      if (error === true) {
         this.text =
           "Erreur format de fichier... Veuillez choisir un format pdf ou image";
-        this.alert = true;
+        this.snackbar = true;
         this.selectedFile = null;
         e.target.value = null;
       }

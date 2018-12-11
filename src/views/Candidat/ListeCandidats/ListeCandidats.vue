@@ -136,7 +136,7 @@
                             <th class="text-xs-left">Nom & prénoms</th>
                             <th class="text-xs-left">Partis</th>
                             <th class="text-xs-left">Ordre</th>
-                            <th class="text-xs-left" width="180px">Modifier ordre</th>
+                            <!-- <th class="text-xs-left" width="180px">Modifier ordre</th> -->
                           </tr>
                         </thead>
                         <tbody>
@@ -147,8 +147,8 @@
                             <td class="text-xs-left" style="padding-top: 25px;padding-bottom: 25px;">{{ item.nomprenom }}</td>
                             <td class="text-xs-left">{{ item.parti }}</td>
                             <td class="text-xs-left">{{ item.ordre }}</td>
-                            <td class="text-xs-left">
-                              <v-btn 
+                            <!-- <td class="text-xs-left"> -->
+                              <!-- <v-btn 
                               small
                               ripple
                               fab
@@ -173,9 +173,9 @@
                               <v-icon
                               >
                                 expand_more
-                              </v-icon>
-                              </v-btn>
-                            </td>
+                              </v-icon> -->
+                              <!-- </v-btn> -->
+                            <!-- </td> -->
                           </tr>
                         </tbody>
                       </table>
@@ -211,7 +211,7 @@
                       </v-menu>
                     </v-card-title>
                     
-                    <table class="v-datatable v-table">
+                    <table class="v-datatable v-table" v-if="ClassementCandidat.length > 0">
                       <thead>
                         <tr>
                           <th class="text-xs-left">#</th>
@@ -250,6 +250,15 @@
                         </tr>
                       </tbody>
                     </table>
+                    
+                    <v-card-text v-else>
+                      <v-card-media class="text-xs-center">
+                        <v-spacer></v-spacer>
+                          <v-icon style="font-size: 90px;padding-bottom: 21px;padding-top: 20px;"> autorenew </v-icon>
+                        <v-spacer></v-spacer>
+                      </v-card-media>
+                          Aucunes données disponible
+                    </v-card-text>
                     
                   </v-card>
 
@@ -344,53 +353,6 @@
             </v-layout>
           </template>
 
-          <!-- MODIFIER ORDRE CANDIDAT  -->
-
-          <!-- <template>
-            <v-layout row justify-center>
-              <v-dialog v-model="changeOrder" persistent max-width="420px">
-                <form id="changeOrderCandidat">
-                  <v-card>
-                    <v-card-title>
-                      <span class="headline">Modifier ordre candidats</span>
-                    </v-card-title>
-                    <v-card-text>
-                      <v-container grid-list-md>
-                        <v-layout wrap>
-                          <v-flex xs12>
-                           <v-combobox
-                              v-model="NewOrderCandidatSuivis"
-                              :items="OrdreCandidatSuivis"
-                              label="Candidats Suivis"
-                              chips
-                              clearable
-                              prepend-icon="account_circle"
-                              multiple
-                            >
-                              <template slot="selection" slot-scope="data">
-                                <v-chip
-                                  :selected="data.selected"
-                                  close
-                                >
-                                  <strong>{{ data.item }}</strong>&nbsp;
-                                </v-chip>
-                              </template>
-                            </v-combobox>
-                          </v-flex>
-                        </v-layout>
-                      </v-container>
-                    </v-card-text>
-                    <v-card-actions style="padding-bottom: 15px;padding-right: 35px;">
-                      <v-spacer></v-spacer>
-                      <v-btn color="red darken-2" small @click.native="changeOrder = false" dark>Annuler</v-btn>
-                      <v-btn color="green darken-1" small @click.native="changeOrderCandidat" dark>Enregistrer</v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </form>
-              </v-dialog>
-            </v-layout>
-          </template> -->
-
           <snackbar
           v-if="snackbar" 
           :text="text"
@@ -410,8 +372,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
 import snackbar from "../../../components/Snackbar";
-const apiDomain = "http://31.207.34.70/fylecollect_api/web/app_dev.php/";
-const localDomain = "http://localhost/API-REST/web/app_dev.php/";
+import apiConfig from "../../../apiConfig";
 
 export default {
   name: "ListeCandidats",
@@ -464,7 +425,7 @@ export default {
     getCandidatInfo() {
       this.loadingPage = true;
       this.axios
-        .get(localDomain + "candidat/info/" + this.user.idCandidat, {
+        .get(apiConfig.baseURL + "candidat/info/" + this.user.idCandidat, {
           headers: {
             "Content-type": "application/x-www-form-urlencoded"
           }
@@ -489,7 +450,7 @@ export default {
       this.loadingPage = true;
       this.axios
         .get(
-          localDomain +
+          apiConfig.baseURL +
             "candidat/annuler/suivis/" +
             this.user.idClient +
             "/" +
@@ -535,7 +496,7 @@ export default {
       this.loadingPage = true;
       this.axios
         .get(
-          localDomain +
+          apiConfig.baseURL +
             "candidat/suivis/new/" +
             this.user.idClient +
             "/" +
@@ -629,7 +590,7 @@ export default {
         data.append("candidatSuivis[]", JSON.stringify(this.CandidatSuivis[a]));
       }
       this.axios
-        .post(localDomain + "candidat/change/ordre", data, {
+        .post(apiConfig.baseURL + "candidat/change/ordre", data, {
           headers: {
             "Content-type": "application/x-www-form-urlencoded"
           }
@@ -690,7 +651,7 @@ export default {
       // Récupération des données des candidats suivis
       this.axios
         .get(
-          localDomain +
+          apiConfig.baseURL +
             "api/statistiques/candidat/" +
             this.user.idCandidat +
             "/brute",
@@ -734,8 +695,34 @@ export default {
             } else {
               // Vérifions si le classement est toujour le même avant de mettre à jour le classement
               if (
+                this.oldClassement.length > 0 &&
                 this.oldClassement[0].voix !== classement[0].pourcentageVoix
               ) {
+                this.oldClassement = [];
+                // Modifions les anciènnes valeures
+                for (let step = 0; step < classement.length; step++) {
+                  // Recherchons le partis du candidat
+                  let el = this.CandidatSuivis.filter(e => {
+                    if (e.nomprenom === classement[step].nomPrenom) return e;
+                  });
+                  let parti = el[0].parti;
+
+                  // Donnée des candidats
+                  this.oldClassement.push({
+                    nomprenom: classement[step].nomPrenom,
+                    partis: parti,
+                    voix: classement[step].pourcentageVoix,
+                    classement: step + 1
+                  });
+                }
+
+                // Mettons à jours la variable permettant d'afficher le classement
+                this.ClassementCandidat = [];
+                this.ClassementCandidat = this.oldClassement;
+              }
+
+              // Vérifions si le classement est toujour le même avant de mettre à jour le classement
+              if (this.oldClassement.length === 0 && classement.length > 0) {
                 this.oldClassement = [];
                 // Modifions les anciènnes valeures
                 for (let step = 0; step < classement.length; step++) {
@@ -764,6 +751,16 @@ export default {
             this.checked++;
             this.loadingPage = false;
           }
+
+          if (data.statusRequete === 200) {
+            this.oldClassement = [];
+            // Mettons à jours la variable permettant d'afficher le classement
+            this.ClassementCandidat = [];
+            this.ClassementCandidat = this.oldClassement;
+
+            this.checked++;
+            this.loadingPage = false;
+          }
         });
 
       this.load = 1;
@@ -773,7 +770,7 @@ export default {
       // Récupération des données des candidats suivis
       this.axios
         .get(
-          localDomain +
+          apiConfig.baseURL +
             "api/statistiques/candidat/" +
             this.user.idCandidat +
             "/valide",
@@ -817,8 +814,34 @@ export default {
             } else {
               // Vérifions si le classement est toujour le même avant de mettre à jour le classement
               if (
+                this.oldClassement.length > 0 &&
                 this.oldClassement[0].voix !== classement[0].pourcentageVoix
               ) {
+                this.oldClassement = [];
+                // Modifions les anciènnes valeures
+                for (let step = 0; step < classement.length; step++) {
+                  // Recherchons le partis du candidat
+                  let el = this.CandidatSuivis.filter(e => {
+                    if (e.nomprenom === classement[step].nomPrenom) return e;
+                  });
+                  let parti = el[0].parti;
+
+                  // Donnée des candidats
+                  this.oldClassement.push({
+                    nomprenom: classement[step].nomPrenom,
+                    partis: parti,
+                    voix: classement[step].pourcentageVoix,
+                    classement: step + 1
+                  });
+                }
+
+                // Mettons à jours la variable permettant d'afficher le classement
+                this.ClassementCandidat = [];
+                this.ClassementCandidat = this.oldClassement;
+              }
+
+              // Vérifions si le classement est toujour le même avant de mettre à jour le classement
+              if (this.oldClassement.length === 0 && classement.length > 0) {
                 this.oldClassement = [];
                 // Modifions les anciènnes valeures
                 for (let step = 0; step < classement.length; step++) {
@@ -844,6 +867,16 @@ export default {
             }
 
             // Incrémentons la variable montrant que nous attaquons la bd
+            this.checked++;
+            this.loadingPage = false;
+          }
+
+          if (data.statusRequete === 200) {
+            this.oldClassement = [];
+            // Mettons à jours la variable permettant d'afficher le classement
+            this.ClassementCandidat = [];
+            this.ClassementCandidat = this.oldClassement;
+
             this.checked++;
             this.loadingPage = false;
           }

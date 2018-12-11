@@ -94,8 +94,7 @@
 </v-container>
 </template>
 <script>
-const apiDomain = "http://31.207.34.70/fylecollect_api/web/app_dev.php/";
-const localDomain = "http://localhost/API-REST/web/app_dev.php/";
+import apiConfig from "../apiConfig";
 
 export default {
   name: "FormStatCandidats",
@@ -129,7 +128,7 @@ export default {
         data.append("id_" + item2.id, item2.nbVoix);
       }
       this.axios
-        .post(localDomain + "statscandidatsbureaux/add", data, {
+        .post(apiConfig.baseURL + "statscandidatsbureaux/add", data, {
           headers: {
             "Content-type": "application/x-www-form-urlencoded"
           }

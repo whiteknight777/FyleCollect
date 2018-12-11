@@ -67,7 +67,7 @@
                     <v-icon>clear</v-icon>
                   </v-btn>
                 </v-card-title>
-                 <table class="v-datatable v-table">
+                  <table v-if="items.length > 0" class="v-datatable v-table">
                       <thead>
                         <tr>
                           <th class="text-xs-left">#</th>
@@ -103,7 +103,7 @@
                               </v-icon>
                               </v-btn>
 
-                              <v-btn 
+                              <!-- <v-btn 
                               small
                               ripple
                               fab
@@ -114,11 +114,22 @@
                               >
                                 clear
                               </v-icon>
-                              </v-btn>
+                              </v-btn> -->
                           </td>
                         </tr>
                       </tbody>
-                    </table>
+                  </table>
+
+                  <v-card v-else style="padding-bottom: 21px;">
+                    <v-card-text>
+                      <v-card-media class="text-xs-center">
+                        <v-spacer></v-spacer>
+                          <v-icon style="font-size: 90px;padding-bottom: 21px;padding-top: 20px;"> person_pin </v-icon>
+                        <v-spacer></v-spacer>
+                      </v-card-media>
+                          Aucun representant disponible
+                    </v-card-text>
+                  </v-card>
               </v-card>
             </template>
           </v-flex>
@@ -130,9 +141,16 @@
               <v-dialog v-model="addRepresentant" persistent max-width="500px">
                 <form id="addRepresentant" ref="form" lazy-validation>
                   <v-card>
-                    <v-card-title>
-                      <span class="headline">Ajouter un représentant</span>
-                    </v-card-title>
+                    <v-toolbar color="light-blue" dark>
+
+                      <v-toolbar-title> Ajouter un représentant</v-toolbar-title>
+
+                      <v-spacer></v-spacer>
+
+                      <v-btn icon @click="addRepresentant = false">
+                        <v-icon>clear</v-icon>
+                      </v-btn>
+                    </v-toolbar>
                     <v-card-text>
                       <v-container grid-list-md>
                         <v-layout wrap>
@@ -154,6 +172,15 @@
                             </v-text-field>
                           </v-flex>
                           <v-flex xs12>
+                            <div style="margin-left:30px">
+                              <v-alert
+                                v-model="alert"
+                                dismissible
+                                transition="scale-transition"
+                              >
+                                {{alertContact}}
+                              </v-alert>
+                            </div>
                             <v-text-field 
                             v-model="newContact"
                             label="Contact" 
@@ -163,6 +190,31 @@
                             required>
                             </v-text-field>
                           </v-flex>
+                          
+                          <v-flex xd12 md12 lg12>
+
+                            <v-text-field
+                              v-model="newPass"
+                              type="password"
+                              prepend-icon="lock"
+                              label="Nouveau mot de passe"
+                              required
+                            ></v-text-field>
+          
+                          </v-flex>
+
+                          <v-flex xd12 md12 lg12>
+                            
+                            <v-text-field
+                              v-model="confirmPass"
+                              type="password"
+                              prepend-icon="lock_open"
+                              label="Confirmer mot de passe"
+                              required
+                            ></v-text-field>
+          
+                          </v-flex>
+
                         </v-layout>
                       </v-container>
                       <!-- <small>*indicates required field</small> -->
@@ -185,13 +237,27 @@
               <v-dialog v-model="updateRepresentant" persistent max-width="500px">
                 <form id="updateRepresentant">
                   <v-card>
-                    <v-card-title>
-                      <span class="headline">Modifier un représentant</span>
-                    </v-card-title>
+                    <v-toolbar color="light-blue" dark>
+
+                      <v-toolbar-title> Modifier un représentant</v-toolbar-title>
+
+                      <v-spacer></v-spacer>
+
+                      <v-btn icon @click="updateRepresentant = false">
+                        <v-icon>clear</v-icon>
+                      </v-btn>
+                    </v-toolbar>
                     <v-card-text>
                       <v-container grid-list-md>
                         <v-layout wrap>
+
                           <v-flex xs12>
+                            <v-switch
+                              :label="updatePass ? 'Veuillez saisir les informations' : 'Voulez-vous modifier le mot de passe du représentant ?'"
+                              v-model="updatePass"
+                              style="padding-bottom:20px"
+                            ></v-switch>
+
                             <v-text-field 
                             v-model="newNomprenom"
                             label="Nom & Prénom(s)" 
@@ -199,6 +265,7 @@
                             required>
                             </v-text-field>
                           </v-flex>
+
                           <v-flex xs12>
                             <v-text-field 
                             v-model="newEmail"
@@ -208,7 +275,17 @@
                             required>
                             </v-text-field>
                           </v-flex>
+
                           <v-flex xs12>
+                            <div style="margin-left:30px">
+                              <v-alert
+                                v-model="alert"
+                                dismissible
+                                transition="scale-transition"
+                              >
+                                {{alertContact}}
+                              </v-alert>
+                            </div>
                             <v-text-field 
                             v-model="newContact"
                             :counter="8"
@@ -218,6 +295,33 @@
                             required>
                             </v-text-field>
                           </v-flex>
+
+                          <v-flex xd12 md12 lg12>
+
+                            <v-text-field
+                              v-model="newPass"
+                              v-if="updatePass === true"
+                              type="password"
+                              prepend-icon="lock"
+                              label="Nouveau mot de passe"
+                              required
+                            ></v-text-field>
+          
+                          </v-flex>
+
+                          <v-flex xd12 md12 lg12>
+                            
+                            <v-text-field
+                              v-model="confirmPass"
+                              v-if="updatePass === true"
+                              type="password"
+                              prepend-icon="lock_open"
+                              label="Confirmer mot de passe"
+                              required
+                            ></v-text-field>
+          
+                          </v-flex>
+
                         </v-layout>
                       </v-container>
                       <!-- <small>*indicates required field</small> -->
@@ -294,8 +398,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
 import snackbar from "../../../components/Snackbar";
-const apiDomain = "http://31.207.34.70/fylecollect_api/web/app_dev.php/";
-const localDomain = "http://localhost/API-REST/web/app_dev.php/";
+import apiConfig from "../../../apiConfig";
 
 export default {
   name: "ListeRepresentant",
@@ -312,10 +415,16 @@ export default {
       loadingPage: false,
       addRepresentant: false,
       updateRepresentant: false,
+      alertContact: "",
+      alert: false,
       newNomprenom: "",
       newEmail: "",
       newContact: "",
       representantId: "",
+      newPass: "",
+      confirmPass: "",
+      oldPass: "",
+      updatePass: false,
       emailRules: [
         v => !!v || "E-mail obligatoire",
         v => /.+@.+[(.)].+/.test(v) || "E-mail doit être valide"
@@ -345,11 +454,14 @@ export default {
     getListeRepresentant() {
       this.loadingPage = true;
       this.axios
-        .get(localDomain + "representants/listAll/" + this.user.idCandidat, {
-          headers: {
-            "Content-type": "application/x-www-form-urlencoded"
+        .get(
+          apiConfig.baseURL + "representants/listAll/" + this.user.idCandidat,
+          {
+            headers: {
+              "Content-type": apiConfig.headers.Content_type
+            }
           }
-        })
+        )
         .then(response => {
           let data = response.data;
 
@@ -367,6 +479,35 @@ export default {
           }
         });
     },
+    checkContact(contact) {
+      this.axios
+        .get(apiConfig.baseURL + "representants/check_contact/" + contact, {
+          headers: {
+            "Content-type": apiConfig.headers.Content_type
+          }
+        })
+        .then(response => {
+          let data = response.data;
+
+          if (data.statusRequete == 100) {
+            // Signalons qu'un numéro similaire existe deja en bd
+            let rep = data.representant;
+            if (rep.id !== this.representantId) {
+              this.alertContact =
+                "Numéro déjà existant (" +
+                rep.nomprenom +
+                ") veuillez le modifier !";
+              this.alert = true;
+              this.valid = false;
+            }
+          }
+
+          if (data.statusRequete == 200) {
+            this.alert = false;
+            this.valid = true;
+          }
+        });
+    },
     addNewRepresentant() {
       if (this.valid === true) {
         this.addRepresentant = false;
@@ -378,39 +519,59 @@ export default {
         data.append("nomprenom", this.newNomprenom);
         data.append("email", this.newEmail);
         data.append("contact", this.newContact);
+        // Vérifions les informations saisies
+        let validPass = false;
+        let valid = false;
+        // Vérifions si le nouveau mot de passe est identique au champ confirmer
+        if (this.newPass === this.confirmPass) {
+          valid = true;
+          data.append("password", this.confirmPass);
+        }
 
-        this.axios
-          .post(localDomain + "representants/add/new", data, {
-            headers: {
-              "Content-type": "application/x-www-form-urlencoded"
-            }
-          })
-          .then(response => {
-            let data = response.data;
+        if (valid === true) {
+          this.axios
+            .post(apiConfig.baseURL + "representants/add/new", data, {
+              headers: {
+                "Content-type": "application/x-www-form-urlencoded"
+              }
+            })
+            .then(response => {
+              let data = response.data;
 
-            if (data.statusRequete == 100) {
-              this.listeRepresentants.push(data.newRepresentant);
-              this.items = this.listeRepresentants;
+              if (data.statusRequete == 100) {
+                this.listeRepresentants.push(data.newRepresentant);
+                this.items = this.listeRepresentants;
 
-              this.getNamesRepresentant();
-              this.loadingPage = false;
-              this.text = "Nouveau representant ajouté";
-              this.snackbar = true;
+                this.getNamesRepresentant();
+                this.loadingPage = false;
+                this.text = "Nouveau representant ajouté";
+                this.snackbar = true;
 
-              // Réinitialisons les variables
-              this.newNomprenom = "";
-              this.newEmail = "";
-              this.newContact = "";
-              this.valid = false;
-            }
-          });
+                // Réinitialisons les variables
+                this.newNomprenom = "";
+                this.newEmail = "";
+                this.newContact = "";
+                this.newPass = "";
+                this.confirmPass = "";
+                this.valid = false;
+              }
+            });
+        } else {
+          // Vérifions si le nouveau mot de passe est identique à celui qui doit être ressaisie
+          this.loadingPage = false;
+          this.newPass = "";
+          this.confirmPass = "";
+          this.text = "Erreur... Veuillez saisir le même mot de passe";
+          this.snackbar = true;
+        }
       }
     },
     updateRepresentantData() {
       if (this.valid === true) {
         this.updateRepresentant = false;
-        this.loadingPage = true;
         this.snackbar = false;
+        let sendData = true;
+
         let form = document.getElementById("updateRepresentant");
         let data = new FormData(form);
         data.append("idRepresentant", this.representantId);
@@ -418,43 +579,64 @@ export default {
         data.append("email", this.newEmail);
         data.append("contact", this.newContact);
 
-        this.axios
-          .post(localDomain + "representants/edit/info", data, {
-            headers: {
-              "Content-type": "application/x-www-form-urlencoded"
-            }
-          })
-          .then(response => {
-            let data = response.data;
+        let validPass = false;
+        if (this.updatePass === true) {
+          if (this.newPass === this.confirmPass) {
+            validPass = true;
+            data.append("newPassword", this.confirmPass);
+            this.loadingPage = true;
+          } else {
+            sendData = false;
+          }
+        }
 
-            if (data.statusRequete == 100) {
-              // Recupérons les nouvelles données
-              let representant = data.newInfo;
+        if (sendData === true) {
+          this.axios
+            .post(apiConfig.baseURL + "representants/edit/info", data, {
+              headers: {
+                "Content-type": "application/x-www-form-urlencoded"
+              }
+            })
+            .then(response => {
+              let data = response.data;
 
-              // Recherchons dans notre liste le representant modifier
-              this.items.filter(e => {
-                if (e.id === representant.id) {
-                  e.nomprenom = representant.nomprenom;
-                  e.email = representant.email;
-                  e.contact = representant.contact;
-                  e.lieu = representant.lieu;
-                  e.bureau = representant.bureau;
-                }
-              });
+              if (data.statusRequete == 100) {
+                // Recupérons les nouvelles données
+                let representant = data.newInfo;
 
-              this.representants = [];
-              this.getNamesRepresentant();
-              this.loadingPage = false;
-              this.text = "Modification(s) enreggistrée(s)";
-              this.snackbar = true;
+                // Recherchons dans notre liste le representant modifier
+                this.items.filter(e => {
+                  if (e.id === representant.id) {
+                    e.nomprenom = representant.nomprenom;
+                    e.email = representant.email;
+                    e.contact = representant.contact;
+                    e.lieu = representant.lieu;
+                    e.bureau = representant.bureau;
+                  }
+                });
 
-              // Réinitialisons les variables
-              this.newNomprenom = "";
-              this.newEmail = "";
-              this.newContact = "";
-              this.valid = false;
-            }
-          });
+                this.representants = [];
+                this.getNamesRepresentant();
+                this.loadingPage = false;
+                this.text = "Modification(s) enreggistrée(s)";
+                this.snackbar = true;
+
+                // Réinitialisons les variables
+                this.newNomprenom = "";
+                this.newEmail = "";
+                this.newContact = "";
+                this.newPass = "";
+                this.confirmPass = "";
+                this.valid = false;
+              }
+            });
+        } else {
+          // Vérifions si le nouveau mot de passe est identique à celui qui doit être ressaisie
+          this.newPass = "";
+          this.confirmPass = "";
+          this.text = "Erreur... Veuillez saisir le même mot de passe";
+          this.snackbar = true;
+        }
       }
     },
     confirmDeleteRepresentant() {
@@ -462,26 +644,32 @@ export default {
       this.loadingPage = true;
       this.snackbar = false;
       this.axios
-        .get(localDomain + "representants/delete/" + this.representantId, {
-          headers: {
-            "Content-type": "application/x-www-form-urlencoded"
+        .get(
+          apiConfig.baseURL + "representants/delete/" + this.representantId,
+          {
+            headers: {
+              "Content-type": "application/x-www-form-urlencoded"
+            }
           }
-        })
+        )
         .then(response => {
           let data = response.data;
 
           if (data.statusRequete == 100) {
             // Recherchons dans notre liste le representant supprimer
-            this.items.filter(e => {
+
+            this.listeRepresentants.filter(e => {
               if (e.id === this.representantId) {
-                let key = this.items.indexOf(e);
-                // bureauName = bureau.name;
-                return this.items.splice(key, 1);
+                let key = this.listeRepresentants.indexOf(e);
+                this.listeRepresentants.splice(key, 1);
               }
             });
-            this.listeRepresentants = this.items;
+            // console.log(this.listeRepresentants.length);
+            // console.log(this.items);
+            this.items = this.listeRepresentants;
             this.representants = [];
             this.getNamesRepresentant();
+            this.clearResearch();
             this.loadingPage = false;
             this.text = "suppression(s) effectuée(s)";
             this.snackbar = true;
@@ -605,7 +793,8 @@ export default {
         /[0-9]{7}.+/.test(v) === true &&
         v.length < 9
       ) {
-        this.valid = true;
+        this.checkContact(v);
+        // this.valid = true;
       } else this.valid = false;
     },
     newEmail(v) {

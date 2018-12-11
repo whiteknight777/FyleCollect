@@ -27,6 +27,18 @@
                 Liste des lieux de votes
               </v-breadcrumbs-item>
             <v-spacer></v-spacer>
+  
+            <v-btn
+              :loading="loading"
+              :disabled="loading"
+              v-if="listeLieux.length < 5"
+              color="orange darken-1"
+              class="white--text"
+              @click.native="importLieux = true"
+            >
+              Importer lieux de vote
+              <v-icon right dark>cloud_download</v-icon>
+            </v-btn>
 
             <v-btn
               :loading="loading"
@@ -39,14 +51,11 @@
               <v-icon right dark>add</v-icon>
             </v-btn>
 
-
-            <!-- Boutton flotant -->
             <v-speed-dial
               v-model="fab"
               :bottom=bottom
               :right=right
               :direction="'top'"
-              :open-on-hover=hover
               fixed
               transition="slide-y-reverse-transition"
               style="z-index:1"
@@ -82,7 +91,7 @@
               <v-icon>edit</v-icon>
               </v-btn>
 
-              <v-btn
+              <!-- <v-btn
                 fab
                 dark
                 small
@@ -90,7 +99,7 @@
                 @click="deleteLieux = true"
               >
               <v-icon>delete</v-icon>
-              </v-btn>
+              </v-btn> -->
 
             </v-speed-dial>
 
@@ -129,7 +138,7 @@
                 </v-btn> -->
               </v-toolbar>
             </v-card>
-            <v-expansion-panel>
+            <v-expansion-panel v-if="items.length > 0">
               <v-expansion-panel-content
                 v-for="(item,i) in items"
                 :key="i"
@@ -190,7 +199,7 @@
 
                       </v-list-tile-action>
 
-                      <v-list-tile-action>                        
+                      <!-- <v-list-tile-action>                        
                         <v-btn 
                         small
                         ripple
@@ -202,7 +211,7 @@
                             clear
                           </v-icon>
                         </v-btn>
-                      </v-list-tile-action>
+                      </v-list-tile-action> -->
 
                     </v-list-tile>
                     <v-divider
@@ -213,6 +222,16 @@
                 </v-card>
               </v-expansion-panel-content>
             </v-expansion-panel>
+            <v-card v-else style="padding-bottom: 21px;">
+              <v-card-text>
+                <v-card-media class="text-xs-center">
+                  <v-spacer></v-spacer>
+                    <v-icon style="font-size: 90px;padding-bottom: 21px;padding-top: 20px;"> add_location </v-icon>
+                  <v-spacer></v-spacer>
+                </v-card-media>
+                    Aucun lieu de vote disponible
+              </v-card-text>
+            </v-card>
           </v-flex>
 
           <!-- AJOUTER LIEU DE VOTE -->
@@ -222,9 +241,16 @@
               <v-dialog v-model="addLieux" persistent max-width="500px">
                 <form id="addLieux">
                   <v-card>
-                    <v-card-title>
-                      <span class="headline">Ajouter un lieu de vote</span>
-                    </v-card-title>
+                    <v-toolbar color="light-blue" dark>
+
+                      <v-toolbar-title>Ajouter un lieu de vote</v-toolbar-title>
+
+                      <v-spacer></v-spacer>
+
+                      <v-btn icon @click="addLieux = false">
+                        <v-icon>clear</v-icon>
+                      </v-btn>
+                    </v-toolbar>
                     <v-card-text>
                       <v-container grid-list-md>
                         <v-layout wrap>
@@ -284,9 +310,16 @@
               <v-dialog v-model="editLieux" persistent max-width="500px">
                 <form id="editLieux">
                   <v-card>
-                    <v-card-title>
-                      <span class="headline">Editer un lieu de vote</span>
-                    </v-card-title>
+                     <v-toolbar color="light-blue" dark>
+
+                      <v-toolbar-title>Editer un lieu de vote</v-toolbar-title>
+
+                      <v-spacer></v-spacer>
+
+                      <v-btn icon @click="editLieux = false">
+                        <v-icon>clear</v-icon>
+                      </v-btn>
+                    </v-toolbar>
                     <v-card-text>
                       <v-container grid-list-md>
                         <v-layout wrap>
@@ -361,9 +394,16 @@
               <v-dialog v-model="deleteLieux" persistent max-width="500px">
                 <form id="deleteLieux">
                   <v-card>
-                    <v-card-title>
-                      <span class="headline">Suprimer un lieu de vote</span>
-                    </v-card-title>
+                    <v-toolbar color="light-blue" dark>
+
+                      <v-toolbar-title>Suprimer un lieu de vote</v-toolbar-title>
+
+                      <v-spacer></v-spacer>
+
+                      <v-btn icon @click="cancelDeleteLieux">
+                        <v-icon>clear</v-icon>
+                      </v-btn>
+                    </v-toolbar>
                     <v-card-text>
                       <v-container grid-list-md>
                         <v-layout wrap>
@@ -392,7 +432,6 @@
                                   :selected="data.selected"
                                 >
                                   <strong>{{ data.item }}</strong>&nbsp;
-                                  <!-- <span>(interest)</span> -->
                                 </v-chip>
                               </template>
                             </v-combobox>
@@ -400,7 +439,6 @@
                          
                         </v-layout>
                       </v-container>
-                      <!-- <small>*indicates required field</small> -->
                     </v-card-text>
                     <v-card-actions style="padding-bottom: 15px;padding-right: 35px;">
                       <v-spacer></v-spacer>
@@ -420,9 +458,16 @@
               <v-dialog v-model="addBureau" persistent max-width="500px">
                 <form id="addBureau">
                   <v-card>
-                    <v-card-title>
-                      <span class="headline">Ajouter un bureau de vote</span>
-                    </v-card-title>
+                    <v-toolbar color="light-blue" dark>
+
+                      <v-toolbar-title>Ajouter un bureau de vote</v-toolbar-title>
+
+                      <v-spacer></v-spacer>
+
+                      <v-btn icon @click="addBureau = false">
+                        <v-icon>clear</v-icon>
+                      </v-btn>
+                    </v-toolbar>
                     <v-card-text>
                       <v-container grid-list-md>
                         <v-layout wrap>
@@ -431,7 +476,7 @@
                               :items="listeLieux"
                               item-value="lieux"
                               item-text="text"
-                              label="Lieux de votes"
+                              label="Sélectionnez un Lieux de votes"
                               @change="checkLieuForBureau"
                               chips
                               clearable
@@ -479,9 +524,16 @@
               <v-dialog v-model="editBureau" persistent max-width="500px">
                 <form id="editBureau">
                   <v-card>
-                    <v-card-title>
-                      <span class="headline">Editer un bureau</span>
-                    </v-card-title>
+                    <v-toolbar color="light-blue" dark>
+
+                      <v-toolbar-title>Editer un bureau</v-toolbar-title>
+
+                      <v-spacer></v-spacer>
+
+                      <v-btn icon @click="cancelEdit">
+                        <v-icon>clear</v-icon>
+                      </v-btn>
+                    </v-toolbar>
                     <v-card-text>
                       <v-container grid-list-md>
                         <v-layout wrap>
@@ -581,6 +633,69 @@
             </v-layout>
           </template>
 
+         <!-- IMPORT DE LIEUX DE VOTES -->
+          <template>
+            <v-layout row justify-center>
+              <v-dialog v-model="importLieux" persistent max-width="500px">
+                <form id="addRepresentant" ref="form" lazy-validation>
+                  <v-card>
+                    <v-toolbar color="light-blue" dark>
+
+                      <v-toolbar-title> Importer des lieux de votes </v-toolbar-title>
+
+                      <v-spacer></v-spacer>
+
+                      <v-btn icon @click="importLieux = false">
+                        <v-icon>clear</v-icon>
+                      </v-btn>
+                    </v-toolbar>
+                    <v-card-text>
+                      <v-container grid-list-md>
+                        <v-layout wrap>
+                          <div style="margin-bottom:20px">
+                              <v-alert
+                                type="info"
+                                v-model="alert"
+                                dismissible
+                                transition="scale-transition"
+                              >
+                                Veuillez importer la liste des lieux de votes sous format CSV
+                              </v-alert>
+                            </div>
+                          <div class="v-input v-text-field v-text-field--enclosed v-text-field--outline v-input--is-label-active v-input--is-dirty">
+                              <div class="v-input__control">
+                                  <div class="v-input__slot">
+                                    <div class="v-text-field__slot">
+                                      <label aria-hidden="true" class="v-label v-label--active" style="left: 0px; right: auto; position: absolute;">
+                                        Importer nouveau pv
+                                      </label>
+                                      <input type="file" ref="file" style="margin-botom:45px" @change="getUploadedFile">
+                                      <br><br><br>
+                                    </div>
+                                  </div>
+                                  <div class="v-text-field__details">
+                                    <div class="v-messages">
+                                      <div class="v-messages__wrapper">
+                                      </div>
+                                    </div>
+                                  </div>
+                              </div>
+                          </div>
+
+                        </v-layout>
+                      </v-container>
+                    </v-card-text>
+                    <v-card-actions style="padding-bottom: 15px;padding-right: 35px;">
+                      <v-spacer></v-spacer>
+                      <v-btn color="red darken-2" small @click.native="importLieux = false" dark>Annuler</v-btn>
+                      <v-btn color="green darken-1" small @click.native="sendFileBureau" dark v-if="valid === true">Enregistrer</v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </form>
+              </v-dialog>
+            </v-layout>
+          </template>
+
 
         </v-layout>
       </v-container>
@@ -603,8 +718,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
 import snackbar from "../../../components/Snackbar";
-const apiDomain = "http://31.207.34.70/fylecollect_api/web/app_dev.php/";
-const localDomain = "http://localhost/API-REST/web/app_dev.php/";
+import apiConfig from "../../../apiConfig";
 
 export default {
   name: "ListeLieux",
@@ -619,6 +733,7 @@ export default {
       supprimer: false,
       deleteLieux: false,
       loadingPage: false,
+      alert: true,
       // Variables du bouton flotant
       fab: false,
       hover: true,
@@ -636,6 +751,8 @@ export default {
       editLibelleLieux: "",
       editLocalisation: "",
       editNbInscrit: 0,
+      importLieux: false,
+      valid: true,
       // Variable permettant de savoir au click le lieu selectionné
       LieuxSelected: "",
       // Variables utilies pour ajouter un bureau
@@ -646,6 +763,7 @@ export default {
       editBureau: false,
       addRepresentant: true,
       libelleBureau: "",
+      selectedFile: null,
       repBureauPosition: null,
       // Variables utilies gérer les notifications
       snackbar: false,
@@ -668,6 +786,69 @@ export default {
     };
   },
   methods: {
+    getUploadedFile(e) {
+      this.selectedFile = e.target.files[0];
+      let error = true;
+      if (this.selectedFile.type === "application/vnd.ms-excel") {
+        error = false;
+      } else {
+        error = true;
+      }
+
+      if (error === true) {
+        this.text =
+          "Erreur format de fichier... Veuillez choisir un format csv";
+        this.snackbar = true;
+        this.selectedFile = null;
+        e.target.value = null;
+      }
+    },
+    sendFileBureau() {
+      if (this.selectedFile === null) {
+        this.text = "Aucun fichier n'a été sélectionné...";
+        this.snackbar = true;
+      } else {
+        this.importLieux = false;
+        this.loadingPage = true;
+        let data = new FormData();
+        data.append("file", this.selectedFile);
+        data.append("idCandidat", this.user.idCandidat);
+
+        this.axios
+          .post(apiConfig.baseURL + "centres/import/data", data, {
+            headers: {
+              "Content-type": "multipart/form-data"
+            }
+          })
+          .then(response => {
+            let data = response.data;
+
+            if (data.statusRequete == 100) {
+              // Récupérons la liste des lieux
+              let newCentres = data.newCentres;
+              for (let step = 0; step < newCentres.length; step++) {
+                this.lieux.push(newCentres[step]);
+              }
+              this.items = this.lieux;
+              this.listeLieux = [];
+              this.getNamesCentres();
+
+              this.loadingPage = false;
+              this.text = "Fichier importé avec succès";
+              this.snackbar = true;
+              this.selectedFile = null;
+            }
+          })
+          .catch(response => {
+            let data = response.data;
+
+            this.loadingPage = false;
+            this.text = "Une érreur est survenu lors de l'import du fichié... ";
+            this.snackbar = true;
+            this.selectedFile = null;
+          });
+      }
+    },
     querySelections(v) {
       this.loading = true;
       // Simulated ajax query
@@ -714,7 +895,7 @@ export default {
     getLieuxVotes() {
       this.loadingPage = true;
       this.axios
-        .get(localDomain + "centres/listAll/" + this.user.idCandidat, {
+        .get(apiConfig.baseURL + "centres/listAll/" + this.user.idCandidat, {
           headers: {
             "Content-type": "application/x-www-form-urlencoded"
           }
@@ -745,7 +926,7 @@ export default {
     getInfoBureau(idBureau) {
       this.loadingPage = true;
       this.axios
-        .get(localDomain + "bureau/info/" + idBureau, {
+        .get(apiConfig.baseURL + "bureau/info/" + idBureau, {
           headers: {
             "Content-type": "application/x-www-form-urlencoded"
           }
@@ -823,7 +1004,7 @@ export default {
       }
 
       this.axios
-        .post(localDomain + "bureau/edit/info", data, {
+        .post(apiConfig.baseURL + "bureau/edit/info", data, {
           headers: {
             "Content-type": "application/x-www-form-urlencoded"
           }
@@ -866,7 +1047,7 @@ export default {
       data.append("nbInscrit", this.editNbInscrit);
 
       this.axios
-        .post(localDomain + "centres/edit/info", data, {
+        .post(apiConfig.baseURL + "centres/edit/info", data, {
           headers: {
             "Content-type": "application/x-www-form-urlencoded"
           }
@@ -910,7 +1091,7 @@ export default {
       data.append("nbBureau", this.newNbBureau);
 
       this.axios
-        .post(localDomain + "centres/add/new", data, {
+        .post(apiConfig.baseURL + "centres/add/new", data, {
           headers: {
             "Content-type": "application/x-www-form-urlencoded"
           }
@@ -945,7 +1126,7 @@ export default {
       // console.log(this.newLibelleBureau);
 
       this.axios
-        .post(localDomain + "bureau/add/new", data, {
+        .post(apiConfig.baseURL + "bureau/add/new", data, {
           headers: {
             "Content-type": "application/x-www-form-urlencoded"
           }
@@ -982,7 +1163,7 @@ export default {
       this.supprimer = false;
       this.loadingPage = true;
       this.axios
-        .get(localDomain + "bureau/delete/" + this.idBureau, {
+        .get(apiConfig.baseURL + "bureau/delete/" + this.idBureau, {
           headers: {
             "Content-type": "application/x-www-form-urlencoded"
           }
@@ -1023,7 +1204,7 @@ export default {
       this.snackbar = false;
 
       this.axios
-        .get(localDomain + "centres/delete/" + this.LieuxSelected[0].id, {
+        .get(apiConfig.baseURL + "centres/delete/" + this.LieuxSelected[0].id, {
           headers: {
             "Content-type": "application/x-www-form-urlencoded"
           }
@@ -1041,6 +1222,32 @@ export default {
               ")";
             this.snackbar = true;
             this.LieuxSelected = "";
+          }
+        });
+    },
+    importLieuxVote() {
+      this.importLieux = false;
+      this.loadingPage = true;
+      this.snackbar = false;
+
+      let data = new FormData();
+      data.append("idCandidat", this.user.idCandidat);
+      data.append("file", this.selectedFile);
+
+      this.axios
+        .get(apiConfig.baseURL + "centres/import/data", data, {
+          headers: {
+            "Content-type": "multipart/form-data"
+          }
+        })
+        .then(response => {
+          let data = response.data;
+
+          if (data.statusRequete == 100) {
+            this.getLieuxVotes();
+            this.loadingPage = false;
+            this.text = "L'importation des lieux de vote à été un succès";
+            this.snackbar = true;
           }
         });
     },

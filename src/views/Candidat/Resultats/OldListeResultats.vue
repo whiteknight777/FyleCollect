@@ -27,7 +27,30 @@
                 Liste des résultats
               </v-breadcrumbs-item>
               
-             
+              <v-autocomplete
+                :loading="loading"
+                :items="listeLieux"
+                :search-input.sync="search"
+                v-model="select"
+                class="md2 mx-3"
+                flat
+                hide-no-data
+                hide-details
+                label="Rechercher un lieu de vote"
+                solo-inverted
+                style="width:400px;"
+                @blur="checkValue"
+              ></v-autocomplete>
+              <v-btn 
+              icon
+              fab
+              small
+              v-if="clear === true" 
+              dark
+              color="deep-orange darken-3"
+              @click="clearResearch">
+              <v-icon>clear</v-icon>
+              </v-btn>
 
               <v-btn
               absolute
@@ -45,410 +68,110 @@
             </v-breadcrumbs>
 
 
-            <div>
-              <v-toolbar
-                color="blue-grey lighten-4"
-                dark
-                tabs
-              >
-                 <v-autocomplete
-                  :loading="loading"
-                  :items="listeLieux"
-                  :search-input.sync="search"
-                  v-model="select"
-                  class="md2 mx-3"
-                  flat
-                  color="black"
-                  prepend-inner-icon="search"
-                  hide-no-data
-                  hide-details
-                  label="Rechercher un lieu de vote"
-                  solo-inverted
-                  style="padding-top:20px; color:black"
-                  @blur="checkValue"
-                ></v-autocomplete>
-
-                <v-btn 
-                  icon
-                  fab
-                  small
-                  v-if="clear === true" 
-                  dark
-                  color="deep-orange darken-3"
-                  style="top: 10px;"
-                  @click="clearResearch"
-                >
-                  <v-icon 
-                  style="margin-left: 0px;">clear</v-icon>
-                </v-btn>
-
-                <v-tabs
-                  slot="extension"
-                  v-model="tabs"
-                  centered
-                  color="transparent"
-                  slider-color="black"
-                >
-                  <v-tab  key="all" @click="getAllResults">
-                    Tout les résultats
-                  </v-tab>
-
-                  <v-tab key="waiting" @click="getWaitingResults">
-                    En attente de validation
-                  </v-tab>
-
-                  <v-tab key="clear" @click="getValidateResults">
-                    Terminés
-                  </v-tab>
-                </v-tabs>
+            <v-card v-for="(item, i) of items" :key="i" v-if="items.length > 0">
+              <v-toolbar color="blue-grey lighten-4">
+                <v-card-title style="padding-left:0px;">
+                  <v-card-text style="padding-left:0px;">{{item.name}}</v-card-text>
+                </v-card-title>
+                <v-card-actions>Nombre inscrit: {{item.nbInscrit}}</v-card-actions>
               </v-toolbar>
+              <table class="v-datatable v-table">
+                <thead>
+                  <tr>
+                    <!-- <th class="text-xs-left">#</th> -->
+                    <th class="text-xs-left">Bureau</th>
+                    <th class="text-xs-left">Representant</th>
+                    <th class="text-xs-left">Nombre de votant</th>
+                    <th class="text-xs-left">Bulletin Null</th>
+                    <th class="text-xs-left">Statut Résultat</th>
+                    <th class="text-xs-left" width=170>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(bureau, a) of item.bv" :key="a">
+                    <td class="text-xs-left">
+                      {{ bureau.name }}
+                    </td>
+                    <td class="text-xs-left" style="padding-top: 25px;padding-bottom: 25px;">{{ bureau.representant }}</td>
+                    <td class="text-xs-left">
+                      {{ bureau.nbVotant }}
+                    </td>
+                    <td class="text-xs-left">{{ bureau.nbBulletinNull }}</td>
+                    <td class="text-xs-left">
+                      <v-chip color="green" text-color="white" v-if="bureau.validerTout">
+                        <v-avatar>
+                          <v-icon>check_circle</v-icon>
+                        </v-avatar>
+                        Validé complètement
+                      </v-chip>
+                      <v-chip color="deep orange" text-color="white" v-else-if="bureau.valider === true && bureau.validerResultatCandidat === false">
+                        <v-avatar>
+                          <v-icon>refresh</v-icon>
+                        </v-avatar>
+                        En cours de validation 
+                      </v-chip>
+                      <v-chip color="deep orange" text-color="white" v-else-if="bureau.validerResultatCandidat === true && bureau.valider === false">
+                        <v-avatar>
+                          <v-icon>refresh</v-icon>
+                        </v-avatar>
+                        En cours de validation 
+                      </v-chip>
+                      <v-chip color="deep orange" text-color="white" v-else-if="bureau.valider === true && bureau.validerResultatCandidat === true && bureau.pvSend === false">
+                        <v-avatar>
+                          <v-icon>attach_file</v-icon>
+                        </v-avatar>
+                        En attente du pv
+                      </v-chip>
+                      <v-chip color="red" text-color="white" v-else>
+                        <v-avatar>
+                          <v-icon>error</v-icon>
+                        </v-avatar>
+                        En attente 
+                      </v-chip>
+                    </td>
+                    <td class="text-xs-left">
+                      <v-btn 
+                      small
+                      fab
+                      :loading="loading"
+                      :disabled="loading"
+                      color="info lighten-1"
+                      style="color:white"
+                      @click="openStatBureau(bureau.id)">
+                      <v-icon>
+                        list
+                      </v-icon>
+                      </v-btn>
 
-              <v-tabs-items v-model="tabs" style="overflow: initial;">
+                      <v-btn 
+                      small
+                      fab
+                      :loading="loading"
+                      :disabled="loading"
+                      color="orange accent-3"
+                      style="color:white"
+                      @click="openPv(bureau.id)">
+                      <v-icon>
+                        attachment
+                      </v-icon>
+                      </v-btn>
+                    
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </v-card>
 
-
-                <v-tab-item key="all">
-                  <!-- LISTE DE TOUT LES RESULTATS -->
-                  <v-card v-for="(item, i) of items" :key="i" v-if="items.length > 0" style="padding-top:1px">
-                    <v-toolbar color="blue-grey lighten-4">
-                      <v-card-title style="padding-left:0px;">
-                        <v-card-text style="padding-left:0px;">{{item.name}}</v-card-text>
-                      </v-card-title>
-                      <v-card-actions>Nombre inscrit: <b>{{item.nbInscrit}}</b></v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-card-actions>Total Votant: <b>{{item.nbTotalVotant}}</b></v-card-actions>
-                      <v-card-actions>Total Bulletin null: <b>{{item.nbTotalBn}}</b></v-card-actions>
-                      <v-card-actions>Votant restant / Absent: <b>{{item.nbAbstention}}</b></v-card-actions>
-                    </v-toolbar>
-                    <table class="v-datatable v-table">
-                      <thead>
-                        <tr>
-                          <!-- <th class="text-xs-left">#</th> -->
-                          <th class="text-xs-left">Bureau</th>
-                          <th class="text-xs-left">Representant</th>
-                          <th class="text-xs-left">Nombre de votant</th>
-                          <th class="text-xs-left">Bulletin Null</th>
-                          <th class="text-xs-left">Statut Résultat</th>
-                          <th class="text-xs-left" width=170>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="(bureau, a) of item.bv" :key="a">
-                          <td class="text-xs-left">
-                            {{ bureau.name }}
-                          </td>
-                          <td class="text-xs-left" style="padding-top: 25px;padding-bottom: 25px;">{{ bureau.representant }}</td>
-                          <td class="text-xs-left">
-                            {{ bureau.nbVotant }}
-                          </td>
-                          <td class="text-xs-left">{{ bureau.nbBulletinNull }}</td>
-                          <td class="text-xs-left">
-                            <v-chip color="green" text-color="white" v-if="bureau.validerTout">
-                              <v-avatar>
-                                <v-icon>check_circle</v-icon>
-                              </v-avatar>
-                              Validé complètement
-                            </v-chip>
-                            <v-chip color="deep orange" text-color="white" v-else-if="bureau.valider === true && bureau.validerResultatCandidat === false">
-                              <v-avatar>
-                                <v-icon>refresh</v-icon>
-                              </v-avatar>
-                              En cours de validation 
-                            </v-chip>
-                            <v-chip color="deep orange" text-color="white" v-else-if="bureau.validerResultatCandidat === true && bureau.valider === false">
-                              <v-avatar>
-                                <v-icon>refresh</v-icon>
-                              </v-avatar>
-                              En cours de validation 
-                            </v-chip>
-                            <v-chip color="deep orange" text-color="white" v-else-if="bureau.valider === true && bureau.validerResultatCandidat === true && bureau.pvSend === false">
-                              <v-avatar>
-                                <v-icon>attach_file</v-icon>
-                              </v-avatar>
-                              En attente du pv
-                            </v-chip>
-                            <v-chip color="red" text-color="white" v-else>
-                              <v-avatar>
-                                <v-icon>error</v-icon>
-                              </v-avatar>
-                              En attente 
-                            </v-chip>
-                          </td>
-                          <td class="text-xs-left">
-                            <v-btn 
-                            small
-                            fab
-                            :loading="loading"
-                            :disabled="loading"
-                            color="info lighten-1"
-                            style="color:white"
-                            @click="openStatBureau(bureau.id)">
-                            <v-icon>
-                              list
-                            </v-icon>
-                            </v-btn>
-
-                            <v-btn 
-                            small
-                            fab
-                            :loading="loading"
-                            :disabled="loading"
-                            color="orange accent-3"
-                            style="color:white"
-                            @click="openPv(bureau.id)">
-                            <v-icon>
-                              attachment
-                            </v-icon>
-                            </v-btn>
-                          
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </v-card>
-
-                  <!-- AUCUN RESULTAT DISPONIBLE -->
-                  <v-card v-if="items.length === 0" style="padding-bottom: 21px">
-                    <v-card-text>
-                      <v-card-media class="text-xs-center">
-                        <v-spacer></v-spacer>
-                          <v-icon style="font-size: 90px;padding-bottom: 21px;padding-top: 20px;"> how_to_vote </v-icon>
-                        <v-spacer></v-spacer>
-                      </v-card-media>
-                          Aucun résultat de vote disponible
-                    </v-card-text>
-                  </v-card>
-                </v-tab-item>
-
-                <v-tab-item key="waiting">
-                  <!-- LISTE DE TOUT LES RESULTATS -->
-                  <v-card v-for="(item, i) of waitingItem" :key="i" v-if="waitingItem.length > 0" style="padding-top:1px">
-                    <v-toolbar color="blue-grey lighten-4">
-                      <v-card-title style="padding-left:0px;">
-                        <v-card-text style="padding-left:0px;">{{item.name}}</v-card-text>
-                      </v-card-title>
-                      <v-card-actions>Nombre inscrit: <b>{{item.nbInscrit}}</b></v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-card-actions>Total Votant: <b>{{item.nbTotalVotant}}</b></v-card-actions>
-                      <v-card-actions>Total Bulletin null: <b>{{item.nbTotalBn}}</b></v-card-actions>
-                      <v-card-actions>Votant restant / Absent: <b>{{item.nbAbstention}}</b></v-card-actions>
-                    </v-toolbar>
-                    <table class="v-datatable v-table">
-                      <thead>
-                        <tr>
-                          <!-- <th class="text-xs-left">#</th> -->
-                          <th class="text-xs-left">Bureau</th>
-                          <th class="text-xs-left">Representant</th>
-                          <th class="text-xs-left">Nombre de votant</th>
-                          <th class="text-xs-left">Bulletin Null</th>
-                          <th class="text-xs-left">Statut Résultat</th>
-                          <th class="text-xs-left" width=170>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="(bureau, a) of item.bv" :key="a">
-                          <td class="text-xs-left">
-                            {{ bureau.name }}
-                          </td>
-                          <td class="text-xs-left" style="padding-top: 25px;padding-bottom: 25px;">{{ bureau.representant }}</td>
-                          <td class="text-xs-left">
-                            {{ bureau.nbVotant }}
-                          </td>
-                          <td class="text-xs-left">{{ bureau.nbBulletinNull }}</td>
-                          <td class="text-xs-left">
-                            <v-chip color="green" text-color="white" v-if="bureau.validerTout">
-                              <v-avatar>
-                                <v-icon>check_circle</v-icon>
-                              </v-avatar>
-                              Validé complètement
-                            </v-chip>
-                            <v-chip color="deep orange" text-color="white" v-else-if="bureau.valider === true && bureau.validerResultatCandidat === false">
-                              <v-avatar>
-                                <v-icon>refresh</v-icon>
-                              </v-avatar>
-                              En cours de validation 
-                            </v-chip>
-                            <v-chip color="deep orange" text-color="white" v-else-if="bureau.validerResultatCandidat === true && bureau.valider === false">
-                              <v-avatar>
-                                <v-icon>refresh</v-icon>
-                              </v-avatar>
-                              En cours de validation 
-                            </v-chip>
-                            <v-chip color="deep orange" text-color="white" v-else-if="bureau.valider === true && bureau.validerResultatCandidat === true && bureau.pvSend === false">
-                              <v-avatar>
-                                <v-icon>attach_file</v-icon>
-                              </v-avatar>
-                              En attente du pv
-                            </v-chip>
-                            <v-chip color="red" text-color="white" v-else>
-                              <v-avatar>
-                                <v-icon>error</v-icon>
-                              </v-avatar>
-                              En attente 
-                            </v-chip>
-                          </td>
-                          <td class="text-xs-left">
-                            <v-btn 
-                            small
-                            fab
-                            :loading="loading"
-                            :disabled="loading"
-                            color="info lighten-1"
-                            style="color:white"
-                            @click="openStatBureau(bureau.id)">
-                            <v-icon>
-                              list
-                            </v-icon>
-                            </v-btn>
-
-                            <v-btn 
-                            small
-                            fab
-                            :loading="loading"
-                            :disabled="loading"
-                            color="orange accent-3"
-                            style="color:white"
-                            @click="openPv(bureau.id)">
-                            <v-icon>
-                              attachment
-                            </v-icon>
-                            </v-btn>
-                          
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </v-card>
-
-                  <!-- AUCUN RESULTAT DISPONIBLE -->
-                  <v-card v-if="waitingItem.length === 0" style="padding-bottom: 21px">
-                    <v-card-text>
-                      <v-card-media class="text-xs-center">
-                        <v-spacer></v-spacer>
-                          <v-icon style="font-size: 90px;padding-bottom: 21px;padding-top: 20px;"> how_to_vote </v-icon>
-                        <v-spacer></v-spacer>
-                      </v-card-media>
-                          Aucun résultat de vote disponible
-                    </v-card-text>
-                  </v-card>
-                </v-tab-item>
-
-                <v-tab-item key="clear">
-                  <!-- LISTE DE TOUT LES RESULTATS -->
-                  <v-card v-for="(item, i) of validateItem" :key="i" v-if="validateItem.length > 0" style="padding-top:1px">
-                    <v-toolbar color="blue-grey lighten-4">
-                      <v-card-title style="padding-left:0px;">
-                        <v-card-text style="padding-left:0px;">{{item.name}}</v-card-text>
-                      </v-card-title>
-                      <v-card-actions>Nombre inscrit: <b>{{item.nbInscrit}}</b></v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-card-actions>Total Votant: <b>{{item.nbTotalVotant}}</b></v-card-actions>
-                      <v-card-actions>Total Bulletin null: <b>{{item.nbTotalBn}}</b></v-card-actions>
-                      <v-card-actions>Votant restant / Absent: <b>{{item.nbAbstention}}</b></v-card-actions>
-                    </v-toolbar>
-                    <table class="v-datatable v-table">
-                      <thead>
-                        <tr>
-                          <!-- <th class="text-xs-left">#</th> -->
-                          <th class="text-xs-left">Bureau</th>
-                          <th class="text-xs-left">Representant</th>
-                          <th class="text-xs-left">Nombre de votant</th>
-                          <th class="text-xs-left">Bulletin Null</th>
-                          <th class="text-xs-left">Statut Résultat</th>
-                          <th class="text-xs-left" width=170>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="(bureau, a) of item.bv" :key="a">
-                          <td class="text-xs-left">
-                            {{ bureau.name }}
-                          </td>
-                          <td class="text-xs-left" style="padding-top: 25px;padding-bottom: 25px;">{{ bureau.representant }}</td>
-                          <td class="text-xs-left">
-                            {{ bureau.nbVotant }}
-                          </td>
-                          <td class="text-xs-left">{{ bureau.nbBulletinNull }}</td>
-                          <td class="text-xs-left">
-                            <v-chip color="green" text-color="white" v-if="bureau.validerTout">
-                              <v-avatar>
-                                <v-icon>check_circle</v-icon>
-                              </v-avatar>
-                              Validé complètement
-                            </v-chip>
-                            <v-chip color="deep orange" text-color="white" v-else-if="bureau.valider === true && bureau.validerResultatCandidat === false">
-                              <v-avatar>
-                                <v-icon>refresh</v-icon>
-                              </v-avatar>
-                              En cours de validation 
-                            </v-chip>
-                            <v-chip color="deep orange" text-color="white" v-else-if="bureau.validerResultatCandidat === true && bureau.valider === false">
-                              <v-avatar>
-                                <v-icon>refresh</v-icon>
-                              </v-avatar>
-                              En cours de validation 
-                            </v-chip>
-                            <v-chip color="deep orange" text-color="white" v-else-if="bureau.valider === true && bureau.validerResultatCandidat === true && bureau.pvSend === false">
-                              <v-avatar>
-                                <v-icon>attach_file</v-icon>
-                              </v-avatar>
-                              En attente du pv
-                            </v-chip>
-                            <v-chip color="red" text-color="white" v-else>
-                              <v-avatar>
-                                <v-icon>error</v-icon>
-                              </v-avatar>
-                              En attente 
-                            </v-chip>
-                          </td>
-                          <td class="text-xs-left">
-                            <v-btn 
-                            small
-                            fab
-                            :loading="loading"
-                            :disabled="loading"
-                            color="info lighten-1"
-                            style="color:white"
-                            @click="openStatBureau(bureau.id)">
-                            <v-icon>
-                              list
-                            </v-icon>
-                            </v-btn>
-
-                            <v-btn 
-                            small
-                            fab
-                            :loading="loading"
-                            :disabled="loading"
-                            color="orange accent-3"
-                            style="color:white"
-                            @click="openPv(bureau.id)">
-                            <v-icon>
-                              attachment
-                            </v-icon>
-                            </v-btn>
-                          
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </v-card>
-
-                  <!-- AUCUN RESULTAT DISPONIBLE -->
-                  <v-card v-if="validateItem.length === 0" style="padding-bottom: 21px">
-                    <v-card-text>
-                      <v-card-media class="text-xs-center">
-                        <v-spacer></v-spacer>
-                          <v-icon style="font-size: 90px;padding-bottom: 21px;padding-top: 20px;"> how_to_vote </v-icon>
-                        <v-spacer></v-spacer>
-                      </v-card-media>
-                          Aucun résultat de vote disponible
-                    </v-card-text>
-                  </v-card>
-                </v-tab-item>
-
-              </v-tabs-items>
-            </div>
-
-            
+            <v-card v-if="items.length === 0" style="padding-bottom: 21px;">
+              <v-card-text>
+                <v-card-media class="text-xs-center">
+                  <v-spacer></v-spacer>
+                    <v-icon style="font-size: 90px;padding-bottom: 21px;padding-top: 20px;"> how_to_vote </v-icon>
+                  <v-spacer></v-spacer>
+                </v-card-media>
+                    Aucun résultat de vote disponible
+              </v-card-text>
+            </v-card>
 
           </v-flex>
 
@@ -506,12 +229,12 @@
                               v-else
                               :value="true"
                               type="success"
-                              style="margin-bottom: 10px"
+                              style="margin-bottom: 20px"
                             >
                               Les statistiques de ce bureau ont été validées.
                             </v-alert>
                           </v-flex>
-                            <v-flex xs12 style="height: 70px;">
+                            <v-flex xs12>
                               <v-text-field 
                               label="Nombre de votants" 
                               type="number"
@@ -522,7 +245,7 @@
                               outline
                               required></v-text-field>
                             </v-flex>
-                            <v-flex xs12 style="height: 70px;">
+                            <v-flex xs12>
                             <v-text-field
                               type="number"
                               :disabled="validerStatsBureau === true || bureauSelected.valider === true"
@@ -534,7 +257,7 @@
                               required
                             ></v-text-field>
                             </v-flex>
-                            <div class="v-input v-text-field v-text-field--enclosed v-text-field--outline v-input--is-label-active v-input--is-dirty" style="padding:4px;">
+                            <div class="v-input v-text-field v-text-field--enclosed v-text-field--outline v-input--is-label-active v-input--is-dirty">
                               <div class="v-input__control">
                                   <div class="v-input__slot">
                                     <div class="v-text-field__slot">
@@ -542,11 +265,11 @@
                                         Importer nouveau pv
                                       </label>
                                       <input type="file" disabled ref="file" v-if="pvSend === true && bureauSelected.pvInfoBureau.id !== undefined && dejaValiderStatsBureau === true" style="margin-botom:45px" @change="getUploadedFile">
-                                      <input type="file" ref="file" v-else-if="pvSend === false && bureauSelected.pvInfoBureau.id === undefined && dejaValiderStatsBureau === true && validerStatsBureau === true" style="margin-botom:45px" @change="getUploadedFile">
+                                      <input type="file" disabled ref="file" v-else-if="pvSend === true && bureauSelected.pvInfoBureau.id !== undefined && dejaValiderStatsBureau === true && validerStatsBureau === true" style="margin-botom:45px" @change="getUploadedFile">
                                       <input type="file" ref="file" v-else-if="pvSend === true && bureauSelected.pvInfoBureau.id !== undefined && dejaValiderStatsBureau === false" style="margin-botom:45px" @change="getUploadedFile">
                                       <input type="file" disabled ref="file" v-else-if="pvSend === true && bureauSelected.pvInfoBureau.id !== undefined && validerStatsBureau === true" style="margin-botom:45px" @change="getUploadedFile">
                                       <input type="file" ref="file" v-else-if="pvSend === false && dejaValiderStatsBureau === false && validerStatsBureau === false" style="margin-botom:45px" @change="getUploadedFile">
-                                      <input type="file" ref="file" v-else-if="pvSend === false && dejaValiderStatsBureau === false && validerStatsBureau === true" style="margin-botom:45px" @change="getUploadedFile">
+                                      <input type="file" ref="file" v-else="pvSend === false && dejaValiderStatsBureau === false && validerStatsBureau === true" style="margin-botom:45px" @change="getUploadedFile">
                                       <br><br><br>
                                       <v-btn
                                         color="primary"
@@ -628,12 +351,12 @@
                               v-else
                               :value="true"
                               type="success"
-                              style="margin-bottom: 10px"
+                              style="margin-bottom: 20px"
                             >
                               Les résultats de vote de ce bureau ont été validés.
                             </v-alert>
                             </v-flex>
-                            <v-flex xs12 md6 lg6 :key="i" v-for="(data2, i) in candidatSuivis" style="display: inherit;height: 70px;">
+                            <v-flex xs12 md6 lg6 :key="i" v-for="(data2, i) in candidatSuivis" style="display: inherit">
                               <v-text-field
                                 :id="'candidat-'+data2.id"
                                 v-model="data2.nbVoix"
@@ -746,8 +469,6 @@ export default {
     return {
       loaded: false,
       loadingPage: false,
-      tabs: null,
-      active: 1,
       validerStatsBureau: false,
       validerResultatCandidat: false,
       dejaValiderStatsBureau: false,
@@ -755,10 +476,7 @@ export default {
       getCumulVoix: 0,
       pvSend: null,
       pvInfo: [],
-      tabs: null,
       tab: null,
-      waitingItem: [],
-      validateItem: [],
       supprimer: false,
       checkData: false,
       updateBureau: false,
@@ -840,37 +558,14 @@ export default {
     querySelections(v) {
       this.loading = true;
       // Simulated ajax query
-
-      if (this.active === 1) {
-        setTimeout(() => {
-          this.items = this.items.filter(e => {
-            return (
-              (e.name || "").toLowerCase().indexOf((v || "").toLowerCase()) > -1
-            );
-          });
-          this.loading = false;
-        }, 500);
-      }
-      if (this.active === 2) {
-        setTimeout(() => {
-          this.waitingItem = this.waitingItem.filter(e => {
-            return (
-              (e.name || "").toLowerCase().indexOf((v || "").toLowerCase()) > -1
-            );
-          });
-          this.loading = false;
-        }, 500);
-      }
-      if (this.active === 3) {
-        setTimeout(() => {
-          this.validateItem = this.validateItem.filter(e => {
-            return (
-              (e.name || "").toLowerCase().indexOf((v || "").toLowerCase()) > -1
-            );
-          });
-          this.loading = false;
-        }, 500);
-      }
+      setTimeout(() => {
+        this.items = this.lieux.filter(e => {
+          return (
+            (e.name || "").toLowerCase().indexOf((v || "").toLowerCase()) > -1
+          );
+        });
+        this.loading = false;
+      }, 500);
     },
     createChart(chartId, chartData) {
       const ctx = document.getElementById("chart" + chartId);
@@ -897,15 +592,7 @@ export default {
       }
     },
     resetItem() {
-      if (this.active === 1) {
-        this.getAllResults();
-      }
-      if (this.active === 2) {
-        this.getWaitingResults();
-      }
-      if (this.active === 3) {
-        this.getValidateResults();
-      }
+      this.items = this.lieux;
     },
     clearResearch() {
       this.clear = false;
@@ -921,168 +608,9 @@ export default {
     launchChart() {
       this.createChart(this.pieData.id, this.pieData);
     },
-    getAllResults() {
-      this.active = 1;
-      this.getAllData();
-    },
-    getWaitingData() {
-      this.loadingPage = true;
-      this.axios
-        .get(
-          apiConfig.baseURL + "resultats/list/waiting/" + this.user.idCandidat,
-          {
-            headers: {
-              "Content-type": "application/x-www-form-urlencoded"
-            }
-          }
-        )
-        .then(response => {
-          let data = response.data;
-
-          if (data.statusRequete == 100) {
-            this.waitingItem = data.listeCentres;
-            // Vérifions si toutes les infos ont été validées
-            this.waitingItem = this.waitingItem.filter(e => {
-              if (e.bv.length > 0) {
-                let nbTotalVotant = 0;
-                let nbTotalBn = 0;
-                for (let bureau of e.bv) {
-                  let statsCandidatsBureaux = bureau.rv;
-                  let nbValider = 0;
-                  for (let resultat of statsCandidatsBureaux) {
-                    if (resultat.valider === true) {
-                      nbValider++;
-                    }
-                  }
-                  // Vérifions si tout les résultats on été validés
-                  if (nbValider === bureau.nbRV) {
-                    bureau.validerResultatCandidat = true;
-                  }
-                  // Vérifions si tout les résultats on été validés
-                  if (
-                    bureau.validerResultatCandidat === true &&
-                    bureau.valider === true &&
-                    bureau.pvSend === true
-                  ) {
-                    bureau.validerTout = true;
-                  }
-                  // Récupérons le cumul des votants de chaque bureaux du centre
-                  if (bureau.nbVotant !== " Aucun resultat ") {
-                    nbTotalVotant = nbTotalVotant + bureau.nbVotant;
-                  } else {
-                    nbTotalVotant = nbTotalVotant + 0;
-                  }
-
-                  // Récupérons le cumul des bulletin null de chaque bureaux du centre
-                  if (bureau.nbBulletinNull !== " Aucun resultat ") {
-                    nbTotalBn = nbTotalBn + bureau.nbBulletinNull;
-                  } else {
-                    nbTotalBn = nbTotalBn + 0;
-                  }
-                }
-                // Mettons à jours les cumuls des stats du centres
-                e.nbTotalVotant = nbTotalVotant;
-                e.nbTotalBn = nbTotalBn;
-                e.nbAbstention =
-                  parseInt(e.nbInscrit) - parseInt(nbTotalVotant);
-
-                return e;
-              }
-            });
-            // preparons la barre de recherche
-            this.listeLieux = [];
-            for (let item of this.waitingItem) {
-              this.listeLieux.push(item.name);
-            }
-          }
-
-          this.loadingPage = false;
-        });
-    },
-    getWaitingResults() {
-      this.active = 2;
-      this.getWaitingData();
-    },
-    getValidateData() {
-      this.loadingPage = true;
-      this.axios
-        .get(
-          apiConfig.baseURL + "resultats/list/valide/" + this.user.idCandidat,
-          {
-            headers: {
-              "Content-type": "application/x-www-form-urlencoded"
-            }
-          }
-        )
-        .then(response => {
-          let data = response.data;
-
-          if (data.statusRequete == 100) {
-            this.validateItem = data.listeCentres;
-            // Vérifions si toutes les infos ont été validées
-            this.validateItem = this.validateItem.filter(e => {
-              if (e.bv.length > 0) {
-                let nbTotalVotant = 0;
-                let nbTotalBn = 0;
-                for (let bureau of e.bv) {
-                  let statsCandidatsBureaux = bureau.rv;
-                  let nbValider = 0;
-                  for (let resultat of statsCandidatsBureaux) {
-                    if (resultat.valider === true) {
-                      nbValider++;
-                    }
-                  }
-                  // Vérifions si tout les résultats on été validés
-                  if (nbValider === bureau.nbRV) {
-                    bureau.validerResultatCandidat = true;
-                  }
-                  // Vérifions si tout les résultats on été validés
-                  if (
-                    bureau.validerResultatCandidat === true &&
-                    bureau.valider === true &&
-                    bureau.pvSend === true
-                  ) {
-                    bureau.validerTout = true;
-                  }
-                  // Récupérons le cumul des votants de chaque bureaux du centre
-                  if (bureau.nbVotant !== " Aucun resultat ") {
-                    nbTotalVotant = nbTotalVotant + bureau.nbVotant;
-                  } else {
-                    nbTotalVotant = nbTotalVotant + 0;
-                  }
-
-                  // Récupérons le cumul des bulletin null de chaque bureaux du centre
-                  if (bureau.nbBulletinNull !== " Aucun resultat ") {
-                    nbTotalBn = nbTotalBn + bureau.nbBulletinNull;
-                  } else {
-                    nbTotalBn = nbTotalBn + 0;
-                  }
-                }
-                // Mettons à jours les cumuls des stats du centres
-                e.nbTotalVotant = nbTotalVotant;
-                e.nbTotalBn = nbTotalBn;
-                e.nbAbstention =
-                  parseInt(e.nbInscrit) - parseInt(nbTotalVotant);
-
-                return e;
-              }
-            });
-            // preparons la barre de recherche
-            this.listeLieux = [];
-            for (let item of this.validateItem) {
-              this.listeLieux.push(item.name);
-            }
-          }
-
-          this.loadingPage = false;
-        });
-    },
-    getValidateResults() {
-      this.active = 3;
-      this.getValidateData();
-    },
     getUploadedFile(e) {
       this.selectedFile = e.target.files[0];
+      console.log(this.selectedFile.type);
       let error = true;
       if (
         this.selectedFile.type !== "application/pdf" ||
@@ -1155,9 +683,6 @@ export default {
                 }
               });
               this.items = this.lieux;
-              this.getAllData();
-              this.getWaitingData();
-              this.getValidateData();
               this.listeLieux = [];
               this.getNamesCentres();
 
@@ -1192,8 +717,6 @@ export default {
             this.lieux = data.listeCentres;
             // Vérifions si toutes les infos ont été validées
             this.lieux.filter(e => {
-              let nbTotalVotant = 0;
-              let nbTotalBn = 0;
               for (let bureau of e.bv) {
                 let statsCandidatsBureaux = bureau.rv;
                 let nbValider = 0;
@@ -1214,24 +737,7 @@ export default {
                 ) {
                   bureau.validerTout = true;
                 }
-                // Récupérons le cumul des votants de chaque bureaux du centre
-                if (bureau.nbVotant !== " Aucun resultat ") {
-                  nbTotalVotant = nbTotalVotant + bureau.nbVotant;
-                } else {
-                  nbTotalVotant = nbTotalVotant + 0;
-                }
-
-                // Récupérons le cumul des bulletin null de chaque bureaux du centre
-                if (bureau.nbBulletinNull !== " Aucun resultat ") {
-                  nbTotalBn = nbTotalBn + bureau.nbBulletinNull;
-                } else {
-                  nbTotalBn = nbTotalBn + 0;
-                }
               }
-              // Mettons à jours les cumuls des stats du centres
-              e.nbTotalVotant = nbTotalVotant;
-              e.nbTotalBn = nbTotalBn;
-              e.nbAbstention = parseInt(e.nbInscrit) - parseInt(nbTotalVotant);
             });
             this.items = this.lieux;
             this.getNamesCentres();
@@ -1370,9 +876,6 @@ export default {
               }
             });
             this.items = this.lieux;
-            this.getAllData();
-            this.getWaitingData();
-            this.getValidateData();
             this.listeLieux = [];
             this.getNamesCentres();
 
@@ -1466,9 +969,6 @@ export default {
               }
             });
             this.items = this.lieux;
-            this.getAllData();
-            this.getWaitingData();
-            this.getValidateData();
             this.listeLieux = [];
             this.getNamesCentres();
 
@@ -1536,9 +1036,6 @@ export default {
             });
 
             this.items = this.lieux;
-            this.getAllData();
-            this.getWaitingData();
-            this.getValidateData();
             this.listeLieux = [];
             this.getNamesCentres();
 
@@ -1600,9 +1097,6 @@ export default {
             this.items = this.lieux;
             this.listeLieux = [];
             this.getNamesCentres();
-            this.getAllData();
-            this.getWaitingData();
-            this.getValidateData();
 
             this.text = "Modification effectuée";
             this.snackbar = true;
@@ -1620,9 +1114,9 @@ export default {
       }
     },
     checkNbBulletinNull(v) {
-      // if (v > this.nbVotant) {
-      //   this.nbBulletinNull = this.nbVotant;
-      // }
+      if (v > this.nbVotant) {
+        this.nbBulletinNull = this.nbVotant;
+      }
 
       if (v < 0) {
         this.nbBulletinNull = 0;
@@ -1651,68 +1145,26 @@ export default {
         this.clear = true;
       }
       if (val === "") {
-        if (this.active === 1) {
-          this.getAllResults();
-        }
-        if (this.active === 2) {
-          this.getWaitingResults();
-        }
-        if (this.active === 3) {
-          this.getValidateResults();
-        }
         this.select = null;
         this.clear = false;
       }
     },
     select(val) {
       if (this.search === null && val === null) {
-        // this.items = this.lieux;
-        if (this.active === 1) {
-          this.getAllResults();
-        }
-        if (this.active === 2) {
-          this.getWaitingResults();
-        }
-        if (this.active === 3) {
-          this.getValidateResults();
-        }
+        this.items = this.lieux;
         this.clear = false;
       }
       if (this.search === null && val === "") {
-        // this.items = this.lieux;
-        if (this.active === 1) {
-          this.getAllResults();
-        }
-        if (this.active === 2) {
-          this.getWaitingResults();
-        }
-        if (this.active === 3) {
-          this.getValidateResults();
-        }
+        this.items = this.lieux;
         this.clear = false;
       }
       if (val !== "" && val !== undefined && val !== null) {
-        if (this.active === 1) {
-          this.items = this.items.filter(e => {
-            if (e.name === val) {
-              return e;
-            }
-          });
-        }
-        if (this.active === 2) {
-          this.waitingItem = this.waitingItem.filter(e => {
-            if (e.name === val) {
-              return e;
-            }
-          });
-        }
-        if (this.active === 3) {
-          this.validateItem = this.validateItem.filter(e => {
-            if (e.name === val) {
-              return e;
-            }
-          });
-        }
+        this.items = [];
+        this.items = this.lieux.filter(e => {
+          if (e.name === val) {
+            return e;
+          }
+        });
         this.clear = true;
       }
     }
@@ -1754,8 +1206,6 @@ export default {
   },
   mounted() {
     this.getAllData();
-    this.getWaitingData();
-    this.getValidateData();
   }
 };
 </script>

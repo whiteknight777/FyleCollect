@@ -144,12 +144,12 @@
                 <v-icon dark>how_to_vote</v-icon>
               </div> -->
               <!-- <v-card-title style="padding-top: 50px;padding-bottom:0"> -->
-                <v-list>
+                <v-list v-if="classement.length === 2"> 
                   <v-list-tile
                     v-for="(item, i) in classement"
-                    :key="'brute'+i"
+                    :key="'valide'+i"
                     avatar
-                    @click=""
+                    style="padding: 14px 0px;"
                   >
                   
                     <v-list-tile-action>
@@ -178,12 +178,53 @@
                     </v-list-tile-action>
                   </v-list-tile>
                 </v-list>
+
+                <v-list v-if="classement.length === 3"> 
+                  <v-list-tile
+                    v-for="(item, i) in classement"
+                    :key="'valide'+i"
+                    avatar
+                  >
+                  
+                    <v-list-tile-action>
+                      <v-btn icon ripple style="position: relative;font-size: large;" :color="item.color" dark>
+                        <span ripple icon>
+                          <b v-if="item.ranking === 1" style="float:left;margin-left: -5px;">{{item.ranking}}</b>
+                          <b v-else style="float: left;margin-left: -11px;">{{item.ranking}}</b>
+                          <small v-if="item.ranking === 1" style="font-size: 8px;text-transform: lowercase;position: absolute;">er</small>
+                          <small v-else style="font-size: 8px;text-transform: lowercase;position: absolute;right: 4px;">ème</small>
+                        </span>
+                      </v-btn>
+                      <!-- <span ripple icon v-text="item.ranking"></span> -->
+                      <!-- <v-icon v-if="item.icon" color="pink">star</v-icon> -->
+                    </v-list-tile-action>
+
+                    <!-- <v-list-tile-avatar>
+                      <img :src="item.avatar">
+                    </v-list-tile-avatar> -->
+
+                    <v-list-tile-content>
+                      <v-list-tile-title v-text="item.title"></v-list-tile-title>
+                    </v-list-tile-content>
+
+                    <v-list-tile-action>
+                      <span style="color:green"><b>{{item.voix}}</b></span>
+                    </v-list-tile-action>
+                  </v-list-tile>
+                </v-list>
+
+                <v-card-text style="padding-bottom: 33px;" v-if="classement.length === 0">
+                  <v-card-media class="text-xs-center">
+                    <v-spacer></v-spacer>
+                      <v-icon style="font-size: 80px;padding-bottom: 20px;padding-top: 15px;"> autorenew </v-icon>
+                    <v-spacer></v-spacer>
+                  </v-card-media>
+                      Aucunes données disponible
+                </v-card-text>
               <!-- </v-card-title> -->
               <!-- <v-card-actions>
                 <v-progress-linear color="primary" height="4" :value="tauxParticipation"></v-progress-linear>
               </v-card-actions> -->
-            </v-card>
-            <v-card v-else style="height:184px">
             </v-card>
           </v-flex>
           <!-- Fin stat bar -->
@@ -293,12 +334,12 @@
                 <v-icon dark>how_to_vote</v-icon>
               </div> -->
               <!-- <v-card-title style="padding-top: 50px;padding-bottom:0"> -->
-                <v-list>
+               <v-list v-if="classement.length === 2"> 
                   <v-list-tile
                     v-for="(item, i) in classement"
                     :key="'valide'+i"
                     avatar
-                    @click=""
+                    style="padding: 14px 0px;"
                   >
                   
                     <v-list-tile-action>
@@ -327,12 +368,53 @@
                     </v-list-tile-action>
                   </v-list-tile>
                 </v-list>
+
+                <v-list v-if="classement.length === 3"> 
+                  <v-list-tile
+                    v-for="(item, i) in classement"
+                    :key="'valide'+i"
+                    avatar
+                  >
+                  
+                    <v-list-tile-action>
+                      <v-btn icon ripple style="position: relative;font-size: large;" :color="item.color" dark>
+                        <span ripple icon>
+                          <b v-if="item.ranking === 1" style="float:left;margin-left: -5px;">{{item.ranking}}</b>
+                          <b v-else style="float: left;margin-left: -11px;">{{item.ranking}}</b>
+                          <small v-if="item.ranking === 1" style="font-size: 8px;text-transform: lowercase;position: absolute;">er</small>
+                          <small v-else style="font-size: 8px;text-transform: lowercase;position: absolute;right: 4px;">ème</small>
+                        </span>
+                      </v-btn>
+                      <!-- <span ripple icon v-text="item.ranking"></span> -->
+                      <!-- <v-icon v-if="item.icon" color="pink">star</v-icon> -->
+                    </v-list-tile-action>
+
+                    <!-- <v-list-tile-avatar>
+                      <img :src="item.avatar">
+                    </v-list-tile-avatar> -->
+
+                    <v-list-tile-content>
+                      <v-list-tile-title v-text="item.title"></v-list-tile-title>
+                    </v-list-tile-content>
+
+                    <v-list-tile-action>
+                      <span style="color:green"><b>{{item.voix}}</b></span>
+                    </v-list-tile-action>
+                  </v-list-tile>
+                </v-list>
+
+                <v-card-text style="padding-bottom: 33px;" v-if="classement.length === 0">
+                  <v-card-media class="text-xs-center">
+                    <v-spacer></v-spacer>
+                      <v-icon style="font-size: 80px;padding-bottom: 20px;padding-top: 15px;"> autorenew </v-icon>
+                    <v-spacer></v-spacer>
+                  </v-card-media>
+                      Aucunes données disponible
+                </v-card-text>
               <!-- </v-card-title> -->
               <!-- <v-card-actions>
                 <v-progress-linear color="primary" height="4" :value="tauxParticipation"></v-progress-linear>
               </v-card-actions> -->
-            </v-card>
-            <v-card v-else style="height:184px">
             </v-card>
           </v-flex>
           <!-- Fin stat bar -->
@@ -344,17 +426,30 @@
   
           <!--  Graphique -->
           <v-flex xs12 md12 lg12>
-            <v-card v-if="loaded">
+            
+            <!-- <v-card style="padding-bottom: 60px;padding-top: 60px;" v-if="loaded === true">
+            <v-card-text>
+              <v-card-media class="text-xs-center">
+                <v-spacer></v-spacer>
+                  <v-icon style="font-size: 90px;padding-bottom: 21px;padding-top: 20px;"> bar_chart </v-icon>
+                <v-spacer></v-spacer>
+              </v-card-media>
+                  Aucunes données disponible pour afficher le graphique
+            </v-card-text>
+            </v-card> -->
+            
+            <v-card >
               <!-- <charts :data="chartData.data" :id="chartData.id" :type="" :options="chartData.options" :legend="">
               </charts> -->
                 <section style="padding-top: 10px;">
-                  <span style="font-size: 17px;text-transform: uppercase;"> {{chartData.legend}} </span>
+                  <span style="font-size: 17px;text-transform: uppercase;"> {{chartData.legend}} <b>({{nbTotalCentre}})</b> </span>
                 </section>
                 <div id="divGraph" style="padding:10px; background: white">
                 <canvas :id="'chart'+chartData.id" :width="400" :height="500"></canvas>
                 </div>
   
             </v-card>
+
           </v-flex>
           <!-- Fin Graphique -->
 
@@ -370,8 +465,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
 // Config API
-const apiDomain = "http://31.207.34.70/fylecollect_api/web/app_dev.php/";
-const localDomain = "http://localhost/API-REST/web/app_dev.php/";
+import apiConfig from "../../apiConfig";
 
 export default {
   name: "UserInterface",
@@ -385,8 +479,10 @@ export default {
       loading: false,
       clickDonneesBrute: false,
       clickDonneesValide: false,
+      nbTotalCentre: 0,
       loaded: true,
       valider: false,
+      showGraph: false,
       checked: 0,
       created: 0,
       load: 0,
@@ -460,7 +556,7 @@ export default {
       // Récupération des données des candidats suivis
       this.axios
         .get(
-          localDomain +
+          apiConfig.baseURL +
             "api/statistiques/candidat/" +
             this.user.idCandidat +
             "/brute",
@@ -504,7 +600,9 @@ export default {
               // Créons les différents graphes
               if (this.created === 0) {
                 // Créons les différents graphes
+                // console.log("test");
                 this.createChart(this.chartData.id, this.chartData);
+                this.nbTotalCentre = data.nbTotalCentre;
                 this.created++;
               }
             } else {
@@ -522,10 +620,9 @@ export default {
                 newLabel.push(centre.libelleCentre);
                 newData.push(centre.nbVote);
               }
-
               // Renseignons les données du candidats récupérées dans le graphe en bar
               if (
-                this.compareArray(newLabel, this.oldLabel) === false &&
+                this.compareArray(newLabel, this.oldLabel) === false ||
                 this.compareArray(newData, this.oldData) === false
               ) {
                 this.created = 0;
@@ -577,6 +674,7 @@ export default {
 
                     // Créons les différents graphes
                     this.createChart(this.chartData.id, this.chartData);
+                    this.nbTotalCentre = data.nbTotalCentre;
                     this.loaded = true;
                   }
 
@@ -620,19 +718,19 @@ export default {
               this.newStatsCandidat[4] = data.tauxParticipation;
 
               // Comarons les anciènnes valeures et les nouvelles valeures
-              if (this.newStatsCandidat[0] > this.oldStatsCandidat[0]) {
+              if (this.newStatsCandidat[0] !== this.oldStatsCandidat[0]) {
                 this.nbVotant = this.newStatsCandidat[0];
               }
-              if (this.newStatsCandidat[1] > this.oldStatsCandidat[1]) {
+              if (this.newStatsCandidat[1] !== this.oldStatsCandidat[1]) {
                 this.nbVote = this.newStatsCandidat[1];
               }
-              if (this.newStatsCandidat[2] > this.oldStatsCandidat[2]) {
+              if (this.newStatsCandidat[2] !== this.oldStatsCandidat[2]) {
                 this.tauxVoixObtenue = this.newStatsCandidat[2];
               }
-              if (this.newStatsCandidat[3] > this.oldStatsCandidat[3]) {
+              if (this.newStatsCandidat[3] !== this.oldStatsCandidat[3]) {
                 this.tauxAbstention = this.newStatsCandidat[3];
               }
-              if (this.newStatsCandidat[4] > this.oldStatsCandidat[4]) {
+              if (this.newStatsCandidat[4] !== this.oldStatsCandidat[4]) {
                 this.tauxParticipation = this.newStatsCandidat[4];
               }
             }
@@ -642,83 +740,138 @@ export default {
             // LORSQUE C'EST LA PREMIERE FOIS QU'IL RECUPERE LES DONNEES
             if (this.oldClassement.length === 0 && this.checked === 0) {
               let classement = data.classement;
-              for (let step = 0; step < 3; step++) {
+              for (let a = 0; a < classement.length; a++) {
                 // Donnée du candidat en tête
-                if (step === 0) {
+                if (a === 0) {
                   this.oldClassement.push({
-                    title: classement[step].nomPrenom,
+                    title: classement[a].nomPrenom,
                     color: "green",
-                    voix: classement[step].pourcentageVoix + "%",
+                    voix: classement[a].pourcentageVoix + "%",
                     ranking: 1,
                     avatar:
                       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
                   });
                 }
                 // Donnée du candidat numéro 2
-                if (step === 1) {
+                if (a === 1) {
                   this.oldClassement.push({
-                    title: classement[step].nomPrenom,
+                    title: classement[a].nomPrenom,
                     color: "orange accent-3",
-                    voix: classement[step].pourcentageVoix + "%",
+                    voix: classement[a].pourcentageVoix + "%",
                     ranking: 2,
                     avatar:
                       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
                   });
                 }
                 // Donnée du candidat nuémro 3
-                if (step === 2) {
+                if (a === 2) {
                   this.oldClassement.push({
-                    title: classement[step].nomPrenom,
+                    title: classement[a].nomPrenom,
                     color: "amber accent-3",
-                    voix: classement[step].pourcentageVoix + "%",
+                    voix: classement[a].pourcentageVoix + "%",
                     ranking: 3,
                     avatar:
                       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
                   });
                 }
-
-                // Mettons à jours la variable permettant d'afficher le classement
-                this.classement = [];
-                this.classement = this.oldClassement;
               }
+              // Mettons à jours la variable permettant d'afficher le classement
+              this.classement = [];
+              this.classement = this.oldClassement;
             } else {
               // Vérifions si le classement est toujour le même avant de mettre à jour le classement
               let classement = data.classement;
+
               if (
-                this.oldClassement[0] !==
-                classement[0].pourcentageVoix + "%"
+                this.oldClassement.length > 0 &&
+                this.oldClassement[0].voix !== classement[0].pourcentageVoix
               ) {
-                // Modifions les anciènnes valeures
-                this.oldClassement[0] = {
-                  title: classement[0].nomPrenom,
-                  color: "green",
-                  voix: classement[0].pourcentageVoix + "%",
-                  ranking: 1,
-                  avatar:
-                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
-                };
+                // on reinitialise la valeur de l'ancien classement
+                this.oldClassement = [];
 
-                this.oldClassement[1] = {
-                  title: classement[1].nomPrenom,
-                  color: "orange accent-3",
-                  voix: classement[1].pourcentageVoix + "%",
-                  ranking: 2,
-                  avatar:
-                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
-                };
+                for (let step = 0; step < classement.length; step++) {
+                  // Donnée du candidat en tête
+                  if (step === 0) {
+                    this.oldClassement.push({
+                      title: classement[step].nomPrenom,
+                      color: "green",
+                      voix: classement[step].pourcentageVoix + "%",
+                      ranking: 1,
+                      avatar:
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
+                    });
+                  }
+                  // Donnée du candidat numéro 2
+                  if (step === 1) {
+                    this.oldClassement.push({
+                      title: classement[step].nomPrenom,
+                      color: "orange accent-3",
+                      voix: classement[step].pourcentageVoix + "%",
+                      ranking: 2,
+                      avatar:
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
+                    });
+                  }
+                  // Donnée du candidat nuémro 3
+                  if (step === 2) {
+                    this.oldClassement.push({
+                      title: classement[step].nomPrenom,
+                      color: "amber accent-3",
+                      voix: classement[step].pourcentageVoix + "%",
+                      ranking: 3,
+                      avatar:
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
+                    });
+                  }
 
-                this.oldClassement[2] = {
-                  title: classement[2].nomPrenom,
-                  color: "amber accent-3",
-                  voix: classement[2].pourcentageVoix + "%",
-                  ranking: 3,
-                  avatar:
-                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
-                };
+                  // Mettons à jours la variable permettant d'afficher le classement
+                  this.classement = [];
+                  this.classement = this.oldClassement;
+                }
+              }
 
-                // Mettons à jours la variable permettant d'afficher le classement
-                this.classement = [];
-                this.classement = this.oldClassement;
+              if (this.oldClassement.length === 0 && classement.length > 0) {
+                // on reinitialise la valeur de l'ancien classement
+                this.oldClassement = [];
+                for (let step = 0; step < classement.length; step++) {
+                  // Donnée du candidat en tête
+                  if (step === 0) {
+                    this.oldClassement.push({
+                      title: classement[step].nomPrenom,
+                      color: "green",
+                      voix: classement[step].pourcentageVoix + "%",
+                      ranking: 1,
+                      avatar:
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
+                    });
+                  }
+                  // Donnée du candidat numéro 2
+                  if (step === 1) {
+                    this.oldClassement.push({
+                      title: classement[step].nomPrenom,
+                      color: "orange accent-3",
+                      voix: classement[step].pourcentageVoix + "%",
+                      ranking: 2,
+                      avatar:
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
+                    });
+                  }
+                  // Donnée du candidat nuémro 3
+                  if (step === 2) {
+                    this.oldClassement.push({
+                      title: classement[step].nomPrenom,
+                      color: "amber accent-3",
+                      voix: classement[step].pourcentageVoix + "%",
+                      ranking: 3,
+                      avatar:
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
+                    });
+                  }
+
+                  // Mettons à jours la variable permettant d'afficher le classement
+                  this.classement = [];
+                  this.classement = this.oldClassement;
+                }
               }
             }
             // Incrémentons la variable montrant que nous attaquons la bd
@@ -746,32 +899,102 @@ export default {
 
               // Affichons des données de classement / defaut
               this.oldClassement = [];
-              this.oldClassement[0] = {
-                title: "-",
-                color: "green",
-                voix: "-",
-                ranking: 1,
-                avatar:
-                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
-              };
 
-              this.oldClassement[1] = {
-                title: "-",
-                color: "orange accent-3",
-                voix: "-",
-                ranking: 2,
-                avatar:
-                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
-              };
+              // Mettons à jours la variable permettant d'afficher le classement
+              this.classement = [];
+              this.classement = this.oldClassement;
+            } else {
+              // Réinitialisons les valeures
+              this.oldLabel = [];
+              this.oldData = [];
+              this.barChartLabel = [];
+              this.dataChartLabel = [];
+              // Remplissons les valeures du tableau
+              this.barChartLabel = this.oldLabel;
+              this.dataChartLabel = this.oldData;
 
-              this.oldClassement[2] = {
-                title: "-",
-                color: "amber accent-3",
-                voix: "-",
-                ranking: 3,
-                avatar:
-                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
-              };
+              this.loaded = false;
+              this.chartData.data.labels = this.barChartLabel;
+              this.chartData.data.datasets[0].data = this.dataChartLabel;
+
+              let oldGraph = document.getElementById(
+                "chart" + this.chartData.id
+              );
+
+              // Récupérons le parent
+              let parent = document.getElementById("divGraph");
+
+              // Div generée
+              let div = document.getElementsByClassName("chartjs-size-monitor");
+
+              if (oldGraph !== null) {
+                this.loaded = false;
+
+                this.chartData.id = this.chartData.id + 1;
+
+                // Créons le nouveau graphique
+                let newGraph = document.createElement("canvas");
+                newGraph.setAttribute("id", "chart" + this.chartData.id);
+                newGraph.setAttribute("width", "400px");
+                newGraph.setAttribute("height", "380px");
+
+                // Vérifions si l'une des div générée automatiquement existe
+                if (div.length > 0) {
+                  let positionDiv = div.length - 1;
+                  parent.removeChild(div[positionDiv]);
+                }
+
+                // Supprimons l'ancien graph et ajoutons le nouveau graph
+                parent.removeChild(oldGraph);
+                parent.appendChild(newGraph);
+
+                // Créons les différents graphes
+                this.createChart(this.chartData.id, this.chartData);
+                this.nbTotalCentre = 0;
+                this.loaded = true;
+              }
+
+              // LORSQUE C'EST LA PREMIERE FOIS QU'IL RECUPERE LES DONNEES
+              // Recupérons les anciènnes valeures
+              this.oldStatsCandidat[0] = this.nbVotant;
+              this.oldStatsCandidat[1] = this.nbVote;
+              this.oldStatsCandidat[2] = this.tauxVoixObtenue;
+              this.oldStatsCandidat[3] = this.tauxAbstention;
+              this.oldStatsCandidat[4] = this.tauxParticipation;
+
+              // Renseignons les nouvelles valeures dans la nouvelle variable
+              this.newStatsCandidat[0] = 0;
+              this.newStatsCandidat[1] = 0;
+              this.newStatsCandidat[2] = 0;
+              this.newStatsCandidat[3] = 0;
+              this.newStatsCandidat[4] = 0;
+
+              // Comarons les anciènnes valeures et les nouvelles valeures
+              if (this.newStatsCandidat[0] !== this.oldStatsCandidat[0]) {
+                this.nbVotant = this.newStatsCandidat[0];
+              }
+              if (this.newStatsCandidat[1] !== this.oldStatsCandidat[1]) {
+                this.nbVote = this.newStatsCandidat[1];
+              }
+              if (this.newStatsCandidat[2] !== this.oldStatsCandidat[2]) {
+                this.tauxVoixObtenue = this.newStatsCandidat[2];
+              }
+              if (this.newStatsCandidat[3] !== this.oldStatsCandidat[3]) {
+                this.tauxAbstention = this.newStatsCandidat[3];
+              }
+              if (this.newStatsCandidat[4] !== this.oldStatsCandidat[4]) {
+                this.tauxParticipation = this.newStatsCandidat[4];
+              }
+
+              // Créons les différents graphes
+              // this.createChart(this.chartData.id, this.chartData);
+
+              // Affichons des données de classement / defaut
+              this.oldClassement = [];
+
+              // Mettons à jours la variable permettant d'afficher le classement
+              this.classement = [];
+              this.classement = this.oldClassement;
             }
 
             // Incrémentons la variable montrant que nous attaquons la bd
@@ -786,7 +1009,7 @@ export default {
       // Récupération des données des candidats suivis
       this.axios
         .get(
-          localDomain +
+          apiConfig.baseURL +
             "api/statistiques/candidat/" +
             this.user.idCandidat +
             "/valide",
@@ -831,6 +1054,7 @@ export default {
               if (this.created === 0) {
                 // Créons les différents graphes
                 this.createChart(this.chartData.id, this.chartData);
+                this.nbTotalCentre = data.nbTotalCentre;
                 this.created++;
               }
             } else {
@@ -850,7 +1074,7 @@ export default {
               }
               // Renseignons les données du candidats récupérées dans le graphe en bar
               if (
-                this.compareArray(newLabel, this.oldLabel) === false &&
+                this.compareArray(newLabel, this.oldLabel) === false ||
                 this.compareArray(newData, this.oldData) === false
               ) {
                 this.created = 0;
@@ -902,6 +1126,7 @@ export default {
 
                     // Créons les différents graphes
                     this.createChart(this.chartData.id, this.chartData);
+                    this.nbTotalCentre = data.nbTotalCentre;
                     this.loaded = true;
                   }
 
@@ -945,19 +1170,19 @@ export default {
               this.newStatsCandidat[4] = data.tauxParticipation;
 
               // Comarons les anciènnes valeures et les nouvelles valeures
-              if (this.newStatsCandidat[0] > this.oldStatsCandidat[0]) {
+              if (this.newStatsCandidat[0] !== this.oldStatsCandidat[0]) {
                 this.nbVotant = this.newStatsCandidat[0];
               }
-              if (this.newStatsCandidat[1] > this.oldStatsCandidat[1]) {
+              if (this.newStatsCandidat[1] !== this.oldStatsCandidat[1]) {
                 this.nbVote = this.newStatsCandidat[1];
               }
-              if (this.newStatsCandidat[2] > this.oldStatsCandidat[2]) {
+              if (this.newStatsCandidat[2] !== this.oldStatsCandidat[2]) {
                 this.tauxVoixObtenue = this.newStatsCandidat[2];
               }
-              if (this.newStatsCandidat[3] > this.oldStatsCandidat[3]) {
+              if (this.newStatsCandidat[3] !== this.oldStatsCandidat[3]) {
                 this.tauxAbstention = this.newStatsCandidat[3];
               }
-              if (this.newStatsCandidat[4] > this.oldStatsCandidat[4]) {
+              if (this.newStatsCandidat[4] !== this.oldStatsCandidat[4]) {
                 this.tauxParticipation = this.newStatsCandidat[4];
               }
             }
@@ -967,7 +1192,7 @@ export default {
             // LORSQUE C'EST LA PREMIERE FOIS QU'IL RECUPERE LES DONNEES
             if (this.oldClassement.length === 0 && this.checked === 0) {
               let classement = data.classement;
-              for (let step = 0; step < 3; step++) {
+              for (let step = 0; step < classement.length; step++) {
                 // Donnée du candidat en tête
                 if (step === 0) {
                   this.oldClassement.push({
@@ -1010,40 +1235,95 @@ export default {
               // Vérifions si le classement est toujour le même avant de mettre à jour le classement
               let classement = data.classement;
               if (
+                this.oldClassement.length > 0 &&
                 this.oldClassement[0].voix !==
-                classement[0].pourcentageVoix + "%"
+                  classement[0].pourcentageVoix + "%"
               ) {
-                // Modifions les anciènnes valeures
-                this.oldClassement[0] = {
-                  title: classement[0].nomPrenom,
-                  color: "green",
-                  voix: classement[0].pourcentageVoix + "%",
-                  ranking: 1,
-                  avatar:
-                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
-                };
+                // on reinitialise la valeur de l'ancien classement
+                this.oldClassement = [];
+                for (let step = 0; step < classement.length; step++) {
+                  // Donnée du candidat en tête
+                  if (step === 0) {
+                    this.oldClassement.push({
+                      title: classement[step].nomPrenom,
+                      color: "green",
+                      voix: classement[step].pourcentageVoix + "%",
+                      ranking: 1,
+                      avatar:
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
+                    });
+                  }
+                  // Donnée du candidat numéro 2
+                  if (step === 1) {
+                    this.oldClassement.push({
+                      title: classement[step].nomPrenom,
+                      color: "orange accent-3",
+                      voix: classement[step].pourcentageVoix + "%",
+                      ranking: 2,
+                      avatar:
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
+                    });
+                  }
+                  // Donnée du candidat nuémro 3
+                  if (step === 2) {
+                    this.oldClassement.push({
+                      title: classement[step].nomPrenom,
+                      color: "amber accent-3",
+                      voix: classement[step].pourcentageVoix + "%",
+                      ranking: 3,
+                      avatar:
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
+                    });
+                  }
 
-                this.oldClassement[1] = {
-                  title: classement[1].nomPrenom,
-                  color: "orange accent-3",
-                  voix: classement[1].pourcentageVoix + "%",
-                  ranking: 2,
-                  avatar:
-                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
-                };
+                  // Mettons à jours la variable permettant d'afficher le classement
+                  this.classement = [];
+                  this.classement = this.oldClassement;
+                }
+              }
 
-                this.oldClassement[2] = {
-                  title: classement[2].nomPrenom,
-                  color: "amber accent-3",
-                  voix: classement[2].pourcentageVoix + "%",
-                  ranking: 3,
-                  avatar:
-                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
-                };
+              if (this.oldClassement.length === 0 && classement.length > 0) {
+                // on reinitialise la valeur de l'ancien classement
+                this.oldClassement = [];
+                for (let step = 0; step < classement.length; step++) {
+                  // Donnée du candidat en tête
+                  if (step === 0) {
+                    this.oldClassement.push({
+                      title: classement[step].nomPrenom,
+                      color: "green",
+                      voix: classement[step].pourcentageVoix + "%",
+                      ranking: 1,
+                      avatar:
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
+                    });
+                  }
+                  // Donnée du candidat numéro 2
+                  if (step === 1) {
+                    this.oldClassement.push({
+                      title: classement[step].nomPrenom,
+                      color: "orange accent-3",
+                      voix: classement[step].pourcentageVoix + "%",
+                      ranking: 2,
+                      avatar:
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
+                    });
+                  }
+                  // Donnée du candidat nuémro 3
+                  if (step === 2) {
+                    this.oldClassement.push({
+                      title: classement[step].nomPrenom,
+                      color: "amber accent-3",
+                      voix: classement[step].pourcentageVoix + "%",
+                      ranking: 3,
+                      avatar:
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
+                    });
+                  }
 
-                // Mettons à jours la variable permettant d'afficher le classement
-                this.classement = [];
-                this.classement = this.oldClassement;
+                  // Mettons à jours la variable permettant d'afficher le classement
+                  this.classement = [];
+                  this.classement = this.oldClassement;
+                }
               }
             }
 
@@ -1098,6 +1378,98 @@ export default {
                 avatar:
                   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs_tXpPKVwoWQynT736mi5UMQf8cTJeqbrBTjnIc35fU103_bQ"
               };
+            } else {
+              // Réinitialisons les valeures
+              this.oldLabel = [];
+              this.oldData = [];
+              this.barChartLabel = [];
+              this.dataChartLabel = [];
+              // Remplissons les valeures du tableau
+              this.barChartLabel = this.oldLabel;
+              this.dataChartLabel = this.oldData;
+
+              this.loaded = false;
+              this.chartData.data.labels = this.barChartLabel;
+              this.chartData.data.datasets[0].data = this.dataChartLabel;
+
+              let oldGraph = document.getElementById(
+                "chart" + this.chartData.id
+              );
+
+              // Récupérons le parent
+              let parent = document.getElementById("divGraph");
+
+              // Div generée
+              let div = document.getElementsByClassName("chartjs-size-monitor");
+
+              if (oldGraph !== null) {
+                this.loaded = false;
+
+                this.chartData.id = this.chartData.id + 1;
+
+                // Créons le nouveau graphique
+                let newGraph = document.createElement("canvas");
+                newGraph.setAttribute("id", "chart" + this.chartData.id);
+                newGraph.setAttribute("width", "400px");
+                newGraph.setAttribute("height", "380px");
+
+                // Vérifions si l'une des div générée automatiquement existe
+                if (div.length > 0) {
+                  let positionDiv = div.length - 1;
+                  parent.removeChild(div[positionDiv]);
+                }
+
+                // Supprimons l'ancien graph et ajoutons le nouveau graph
+                parent.removeChild(oldGraph);
+                parent.appendChild(newGraph);
+
+                // Créons les différents graphes
+                this.createChart(this.chartData.id, this.chartData);
+                this.nbTotalCentre = 0;
+                this.loaded = true;
+              }
+
+              // LORSQUE C'EST LA PREMIERE FOIS QU'IL RECUPERE LES DONNEES
+              // Recupérons les anciènnes valeures
+              this.oldStatsCandidat[0] = this.nbVotant;
+              this.oldStatsCandidat[1] = this.nbVote;
+              this.oldStatsCandidat[2] = this.tauxVoixObtenue;
+              this.oldStatsCandidat[3] = this.tauxAbstention;
+              this.oldStatsCandidat[4] = this.tauxParticipation;
+
+              // Renseignons les nouvelles valeures dans la nouvelle variable
+              this.newStatsCandidat[0] = 0;
+              this.newStatsCandidat[1] = 0;
+              this.newStatsCandidat[2] = 0;
+              this.newStatsCandidat[3] = 0;
+              this.newStatsCandidat[4] = 0;
+
+              // Comarons les anciènnes valeures et les nouvelles valeures
+              if (this.newStatsCandidat[0] !== this.oldStatsCandidat[0]) {
+                this.nbVotant = this.newStatsCandidat[0];
+              }
+              if (this.newStatsCandidat[1] !== this.oldStatsCandidat[1]) {
+                this.nbVote = this.newStatsCandidat[1];
+              }
+              if (this.newStatsCandidat[2] !== this.oldStatsCandidat[2]) {
+                this.tauxVoixObtenue = this.newStatsCandidat[2];
+              }
+              if (this.newStatsCandidat[3] !== this.oldStatsCandidat[3]) {
+                this.tauxAbstention = this.newStatsCandidat[3];
+              }
+              if (this.newStatsCandidat[4] !== this.oldStatsCandidat[4]) {
+                this.tauxParticipation = this.newStatsCandidat[4];
+              }
+
+              // Créons les différents graphes
+              // this.createChart(this.chartData.id, this.chartData);
+
+              // Affichons des données de classement / defaut
+              this.oldClassement = [];
+
+              // Mettons à jours la variable permettant d'afficher le classement
+              this.classement = [];
+              this.classement = this.oldClassement;
             }
 
             // Incrémentons la variable montrant que nous attaquons la bd
@@ -1177,6 +1549,12 @@ export default {
       } else {
         this.loading = false;
       }
+    },
+    dataChartLabel(v) {
+      if (v.length > 0) {
+        this.showGraph = true;
+      }
+      // console.log(v);
     }
   },
   mounted() {

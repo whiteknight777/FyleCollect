@@ -164,7 +164,7 @@
   
       <v-spacer></v-spacer>
 
-      <v-form>
+      <!-- <v-form>
         <v-text-field
           
           label="Recherche..."
@@ -178,7 +178,7 @@
 
       <v-btn icon @click.stop="rightDrawer = !rightDrawer">
         <v-icon>sort</v-icon>
-      </v-btn>
+      </v-btn> -->
 
       <v-btn icon @click.stop="checkLogout">
         <v-icon>settings_power</v-icon>
@@ -194,7 +194,7 @@
     <!-- END CONTENT  -->
   
     <!-- RIGHT MODAL  -->
-    <v-navigation-drawer temporary :right="right" v-model="rightDrawer" fixed app width=250>
+    <!-- <v-navigation-drawer temporary :right="right" v-model="rightDrawer" fixed app width=250>
 
       <v-list
           subheader
@@ -265,7 +265,7 @@
         </v-list>
 
     
-    </v-navigation-drawer>
+    </v-navigation-drawer> -->
     <!-- END RIGTH MODAL  -->
     <snackbar
     v-if="snackbar" 
@@ -289,6 +289,7 @@
 import userInterface from "./UserInterface.vue";
 import validationModal from "../../components/ValidationModal";
 import snackbar from "../../components/Snackbar";
+import apiConfig from "../../apiConfig";
 
 export default {
   name: "HomeCandidat",

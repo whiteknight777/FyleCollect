@@ -1,4 +1,14 @@
 <template>
+<div>
+  <div class="loading" v-if="loadingPage === true">
+    <v-progress-circular
+      :size="70"
+      :width="7"
+      color="primary"
+      indeterminate
+      style="position:fixed; margin-left:540px; margin-top:270px"
+    ></v-progress-circular>
+  </div>
   <v-container fluid grid-list-md>
     <v-slide-y-transition mode="out-in">
       <v-container grid-list-md text-xs-center>
@@ -119,13 +129,13 @@
       </v-container>
     </v-slide-y-transition>
   </v-container>
+</div>
 </template>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
 // Config API
-let apiDomain = "http://31.207.34.70/fylecollect_api/web/app_dev.php/";
-let localDomain = "http://localhost/API-REST/web/app_dev.php/";
+import apiConfig from "../../apiConfig";
 
 export default {
   name: "RepresentantInterface",
@@ -145,6 +155,7 @@ export default {
         statBureau: false,
         statCandidats: false
       },
+      loadingPage: false,
 
       // affiche le nom du candidat
       nomCandidat: "",
@@ -326,7 +337,7 @@ export default {
       // Récupération des données des candidats suivis
       this.axios
         .get(
-          localDomain +
+          apiConfig.baseURL +
             "api/statistiques/representant/data_chart_bar/" +
             this.user.idUtilisateur,
           {
@@ -405,11 +416,14 @@ export default {
     getDataBureau() {
       // Récupération des données du bureau
       this.axios
-        .get(localDomain + "statsbureaux/list/" + this.user.idUtilisateur, {
-          headers: {
-            "Content-type": "application/x-www-form-urlencoded"
+        .get(
+          apiConfig.baseURL + "statsbureaux/list/" + this.user.idUtilisateur,
+          {
+            headers: {
+              "Content-type": "application/x-www-form-urlencoded"
+            }
           }
-        })
+        )
         .then(response => {
           // Récupérons la reponse renvoyée
           let data = response.data;
