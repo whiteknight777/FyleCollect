@@ -5,7 +5,7 @@ const localDomain = "http://localhost/API-REST/web/app_dev.php/";
 const prodDomain = "http://31.207.34.70/fylecollect_api_prod/web/app_dev.php/";
 
 let config = {
-  baseURL: localDomain,
+  baseURL: prodDomain,
   headers: {
     Content_type: "application/json",
     Authorization: "Bearer " + localStorage.token
