@@ -16,7 +16,7 @@
       <v-list style="padding-bottom: 0;">
         <v-list-tile>
           <img
-            src="../../assets/logo_fc_ob_411x100.png"
+            src="../../../assets/logo_fc_ob_411x100.png"
             style="border-radius: 0;margin-bottom: 5px;width: 100%"
           >
         </v-list-tile>
@@ -49,7 +49,6 @@
         <span style="font-size:18px">
           <b>{{userinfo.nomPrenoms}}</b>
         </span>
-        <!-- <span style="font-size:18px"><b> Koné Moïse </b></span> -->
       </p>
       <!-- FIN USER CONNECTED -->
       <!-- LEFT MENU -->
@@ -148,30 +147,30 @@
       </v-list>
 
       <!-- <v-list class="pa-0">
-        <v-list-tile @click="active = 5" class :class="{'active-item active-color': active === 5 }">
-          <v-list-tile-action>
-            <v-icon>notes</v-icon>
-          </v-list-tile-action>
+           <v-list-tile @click="active = 5" class="" :class="{'active-item active-color': active === 5 }">
+            <v-list-tile-action>
+              <v-icon>notes</v-icon>
+            </v-list-tile-action>
 
-          <router-link to="/liste-resultats">
-            <v-list-tile-content>
-              <v-list-tile-title class :class="{'active-color': active === 5}">Détails Résultats</v-list-tile-title>
-            </v-list-tile-content>
-          </router-link>
-        </v-list-tile>
+            <router-link to="/liste-resultats">
+              <v-list-tile-content>
+                <v-list-tile-title  class="" :class="{'active-color': active === 5}">Détails Résultats</v-list-tile-title>
+              </v-list-tile-content>
+            </router-link>
+          </v-list-tile>
       </v-list>-->
       <v-list class="pa-0">
-        <v-list-tile @click="active = 6" class :class="{'active-item': active === 6}">
-          <v-list-tile-action>
-            <v-icon>mail</v-icon>
-          </v-list-tile-action>
+        <router-link to="/messagerie">
+          <v-list-tile @click="active = 6" class :class="{'active-item': active === 6}">
+            <v-list-tile-action>
+              <v-icon>mail</v-icon>
+            </v-list-tile-action>
 
-          <router-link to="/messagerie">
-            <v-list-tile-content @click="active = 6">
+            <v-list-tile-content>
               <v-list-tile-title class :class="{'active-color': active === 6}">Messagerie</v-list-tile-title>
             </v-list-tile-content>
-          </router-link>
-        </v-list-tile>
+          </v-list-tile>
+        </router-link>
       </v-list>
 
       <v-list class="pa-0">
@@ -225,7 +224,7 @@
     <!-- END TOPBAR -->
     <!-- CONTENT  -->
     <v-content>
-      <userInterface :user="userinfo"></userInterface>
+      <newResultat :user="userinfo"></newResultat>
     </v-content>
     <!-- END CONTENT  -->
     <!-- RIGHT MODAL  -->
@@ -254,7 +253,7 @@
 
         <v-divider></v-divider>
 
-        <v-list
+      <v-list
           subheader
           three-line
         >
@@ -310,25 +309,26 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <script>
-import userInterface from "./UserInterface.vue";
-import validationModal from "../../components/ValidationModal";
-import snackbar from "../../components/Snackbar";
-import apiConfig from "../../apiConfig";
+import newResultat from "./NewResultat.vue";
+import validationModal from "../../../components/ValidationModal";
+import snackbar from "../../../components/Snackbar";
+import apiConfig from "../../../apiConfig";
 
 export default {
-  name: "HomeCandidat",
+  name: "HomeNewResultats",
   components: {
     validationModal,
     snackbar,
-    userInterface
+    newResultat
   },
   data() {
     return {
       userinfo: this.getUserConnected(),
+      open: true,
       validation: false,
-      active: 1,
+      openListMenu: true,
+      active: 8,
       notifications: false,
-      openListMenu: false,
       sound: true,
       widgets: false,
       clipped: false,
@@ -336,7 +336,7 @@ export default {
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      snackbar: true,
+      snackbar: false,
       y: "bottom",
       x: null,
       mode: "",
@@ -389,6 +389,12 @@ export default {
     },
     getUserConnected() {
       return JSON.parse(sessionStorage.getItem("userConnected"));
+    }
+  },
+  watch: {
+    active(v) {
+      if (v === 5 || v === 8) this.openListMenu = true;
+      else this.openListMenu = false;
     }
   },
   mounted() {
@@ -475,12 +481,15 @@ export default {
   -ms-flex: 1 1 100%;
   flex: 1 1 100%;
   margin: auto;
-  padding-top: 18px;
+  padding: 24px;
   width: 101%;
 }
-@media only screen and (min-width: 960px) {
-  .container {
-    max-width: 1071px;
-  }
+.active-sub-item {
+  background: #efefef;
+  border-left: 10px solid dimgray;
+}
+a {
+  color: #212121 !important;
+  text-decoration: none;
 }
 </style>

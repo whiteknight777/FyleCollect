@@ -1,180 +1,328 @@
 <template>
-<div>
-  <div class="loading" v-if="loadingPage === true">
-    <v-progress-circular
-      :size="70"
-      :width="7"
-      color="primary"
-      indeterminate
-      style="position:fixed; margin-left:540px; margin-top:270px"
-    ></v-progress-circular>
-  </div>
-  <v-container fluid grid-list-md>
-    <v-slide-y-transition mode="out-in">
-      <v-container grid-list-md text-xs-center>
-        <v-layout row wrap>
-          <!--  Stat bar -->
-          <v-flex xs12 md12 lg12>
-            <v-breadcrumbs divider="/" style="margin-bottom:20px">
-              <v-breadcrumbs-item
-                :disabled="true"
-              >
-                Tableau de bord
-              </v-breadcrumbs-item>
-              <v-breadcrumbs-item
-                :disabled="false"
-              >
-                Liste des résultats
-              </v-breadcrumbs-item>
-              
-             
+  <div>
+    <div class="loading" v-if="loadingPage === true">
+      <v-progress-circular
+        :size="70"
+        :width="7"
+        color="primary"
+        indeterminate
+        style="position:fixed; margin-left:540px; margin-top:270px"
+      ></v-progress-circular>
+    </div>
+    <v-container fluid grid-list-md>
+      <v-slide-y-transition mode="out-in">
+        <v-container grid-list-md text-xs-center>
+          <v-layout row wrap>
+            <!--  Stat bar -->
+            <v-flex xs12 md12 lg12>
+              <v-breadcrumbs divider="/" style="margin-bottom:20px">
+                <v-breadcrumbs-item :disabled="true">Tableau de bord</v-breadcrumbs-item>
+                <v-breadcrumbs-item :disabled="false">Liste des résultats</v-breadcrumbs-item>
 
-              <v-btn
-              absolute
-              fixed
-              dark
-              fab
-              bottom
-              right
-              color="green darken-1"
-              style="bottom: 20px;"
-              @click="getStatsCommune"
-            >
-              <v-icon>print</v-icon>
-            </v-btn>
-            </v-breadcrumbs>
-
-
-            <div>
-              <v-toolbar
-                color="blue-grey lighten-4"
-                dark
-                tabs
-              >
-                 <v-autocomplete
-                  :loading="loading"
-                  :items="listeLieux"
-                  :search-input.sync="search"
-                  v-model="select"
-                  class="md2 mx-3"
-                  flat
-                  color="black"
-                  prepend-inner-icon="search"
-                  hide-no-data
-                  hide-details
-                  label="Rechercher un lieu de vote"
-                  solo-inverted
-                  style="padding-top:20px; color:black"
-                  @blur="checkValue"
-                ></v-autocomplete>
-
-                <v-btn 
-                  icon
-                  fab
-                  small
-                  v-if="clear === true" 
+                <v-btn
+                  absolute
+                  fixed
                   dark
-                  color="deep-orange darken-3"
-                  style="top: 10px;"
-                  @click="clearResearch"
+                  fab
+                  bottom
+                  right
+                  color="green darken-1"
+                  style="bottom: 20px;"
+                  v-if="user.idCandidat === 19"
+                  @click="getTypeStats = !getTypeStats"
                 >
-                  <v-icon 
-                  style="margin-left: 0px;">clear</v-icon>
+                  <v-icon>print</v-icon>
                 </v-btn>
 
-                <v-tabs
-                  slot="extension"
-                  v-model="tabs"
-                  centered
-                  color="transparent"
-                  slider-color="black"
+                <v-btn
+                  absolute
+                  fixed
+                  dark
+                  fab
+                  bottom
+                  right
+                  v-else
+                  color="green darken-1"
+                  style="bottom: 20px;"
+                  @click="getStatsRegion"
                 >
-                  <v-tab  key="all" @click="getAllResults">
-                    Tout les résultats
-                  </v-tab>
+                  <v-icon>print</v-icon>
+                </v-btn>
+              </v-breadcrumbs>
 
-                  <v-tab key="waiting" @click="getWaitingResults">
-                    En attente de validation
-                  </v-tab>
+              <div>
+                <v-toolbar color="blue-grey lighten-4" dark tabs>
+                  <v-autocomplete
+                    :loading="loading"
+                    :items="listeLieux"
+                    :search-input.sync="search"
+                    v-model="select"
+                    class="md2 mx-3"
+                    flat
+                    color="black"
+                    prepend-inner-icon="search"
+                    hide-no-data
+                    hide-details
+                    label="Rechercher un lieu de vote"
+                    solo-inverted
+                    style="padding-top:20px; color:black"
+                    @blur="checkValue"
+                  ></v-autocomplete>
 
-                  <v-tab key="clear" @click="getValidateResults">
-                    Terminés
-                  </v-tab>
-                </v-tabs>
-              </v-toolbar>
+                  <v-btn
+                    icon
+                    fab
+                    small
+                    v-if="clear === true"
+                    dark
+                    color="deep-orange darken-3"
+                    style="top: 10px;"
+                    @click="clearResearch"
+                  >
+                    <v-icon style="margin-left: 0px;">clear</v-icon>
+                  </v-btn>
 
-              <v-tabs-items v-model="tabs" style="overflow: initial;">
+                  <v-tabs
+                    slot="extension"
+                    v-model="tabs"
+                    centered
+                    color="transparent"
+                    slider-color="black"
+                  >
+                    <v-tab key="all" @click="getAllResults">Tout les résultats</v-tab>
 
+                    <v-tab key="waiting" @click="getWaitingResults">En attente de validation</v-tab>
 
-                <v-tab-item key="all">
-                  <!-- LISTE DE TOUT LES RESULTATS -->
-                  <v-card v-for="(item, i) of items" :key="i" v-if="items.length > 0" style="padding-top:1px">
-                    <v-toolbar color="blue-grey lighten-4">
-                      <v-card-title style="padding-left:0px;">
-                        <v-card-text style="padding-left:0px;">{{item.name}}</v-card-text>
-                      </v-card-title>
-                      <v-card-actions>Nombre inscrit: <b>{{item.nbInscrit}}</b></v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-card-actions>Total Votant: <b>{{item.nbTotalVotant}}</b></v-card-actions>
-                      <v-card-actions>Total Bulletin null: <b>{{item.nbTotalBn}}</b></v-card-actions>
-                      <v-card-actions>Votant restant / Absent: <b>{{item.nbAbstention}}</b></v-card-actions>
-                    </v-toolbar>
-                    <table class="v-datatable v-table">
-                      <thead>
-                        <tr>
-                          <!-- <th class="text-xs-left">#</th> -->
-                          <th class="text-xs-left">Bureau</th>
-                          <th class="text-xs-left">Representant</th>
-                          <th class="text-xs-left">Nombre de votant</th>
-                          <th class="text-xs-left">Bulletin Null</th>
-                          <th class="text-xs-left">Statut Résultat</th>
-                          <th class="text-xs-left" width=170>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="(bureau, a) of item.bv" :key="a">
-                          <td class="text-xs-left">
-                            {{ bureau.name }}
-                          </td>
-                          <td class="text-xs-left" style="padding-top: 25px;padding-bottom: 25px;">{{ bureau.representant }}</td>
-                          <td class="text-xs-left">
-                            {{ bureau.nbVotant }}
-                          </td>
-                          <td class="text-xs-left">{{ bureau.nbBulletinNull }}</td>
-                          <td class="text-xs-left">
-                            <v-chip color="green" text-color="white" v-if="bureau.validerTout">
-                              <v-avatar>
-                                <v-icon>check_circle</v-icon>
-                              </v-avatar>
-                              Validé complètement
-                            </v-chip>
-                            <v-chip color="deep orange" text-color="white" v-else-if="bureau.valider === true && bureau.validerResultatCandidat === false">
-                              <v-avatar>
-                                <v-icon>refresh</v-icon>
-                              </v-avatar>
-                              En cours de validation 
-                            </v-chip>
-                            <v-chip color="deep orange" text-color="white" v-else-if="bureau.validerResultatCandidat === true && bureau.valider === false">
-                              <v-avatar>
-                                <v-icon>refresh</v-icon>
-                              </v-avatar>
-                              En cours de validation 
-                            </v-chip>
-                            <v-chip color="deep orange" text-color="white" v-else-if="bureau.valider === true && bureau.validerResultatCandidat === true && bureau.pvSend === false">
-                              <v-avatar>
-                                <v-icon>attach_file</v-icon>
-                              </v-avatar>
-                              En attente du pv
-                            </v-chip>
-                            <v-chip color="red" text-color="white" v-else>
-                              <v-avatar>
-                                <v-icon>error</v-icon>
-                              </v-avatar>
-                              En attente 
-                            </v-chip>
-                          </td>
-                          <td class="text-xs-left">
-                            <v-btn 
+                    <v-tab key="clear" @click="getValidateResults">Terminés</v-tab>
+                  </v-tabs>
+                </v-toolbar>
+
+                <v-tabs-items v-model="tabs" style="overflow: initial;">
+                  <v-tab-item key="all">
+                    <!-- LISTE DE TOUT LES RESULTATS -->
+                    <v-card
+                      v-for="(item, i) of items"
+                      :key="i"
+                      v-if="items.length > 0"
+                      style="padding-top:1px"
+                    >
+                      <v-toolbar color="blue-grey lighten-4">
+                        <v-card-title style="padding-left:0px;">
+                          <v-card-text style="padding-left:0px;">{{item.name}}</v-card-text>
+                        </v-card-title>
+                        <v-card-actions>
+                          Nombre inscrit:
+                          <b>{{item.nbInscrit}}</b>
+                        </v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-card-actions>
+                          Total Votant:
+                          <b>{{item.nbTotalVotant}}</b>
+                        </v-card-actions>
+                        <v-card-actions>
+                          Total Bulletin null:
+                          <b>{{item.nbTotalBn}}</b>
+                        </v-card-actions>
+                        <v-card-actions>
+                          Votant restant / Absent:
+                          <b>{{item.nbAbstention}}</b>
+                        </v-card-actions>
+                      </v-toolbar>
+                      <table class="v-datatable v-table">
+                        <thead>
+                          <tr>
+                            <!-- <th class="text-xs-left">#</th> -->
+                            <th class="text-xs-left">Bureau</th>
+                            <th class="text-xs-left">Representant</th>
+                            <th class="text-xs-left">Nombre de votant</th>
+                            <th class="text-xs-left">Bulletin Null</th>
+                            <th class="text-xs-left">Statut Résultat</th>
+                            <th class="text-xs-left" width="170">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(bureau, a) of item.bv" :key="a">
+                            <td class="text-xs-left">{{ bureau.name }}</td>
+                            <td
+                              class="text-xs-left"
+                              style="padding-top: 25px;padding-bottom: 25px;"
+                            >{{ bureau.representant }}</td>
+                            <td class="text-xs-left">{{ bureau.nbVotant }}</td>
+                            <td class="text-xs-left">{{ bureau.nbBulletinNull }}</td>
+                            <td class="text-xs-left">
+                              <v-chip color="green" text-color="white" v-if="bureau.validerTout">
+                                <v-avatar>
+                                  <v-icon>check_circle</v-icon>
+                                </v-avatar>Validé complètement
+                              </v-chip>
+                              <v-chip
+                                color="deep orange"
+                                text-color="white"
+                                v-else-if="bureau.valider === true && bureau.validerResultatCandidat === false"
+                              >
+                                <v-avatar>
+                                  <v-icon>refresh</v-icon>
+                                </v-avatar>En cours de validation
+                              </v-chip>
+                              <v-chip
+                                color="deep orange"
+                                text-color="white"
+                                v-else-if="bureau.validerResultatCandidat === true && bureau.valider === false"
+                              >
+                                <v-avatar>
+                                  <v-icon>refresh</v-icon>
+                                </v-avatar>En cours de validation
+                              </v-chip>
+                              <v-chip
+                                color="deep orange"
+                                text-color="white"
+                                v-else-if="bureau.valider === true && bureau.validerResultatCandidat === true && bureau.pvSend === false"
+                              >
+                                <v-avatar>
+                                  <v-icon>attach_file</v-icon>
+                                </v-avatar>En attente du pv
+                              </v-chip>
+                              <v-chip color="red" text-color="white" v-else>
+                                <v-avatar>
+                                  <v-icon>error</v-icon>
+                                </v-avatar>En attente
+                              </v-chip>
+                            </td>
+                            <td class="text-xs-left">
+                              <!-- <v-btn
+                                small
+                                fab
+                                :loading="loading"
+                                :disabled="loading"
+                                color="info lighten-1"
+                                style="color:white"
+                                @click="openStatBureau(bureau.id)"
+                              >
+                                <v-icon>list</v-icon>
+                              </v-btn>-->
+                              <v-btn
+                                small
+                                fab
+                                :loading="loading"
+                                :disabled="loading"
+                                color="orange accent-3"
+                                style="color:white"
+                                @click="openPv(bureau.id)"
+                              >
+                                <v-icon>attachment</v-icon>
+                              </v-btn>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </v-card>
+
+                    <!-- AUCUN RESULTAT DISPONIBLE -->
+                    <v-card v-if="items.length === 0" style="padding-bottom: 21px">
+                      <v-card-text>
+                        <v-card-media class="text-xs-center">
+                          <v-spacer></v-spacer>
+                          <v-icon
+                            style="font-size: 90px;padding-bottom: 21px;padding-top: 20px;"
+                          >how_to_vote</v-icon>
+                          <v-spacer></v-spacer>
+                        </v-card-media>Aucun résultat de vote disponible
+                      </v-card-text>
+                    </v-card>
+                  </v-tab-item>
+
+                  <v-tab-item key="waiting">
+                    <!-- LISTE DE TOUT LES RESULTATS -->
+                    <v-card
+                      v-for="(item, i) of waitingItem"
+                      :key="i"
+                      v-if="waitingItem.length > 0"
+                      style="padding-top:1px"
+                    >
+                      <v-toolbar color="blue-grey lighten-4">
+                        <v-card-title style="padding-left:0px;">
+                          <v-card-text style="padding-left:0px;">{{item.name}}</v-card-text>
+                        </v-card-title>
+                        <v-card-actions>
+                          Nombre inscrit:
+                          <b>{{item.nbInscrit}}</b>
+                        </v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-card-actions>
+                          Total Votant:
+                          <b>{{item.nbTotalVotant}}</b>
+                        </v-card-actions>
+                        <v-card-actions>
+                          Total Bulletin null:
+                          <b>{{item.nbTotalBn}}</b>
+                        </v-card-actions>
+                        <v-card-actions>
+                          Votant restant / Absent:
+                          <b>{{item.nbAbstention}}</b>
+                        </v-card-actions>
+                      </v-toolbar>
+                      <table class="v-datatable v-table">
+                        <thead>
+                          <tr>
+                            <!-- <th class="text-xs-left">#</th> -->
+                            <th class="text-xs-left">Bureau</th>
+                            <th class="text-xs-left">Representant</th>
+                            <th class="text-xs-left">Nombre de votant</th>
+                            <th class="text-xs-left">Bulletin Null</th>
+                            <th class="text-xs-left">Statut Résultat</th>
+                            <th class="text-xs-left" width="170">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(bureau, a) of item.bv" :key="a">
+                            <td class="text-xs-left">{{ bureau.name }}</td>
+                            <td
+                              class="text-xs-left"
+                              style="padding-top: 25px;padding-bottom: 25px;"
+                            >{{ bureau.representant }}</td>
+                            <td class="text-xs-left">{{ bureau.nbVotant }}</td>
+                            <td class="text-xs-left">{{ bureau.nbBulletinNull }}</td>
+                            <td class="text-xs-left">
+                              <v-chip color="green" text-color="white" v-if="bureau.validerTout">
+                                <v-avatar>
+                                  <v-icon>check_circle</v-icon>
+                                </v-avatar>Validé complètement
+                              </v-chip>
+                              <v-chip
+                                color="deep orange"
+                                text-color="white"
+                                v-else-if="bureau.valider === true && bureau.validerResultatCandidat === false"
+                              >
+                                <v-avatar>
+                                  <v-icon>refresh</v-icon>
+                                </v-avatar>En cours de validation
+                              </v-chip>
+                              <v-chip
+                                color="deep orange"
+                                text-color="white"
+                                v-else-if="bureau.validerResultatCandidat === true && bureau.valider === false"
+                              >
+                                <v-avatar>
+                                  <v-icon>refresh</v-icon>
+                                </v-avatar>En cours de validation
+                              </v-chip>
+                              <v-chip
+                                color="deep orange"
+                                text-color="white"
+                                v-else-if="bureau.valider === true && bureau.validerResultatCandidat === true && bureau.pvSend === false"
+                              >
+                                <v-avatar>
+                                  <v-icon>attach_file</v-icon>
+                                </v-avatar>En attente du pv
+                              </v-chip>
+                              <v-chip color="red" text-color="white" v-else>
+                                <v-avatar>
+                                  <v-icon>error</v-icon>
+                                </v-avatar>En attente
+                              </v-chip>
+                            </td>
+                            <td class="text-xs-left">
+                              <!-- <v-btn 
                             small
                             fab
                             :loading="loading"
@@ -185,281 +333,180 @@
                             <v-icon>
                               list
                             </v-icon>
-                            </v-btn>
+                              </v-btn>-->
+                              <v-btn
+                                small
+                                fab
+                                :loading="loading"
+                                :disabled="loading"
+                                color="orange accent-3"
+                                style="color:white"
+                                @click="openPv(bureau.id)"
+                              >
+                                <v-icon>attachment</v-icon>
+                              </v-btn>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </v-card>
 
-                            <v-btn 
-                            small
-                            fab
-                            :loading="loading"
-                            :disabled="loading"
-                            color="orange accent-3"
-                            style="color:white"
-                            @click="openPv(bureau.id)">
-                            <v-icon>
-                              attachment
-                            </v-icon>
-                            </v-btn>
-                          
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </v-card>
+                    <!-- AUCUN RESULTAT DISPONIBLE -->
+                    <v-card v-if="waitingItem.length === 0" style="padding-bottom: 21px">
+                      <v-card-text>
+                        <v-card-media class="text-xs-center">
+                          <v-spacer></v-spacer>
+                          <v-icon
+                            style="font-size: 90px;padding-bottom: 21px;padding-top: 20px;"
+                          >how_to_vote</v-icon>
+                          <v-spacer></v-spacer>
+                        </v-card-media>Aucun résultat de vote disponible
+                      </v-card-text>
+                    </v-card>
+                  </v-tab-item>
 
-                  <!-- AUCUN RESULTAT DISPONIBLE -->
-                  <v-card v-if="items.length === 0" style="padding-bottom: 21px">
-                    <v-card-text>
-                      <v-card-media class="text-xs-center">
+                  <v-tab-item key="clear">
+                    <!-- LISTE DE TOUT LES RESULTATS -->
+                    <v-card
+                      v-for="(item, i) of validateItem"
+                      :key="i"
+                      v-if="validateItem.length > 0"
+                      style="padding-top:1px"
+                    >
+                      <v-toolbar color="blue-grey lighten-4">
+                        <v-card-title style="padding-left:0px;">
+                          <v-card-text style="padding-left:0px;">{{item.name}}</v-card-text>
+                        </v-card-title>
+                        <v-card-actions>
+                          Nombre inscrit:
+                          <b>{{item.nbInscrit}}</b>
+                        </v-card-actions>
                         <v-spacer></v-spacer>
-                          <v-icon style="font-size: 90px;padding-bottom: 21px;padding-top: 20px;"> how_to_vote </v-icon>
-                        <v-spacer></v-spacer>
-                      </v-card-media>
-                          Aucun résultat de vote disponible
-                    </v-card-text>
-                  </v-card>
-                </v-tab-item>
+                        <v-card-actions>
+                          Total Votant:
+                          <b>{{item.nbTotalVotant}}</b>
+                        </v-card-actions>
+                        <v-card-actions>
+                          Total Bulletin null:
+                          <b>{{item.nbTotalBn}}</b>
+                        </v-card-actions>
+                        <v-card-actions>
+                          Votant restant / Absent:
+                          <b>{{item.nbAbstention}}</b>
+                        </v-card-actions>
+                      </v-toolbar>
+                      <table class="v-datatable v-table">
+                        <thead>
+                          <tr>
+                            <!-- <th class="text-xs-left">#</th> -->
+                            <th class="text-xs-left">Bureau</th>
+                            <th class="text-xs-left">Representant</th>
+                            <th class="text-xs-left">Nombre de votant</th>
+                            <th class="text-xs-left">Bulletin Null</th>
+                            <th class="text-xs-left">Statut Résultat</th>
+                            <th class="text-xs-left" width="170">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(bureau, a) of item.bv" :key="a">
+                            <td class="text-xs-left">{{ bureau.name }}</td>
+                            <td
+                              class="text-xs-left"
+                              style="padding-top: 25px;padding-bottom: 25px;"
+                            >{{ bureau.representant }}</td>
+                            <td class="text-xs-left">{{ bureau.nbVotant }}</td>
+                            <td class="text-xs-left">{{ bureau.nbBulletinNull }}</td>
+                            <td class="text-xs-left">
+                              <v-chip color="green" text-color="white" v-if="bureau.validerTout">
+                                <v-avatar>
+                                  <v-icon>check_circle</v-icon>
+                                </v-avatar>Validé complètement
+                              </v-chip>
+                              <v-chip
+                                color="deep orange"
+                                text-color="white"
+                                v-else-if="bureau.valider === true && bureau.validerResultatCandidat === false"
+                              >
+                                <v-avatar>
+                                  <v-icon>refresh</v-icon>
+                                </v-avatar>En cours de validation
+                              </v-chip>
+                              <v-chip
+                                color="deep orange"
+                                text-color="white"
+                                v-else-if="bureau.validerResultatCandidat === true && bureau.valider === false"
+                              >
+                                <v-avatar>
+                                  <v-icon>refresh</v-icon>
+                                </v-avatar>En cours de validation
+                              </v-chip>
+                              <v-chip
+                                color="deep orange"
+                                text-color="white"
+                                v-else-if="bureau.valider === true && bureau.validerResultatCandidat === true && bureau.pvSend === false"
+                              >
+                                <v-avatar>
+                                  <v-icon>attach_file</v-icon>
+                                </v-avatar>En attente du pv
+                              </v-chip>
+                              <v-chip color="red" text-color="white" v-else>
+                                <v-avatar>
+                                  <v-icon>error</v-icon>
+                                </v-avatar>En attente
+                              </v-chip>
+                            </td>
+                            <td class="text-xs-left">
+                              <!-- <v-btn
+                                small
+                                fab
+                                :loading="loading"
+                                :disabled="loading"
+                                color="info lighten-1"
+                                style="color:white"
+                                @click="openStatBureau(bureau.id)"
+                              >
+                                <v-icon>list</v-icon>
+                              </v-btn>-->
+                              <v-btn
+                                small
+                                fab
+                                :loading="loading"
+                                :disabled="loading"
+                                color="orange accent-3"
+                                style="color:white"
+                                @click="openPv(bureau.id)"
+                              >
+                                <v-icon>attachment</v-icon>
+                              </v-btn>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </v-card>
 
-                <v-tab-item key="waiting">
-                  <!-- LISTE DE TOUT LES RESULTATS -->
-                  <v-card v-for="(item, i) of waitingItem" :key="i" v-if="waitingItem.length > 0" style="padding-top:1px">
-                    <v-toolbar color="blue-grey lighten-4">
-                      <v-card-title style="padding-left:0px;">
-                        <v-card-text style="padding-left:0px;">{{item.name}}</v-card-text>
-                      </v-card-title>
-                      <v-card-actions>Nombre inscrit: <b>{{item.nbInscrit}}</b></v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-card-actions>Total Votant: <b>{{item.nbTotalVotant}}</b></v-card-actions>
-                      <v-card-actions>Total Bulletin null: <b>{{item.nbTotalBn}}</b></v-card-actions>
-                      <v-card-actions>Votant restant / Absent: <b>{{item.nbAbstention}}</b></v-card-actions>
-                    </v-toolbar>
-                    <table class="v-datatable v-table">
-                      <thead>
-                        <tr>
-                          <!-- <th class="text-xs-left">#</th> -->
-                          <th class="text-xs-left">Bureau</th>
-                          <th class="text-xs-left">Representant</th>
-                          <th class="text-xs-left">Nombre de votant</th>
-                          <th class="text-xs-left">Bulletin Null</th>
-                          <th class="text-xs-left">Statut Résultat</th>
-                          <th class="text-xs-left" width=170>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="(bureau, a) of item.bv" :key="a">
-                          <td class="text-xs-left">
-                            {{ bureau.name }}
-                          </td>
-                          <td class="text-xs-left" style="padding-top: 25px;padding-bottom: 25px;">{{ bureau.representant }}</td>
-                          <td class="text-xs-left">
-                            {{ bureau.nbVotant }}
-                          </td>
-                          <td class="text-xs-left">{{ bureau.nbBulletinNull }}</td>
-                          <td class="text-xs-left">
-                            <v-chip color="green" text-color="white" v-if="bureau.validerTout">
-                              <v-avatar>
-                                <v-icon>check_circle</v-icon>
-                              </v-avatar>
-                              Validé complètement
-                            </v-chip>
-                            <v-chip color="deep orange" text-color="white" v-else-if="bureau.valider === true && bureau.validerResultatCandidat === false">
-                              <v-avatar>
-                                <v-icon>refresh</v-icon>
-                              </v-avatar>
-                              En cours de validation 
-                            </v-chip>
-                            <v-chip color="deep orange" text-color="white" v-else-if="bureau.validerResultatCandidat === true && bureau.valider === false">
-                              <v-avatar>
-                                <v-icon>refresh</v-icon>
-                              </v-avatar>
-                              En cours de validation 
-                            </v-chip>
-                            <v-chip color="deep orange" text-color="white" v-else-if="bureau.valider === true && bureau.validerResultatCandidat === true && bureau.pvSend === false">
-                              <v-avatar>
-                                <v-icon>attach_file</v-icon>
-                              </v-avatar>
-                              En attente du pv
-                            </v-chip>
-                            <v-chip color="red" text-color="white" v-else>
-                              <v-avatar>
-                                <v-icon>error</v-icon>
-                              </v-avatar>
-                              En attente 
-                            </v-chip>
-                          </td>
-                          <td class="text-xs-left">
-                            <v-btn 
-                            small
-                            fab
-                            :loading="loading"
-                            :disabled="loading"
-                            color="info lighten-1"
-                            style="color:white"
-                            @click="openStatBureau(bureau.id)">
-                            <v-icon>
-                              list
-                            </v-icon>
-                            </v-btn>
+                    <!-- AUCUN RESULTAT DISPONIBLE -->
+                    <v-card v-if="validateItem.length === 0" style="padding-bottom: 21px">
+                      <v-card-text>
+                        <v-card-media class="text-xs-center">
+                          <v-spacer></v-spacer>
+                          <v-icon
+                            style="font-size: 90px;padding-bottom: 21px;padding-top: 20px;"
+                          >how_to_vote</v-icon>
+                          <v-spacer></v-spacer>
+                        </v-card-media>Aucun résultat de vote disponible
+                      </v-card-text>
+                    </v-card>
+                  </v-tab-item>
+                </v-tabs-items>
+              </div>
+            </v-flex>
 
-                            <v-btn 
-                            small
-                            fab
-                            :loading="loading"
-                            :disabled="loading"
-                            color="orange accent-3"
-                            style="color:white"
-                            @click="openPv(bureau.id)">
-                            <v-icon>
-                              attachment
-                            </v-icon>
-                            </v-btn>
-                          
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </v-card>
-
-                  <!-- AUCUN RESULTAT DISPONIBLE -->
-                  <v-card v-if="waitingItem.length === 0" style="padding-bottom: 21px">
-                    <v-card-text>
-                      <v-card-media class="text-xs-center">
-                        <v-spacer></v-spacer>
-                          <v-icon style="font-size: 90px;padding-bottom: 21px;padding-top: 20px;"> how_to_vote </v-icon>
-                        <v-spacer></v-spacer>
-                      </v-card-media>
-                          Aucun résultat de vote disponible
-                    </v-card-text>
-                  </v-card>
-                </v-tab-item>
-
-                <v-tab-item key="clear">
-                  <!-- LISTE DE TOUT LES RESULTATS -->
-                  <v-card v-for="(item, i) of validateItem" :key="i" v-if="validateItem.length > 0" style="padding-top:1px">
-                    <v-toolbar color="blue-grey lighten-4">
-                      <v-card-title style="padding-left:0px;">
-                        <v-card-text style="padding-left:0px;">{{item.name}}</v-card-text>
-                      </v-card-title>
-                      <v-card-actions>Nombre inscrit: <b>{{item.nbInscrit}}</b></v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-card-actions>Total Votant: <b>{{item.nbTotalVotant}}</b></v-card-actions>
-                      <v-card-actions>Total Bulletin null: <b>{{item.nbTotalBn}}</b></v-card-actions>
-                      <v-card-actions>Votant restant / Absent: <b>{{item.nbAbstention}}</b></v-card-actions>
-                    </v-toolbar>
-                    <table class="v-datatable v-table">
-                      <thead>
-                        <tr>
-                          <!-- <th class="text-xs-left">#</th> -->
-                          <th class="text-xs-left">Bureau</th>
-                          <th class="text-xs-left">Representant</th>
-                          <th class="text-xs-left">Nombre de votant</th>
-                          <th class="text-xs-left">Bulletin Null</th>
-                          <th class="text-xs-left">Statut Résultat</th>
-                          <th class="text-xs-left" width=170>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="(bureau, a) of item.bv" :key="a">
-                          <td class="text-xs-left">
-                            {{ bureau.name }}
-                          </td>
-                          <td class="text-xs-left" style="padding-top: 25px;padding-bottom: 25px;">{{ bureau.representant }}</td>
-                          <td class="text-xs-left">
-                            {{ bureau.nbVotant }}
-                          </td>
-                          <td class="text-xs-left">{{ bureau.nbBulletinNull }}</td>
-                          <td class="text-xs-left">
-                            <v-chip color="green" text-color="white" v-if="bureau.validerTout">
-                              <v-avatar>
-                                <v-icon>check_circle</v-icon>
-                              </v-avatar>
-                              Validé complètement
-                            </v-chip>
-                            <v-chip color="deep orange" text-color="white" v-else-if="bureau.valider === true && bureau.validerResultatCandidat === false">
-                              <v-avatar>
-                                <v-icon>refresh</v-icon>
-                              </v-avatar>
-                              En cours de validation 
-                            </v-chip>
-                            <v-chip color="deep orange" text-color="white" v-else-if="bureau.validerResultatCandidat === true && bureau.valider === false">
-                              <v-avatar>
-                                <v-icon>refresh</v-icon>
-                              </v-avatar>
-                              En cours de validation 
-                            </v-chip>
-                            <v-chip color="deep orange" text-color="white" v-else-if="bureau.valider === true && bureau.validerResultatCandidat === true && bureau.pvSend === false">
-                              <v-avatar>
-                                <v-icon>attach_file</v-icon>
-                              </v-avatar>
-                              En attente du pv
-                            </v-chip>
-                            <v-chip color="red" text-color="white" v-else>
-                              <v-avatar>
-                                <v-icon>error</v-icon>
-                              </v-avatar>
-                              En attente 
-                            </v-chip>
-                          </td>
-                          <td class="text-xs-left">
-                            <v-btn 
-                            small
-                            fab
-                            :loading="loading"
-                            :disabled="loading"
-                            color="info lighten-1"
-                            style="color:white"
-                            @click="openStatBureau(bureau.id)">
-                            <v-icon>
-                              list
-                            </v-icon>
-                            </v-btn>
-
-                            <v-btn 
-                            small
-                            fab
-                            :loading="loading"
-                            :disabled="loading"
-                            color="orange accent-3"
-                            style="color:white"
-                            @click="openPv(bureau.id)">
-                            <v-icon>
-                              attachment
-                            </v-icon>
-                            </v-btn>
-                          
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </v-card>
-
-                  <!-- AUCUN RESULTAT DISPONIBLE -->
-                  <v-card v-if="validateItem.length === 0" style="padding-bottom: 21px">
-                    <v-card-text>
-                      <v-card-media class="text-xs-center">
-                        <v-spacer></v-spacer>
-                          <v-icon style="font-size: 90px;padding-bottom: 21px;padding-top: 20px;"> how_to_vote </v-icon>
-                        <v-spacer></v-spacer>
-                      </v-card-media>
-                          Aucun résultat de vote disponible
-                    </v-card-text>
-                  </v-card>
-                </v-tab-item>
-
-              </v-tabs-items>
-            </div>
-
-            
-
-          </v-flex>
-
-          <!-- AJOUTER LIEU DE VOTE -->
-
-          <template>
-            <v-layout row justify-center>
-              <v-dialog v-model="checkData" persistent max-width="650px">
+            <!-- AJOUTER LIEU DE VOTE -->
+            <template>
+              <v-layout row justify-center>
+                <v-dialog v-model="checkData" persistent max-width="650px">
                   <v-toolbar tabs>
                     <!-- <v-toolbar-side-icon></v-toolbar-side-icon> -->
-
                     <v-toolbar-title v-if="checkData">Résultats du {{bureauSelected.name}}</v-toolbar-title>
 
                     <v-spacer></v-spacer>
@@ -468,12 +515,7 @@
                       <v-icon>clear</v-icon>
                     </v-btn>
 
-                    <v-tabs
-                      slot="extension"
-                      v-model="tab"
-                      fixed-tabs
-                      color="transparent"
-                    >
+                    <v-tabs slot="extension" v-model="tab" fixed-tabs color="transparent">
                       <v-tabs-slider></v-tabs-slider>
                       <v-tab href="#mobile-tabs-5-1" class="primary--text">
                         <v-icon>list</v-icon>
@@ -485,125 +527,167 @@
 
                       <!-- <v-tab href="#mobile-tabs-5-3" class="primary--text" @click="launchChart">
                         <v-icon>bubble_chart</v-icon>
-                      </v-tab> -->
+                      </v-tab>-->
                     </v-tabs>
                   </v-toolbar>
 
                   <v-tabs-items v-model="tab" class="white elevation-1" v-if="checkData">
-
                     <v-tab-item id="mobile-tabs-5-1">
                       <form id="addStatBureau">
                         <v-container grid-list-md style="padding: 40px;">
                           <v-layout wrap>
                             <v-flex d-flex>
-                            <v-switch
-                              v-if="dejaValiderStatsBureau === false"
-                              :label="validerStatsBureau === false ? 'Enregistrer / Modifier les stats du Bureau' : 'Valider les stats du Bureau'"
-                              v-model="validerStatsBureau"
-                              color="green"
-                            ></v-switch>
-                            <v-alert
-                              v-else
-                              :value="true"
-                              type="success"
-                              style="margin-bottom: 10px"
+                              <v-switch
+                                v-if="dejaValiderStatsBureau === false"
+                                :label="validerStatsBureau === false ? 'Enregistrer / Modifier les stats du Bureau' : 'Valider les stats du Bureau'"
+                                v-model="validerStatsBureau"
+                                color="green"
+                              ></v-switch>
+                              <v-alert
+                                v-else
+                                :value="true"
+                                type="success"
+                                style="margin-bottom: 10px"
+                              >Les statistiques de ce bureau ont été validées.</v-alert>
+                            </v-flex>
+                            <v-flex xs12 style="height: 70px;">
+                              <v-text-field
+                                label="Nombre de votants"
+                                type="number"
+                                :disabled="validerStatsBureau === true || bureauSelected.valider === true"
+                                v-model="nbVotant"
+                                min="0"
+                                @blur="checkNbVotant(nbVotant)"
+                                outline
+                                required
+                              ></v-text-field>
+                            </v-flex>
+                            <v-flex xs12 style="height: 70px;">
+                              <v-text-field
+                                type="number"
+                                :disabled="validerStatsBureau === true || bureauSelected.valider === true"
+                                label="Nombre de bulletin null"
+                                v-model="nbBulletinNull"
+                                min="0"
+                                @blur="checkNbBulletinNull(nbBulletinNull)"
+                                outline
+                                required
+                              ></v-text-field>
+                            </v-flex>
+                            <div
+                              class="v-input v-text-field v-text-field--enclosed v-text-field--outline v-input--is-label-active v-input--is-dirty"
+                              style="padding:4px;"
                             >
-                              Les statistiques de ce bureau ont été validées.
-                            </v-alert>
-                          </v-flex>
-                            <v-flex xs12 style="height: 70px;">
-                              <v-text-field 
-                              label="Nombre de votants" 
-                              type="number"
-                              :disabled="validerStatsBureau === true || bureauSelected.valider === true"
-                              v-model="nbVotant"
-                              min=0
-                              @blur="checkNbVotant(nbVotant)"
-                              outline
-                              required></v-text-field>
-                            </v-flex>
-                            <v-flex xs12 style="height: 70px;">
-                            <v-text-field
-                              type="number"
-                              :disabled="validerStatsBureau === true || bureauSelected.valider === true"
-                              label="Nombre de bulletin null"
-                              v-model="nbBulletinNull"
-                              min=0
-                              @blur="checkNbBulletinNull(nbBulletinNull)"
-                              outline
-                              required
-                            ></v-text-field>
-                            </v-flex>
-                            <div class="v-input v-text-field v-text-field--enclosed v-text-field--outline v-input--is-label-active v-input--is-dirty" style="padding:4px;">
                               <div class="v-input__control">
-                                  <div class="v-input__slot">
-                                    <div class="v-text-field__slot">
-                                      <label aria-hidden="true" class="v-label v-label--active" style="left: 0px; right: auto; position: absolute;">
-                                        Importer nouveau pv
-                                      </label>
-                                      <input type="file" disabled ref="file" v-if="pvSend === true && bureauSelected.pvInfoBureau.id !== undefined && dejaValiderStatsBureau === true" style="margin-botom:45px" @change="getUploadedFile">
-                                      <input type="file" ref="file" v-else-if="pvSend === false && bureauSelected.pvInfoBureau.id === undefined && dejaValiderStatsBureau === true && validerStatsBureau === true" style="margin-botom:45px" @change="getUploadedFile">
-                                      <input type="file" ref="file" v-else-if="pvSend === true && bureauSelected.pvInfoBureau.id !== undefined && dejaValiderStatsBureau === false" style="margin-botom:45px" @change="getUploadedFile">
-                                      <input type="file" disabled ref="file" v-else-if="pvSend === true && bureauSelected.pvInfoBureau.id !== undefined && validerStatsBureau === true" style="margin-botom:45px" @change="getUploadedFile">
-                                      <input type="file" ref="file" v-else-if="pvSend === false && dejaValiderStatsBureau === false && validerStatsBureau === false" style="margin-botom:45px" @change="getUploadedFile">
-                                      <input type="file" ref="file" v-else-if="pvSend === false && dejaValiderStatsBureau === false && validerStatsBureau === true" style="margin-botom:45px" @change="getUploadedFile">
-                                      <br><br><br>
-                                      <v-btn
-                                        color="primary"
-                                        v-if="pvSend === true && bureauSelected.pvInfoBureau.id !== undefined"
-                                        small
-                                        dark
-                                        @click="checkOldPv(bureauSelected.pvInfoBureau.path)"
-                                        style="padding: 20px 16px 45px;"
-                                      >
-                                      <v-icon> attach_file</v-icon>
-                                        consulter PV
-                                      </v-btn>
-                                    </div>
+                                <div class="v-input__slot">
+                                  <div class="v-text-field__slot">
+                                    <label
+                                      aria-hidden="true"
+                                      class="v-label v-label--active"
+                                      style="left: 0px; right: auto; position: absolute;"
+                                    >Importer nouveau pv</label>
+                                    <input
+                                      type="file"
+                                      disabled
+                                      ref="file"
+                                      v-if="pvSend === true && bureauSelected.pvInfoBureau.id !== undefined && dejaValiderStatsBureau === true"
+                                      style="margin-botom:45px"
+                                      @change="getUploadedFile"
+                                    >
+                                    <input
+                                      type="file"
+                                      ref="file"
+                                      v-else-if="pvSend === false && bureauSelected.pvInfoBureau.id === undefined && dejaValiderStatsBureau === true && validerStatsBureau === true"
+                                      style="margin-botom:45px"
+                                      @change="getUploadedFile"
+                                    >
+                                    <input
+                                      type="file"
+                                      ref="file"
+                                      v-else-if="pvSend === true && bureauSelected.pvInfoBureau.id !== undefined && dejaValiderStatsBureau === false"
+                                      style="margin-botom:45px"
+                                      @change="getUploadedFile"
+                                    >
+                                    <input
+                                      type="file"
+                                      disabled
+                                      ref="file"
+                                      v-else-if="pvSend === true && bureauSelected.pvInfoBureau.id !== undefined && validerStatsBureau === true"
+                                      style="margin-botom:45px"
+                                      @change="getUploadedFile"
+                                    >
+                                    <input
+                                      type="file"
+                                      ref="file"
+                                      v-else-if="pvSend === false && dejaValiderStatsBureau === false && validerStatsBureau === false"
+                                      style="margin-botom:45px"
+                                      @change="getUploadedFile"
+                                    >
+                                    <input
+                                      type="file"
+                                      ref="file"
+                                      v-else-if="pvSend === false && dejaValiderStatsBureau === false && validerStatsBureau === true"
+                                      style="margin-botom:45px"
+                                      @change="getUploadedFile"
+                                    >
+                                    <br>
+                                    <br>
+                                    <br>
+                                    <v-btn
+                                      color="primary"
+                                      v-if="pvSend === true && bureauSelected.pvInfoBureau.id !== undefined"
+                                      small
+                                      dark
+                                      @click="checkOldPv(bureauSelected.pvInfoBureau.path)"
+                                      style="padding: 20px 16px 45px;"
+                                    >
+                                      <v-icon>attach_file</v-icon>consulter PV
+                                    </v-btn>
                                   </div>
-                                  <div class="v-text-field__details">
-                                    <div class="v-messages">
-                                      <div class="v-messages__wrapper">
-                                      </div>
-                                    </div>
+                                </div>
+                                <div class="v-text-field__details">
+                                  <div class="v-messages">
+                                    <div class="v-messages__wrapper"></div>
                                   </div>
+                                </div>
                               </div>
                             </div>
                             <v-flex xs12 md12 lg12>
-                              <v-btn color="primary" 
-                              :loading="loading"
-                              :disabled="loading"
-                              block 
-                              large 
-                              v-if="checkPvEtat"
-                              @click.native="sendFileBureau" 
-                              style="margin-top:30px">
-                              Importer pv
-                              </v-btn>
-                              
+                              <v-btn
+                                color="primary"
+                                :loading="loading"
+                                :disabled="loading"
+                                block
+                                large
+                                v-if="checkPvEtat"
+                                @click.native="sendFileBureau"
+                                style="margin-top:30px"
+                              >Importer pv</v-btn>
                             </v-flex>
 
                             <v-flex xs12 md12 lg12>
-                              <v-btn color="primary" 
-                              :loading="loading"
-                              :disabled="loading"
-                              v-if="validerStatsBureau === false"
-                              block large 
-                              @click.native="updateStatsBureau" 
-                              style="margin-top:30px">
-                              Enregistrer
-                              </v-btn>
-                              
-                              <v-btn color="green" 
-                              :loading="loading"
-                              :disabled="loading"
-                              v-if="dejaValiderStatsBureau === false && validerStatsBureau === true"
-                              block large 
-                              dark
-                              @click.native="confirmerValidationStatsBureau" 
-                              style="margin-top:30px">
-                              Valider statistique
-                              </v-btn>
+                              <v-btn
+                                color="primary"
+                                :loading="loading"
+                                :disabled="loading"
+                                v-if="validerStatsBureau === false"
+                                block
+                                large
+                                @click.native="updateStatsBureau"
+                                style="margin-top:30px"
+                              >Enregistrer</v-btn>
+
+                              <v-btn
+                                color="green"
+                                :loading="loading"
+                                :disabled="loading"
+                                v-if="dejaValiderStatsBureau === false && validerStatsBureau === true"
+                                block
+                                large
+                                dark
+                                @click.native="confirmerValidationStatsBureau"
+                                style="margin-top:30px"
+                              >Valider statistique</v-btn>
                             </v-flex>
                           </v-layout>
                         </v-container>
@@ -615,25 +699,33 @@
                         <v-container grid-list-md style="padding: 40px;">
                           <v-layout wrap>
                             <v-flex>
-                              <h3>Nombre de voix restante : <b>{{diffStatsCandidat}}</b></h3>
+                              <h3>
+                                Nombre de voix restante :
+                                <b>{{diffStatsCandidat}}</b>
+                              </h3>
                             </v-flex>
                             <v-flex xs12 d-flex>
-                            <v-switch
-                              v-if="dejaValiderResultatCandidat === false"
-                              :label="validerResultatCandidat === false ? 'Enregistrer / Modifier les résultats des candidats' : 'Valider les résultats des candidats'"
-                              v-model="validerResultatCandidat"
-                              color="green"
-                            ></v-switch>
-                            <v-alert
-                              v-else
-                              :value="true"
-                              type="success"
-                              style="margin-bottom: 10px"
-                            >
-                              Les résultats de vote de ce bureau ont été validés.
-                            </v-alert>
+                              <v-switch
+                                v-if="dejaValiderResultatCandidat === false"
+                                :label="validerResultatCandidat === false ? 'Enregistrer / Modifier les résultats des candidats' : 'Valider les résultats des candidats'"
+                                v-model="validerResultatCandidat"
+                                color="green"
+                              ></v-switch>
+                              <v-alert
+                                v-else
+                                :value="true"
+                                type="success"
+                                style="margin-bottom: 10px"
+                              >Les résultats de vote de ce bureau ont été validés.</v-alert>
                             </v-flex>
-                            <v-flex xs12 md6 lg6 :key="i" v-for="(data2, i) in candidatSuivis" style="display: inherit;height: 70px;">
+                            <v-flex
+                              xs12
+                              md6
+                              lg6
+                              :key="i"
+                              v-for="(data2, i) in candidatSuivis"
+                              style="display: inherit;height: 70px;"
+                            >
                               <v-text-field
                                 :id="'candidat-'+data2.id"
                                 v-model="data2.nbVoix"
@@ -643,37 +735,39 @@
                                 placeholder="Nombre de voix"
                                 @keyup="checkDataStatsCandidat(data2.nbVoix)"
                                 outline
-                                min=0
+                                min="0"
                                 required
                               ></v-text-field>
                             </v-flex>
                             <v-flex xs12 md12 lg12>
-                              <v-btn color="primary" 
-                              :loading="loading"
-                              :disabled="loading"
-                              v-if="validerResultatCandidat === false"
-                              block large 
-                              @click.native="updateStatsCandidatBureau" 
-                              style="margin-top:30px">
-                              Enregistrer
-                              </v-btn>
-                              
-                              <v-btn color="green" 
-                              :loading="loading"
-                              :disabled="loading"
-                              v-if="dejaValiderResultatCandidat === false && validerResultatCandidat === true"
-                              block large 
-                              dark
-                              @click.native="confirmerValidationResultatsBureau" 
-                              style="margin-top:30px">
-                              Valider résultats
-                              </v-btn>
+                              <v-btn
+                                color="primary"
+                                :loading="loading"
+                                :disabled="loading"
+                                v-if="validerResultatCandidat === false"
+                                block
+                                large
+                                @click.native="updateStatsCandidatBureau"
+                                style="margin-top:30px"
+                              >Enregistrer</v-btn>
+
+                              <v-btn
+                                color="green"
+                                :loading="loading"
+                                :disabled="loading"
+                                v-if="dejaValiderResultatCandidat === false && validerResultatCandidat === true"
+                                block
+                                large
+                                dark
+                                @click.native="confirmerValidationResultatsBureau"
+                                style="margin-top:30px"
+                              >Valider résultats</v-btn>
                             </v-flex>
                           </v-layout>
                         </v-container>
                       </form>
                     </v-tab-item>
-                    
+
                     <!-- <v-tab-item id="mobile-tabs-5-3">
                       <v-container grid-list-md style="padding: 40px;">
                         <v-layout wrap>
@@ -690,20 +784,74 @@
                           </v-flex>
                         </v-layout>
                       </v-container>
-                    </v-tab-item> -->
-
+                    </v-tab-item>-->
                   </v-tabs-items>
+                </v-dialog>
+              </v-layout>
+            </template>
+          </v-layout>
 
+          <!-- AJOUTER RESULTATS -->
+          <template>
+            <v-layout row justify-center>
+              <v-dialog v-model="getTypeStats" persistent max-width="400px">
+                <v-toolbar tabs>
+                  <!-- <v-toolbar-side-icon></v-toolbar-side-icon> -->
+                  <v-toolbar-title v-if="getTypeStats">Choisissez le type de statistique</v-toolbar-title>
+
+                  <v-spacer></v-spacer>
+
+                  <v-btn icon @click="getTypeStats = false">
+                    <v-icon>clear</v-icon>
+                  </v-btn>
+                </v-toolbar>
+
+                <v-card>
+                  <v-container grid-list-md style="padding: 40px;">
+                    <v-layout wrap>
+                      <v-flex d-flex xs12>
+                        <v-combobox
+                          v-model="typeStatsSelected"
+                          :items="['Région','Département','CEL']"
+                          label="Filtrer par"
+                        ></v-combobox>
+                      </v-flex>
+
+                      <v-flex d-flex xs12>
+                        <v-combobox
+                          v-if="typeStatsSelected === 'Département'"
+                          v-model="departementSelected"
+                          :items="['BANGOLO','DUEKOUE','KOUIBLY','FACOBLY']"
+                          label="Choisissez le département"
+                        ></v-combobox>
+                        <v-combobox
+                          v-if="typeStatsSelected === 'CEL'"
+                          v-model="celSelected"
+                          :items="['BANGOLO','DIEOUZON','ZEO','ZOU','BEOUE-ZIBIAO','BLENIMEOUIN','GOHOUO-ZAGNA','GUINGLO-TAHOUAKE','KAHIN-ZARABAON','BAGOHOUO','DUEKOUE','SP_DUEKOUE','GBAPLEU','GUEHIEBLY','GUEZON','KOUIBLY','SP_KOUIBLY','NIDROU','TOTRODROU','OUYABLY-GNONDROU','FACOBLY','SEMIEN','SP_GUEZON','KOUA','TIENY-SEABLY']"
+                          label="Choisissez la CEL"
+                        ></v-combobox>
+                      </v-flex>
+
+                      <v-flex xs12 md12 lg12>
+                        <v-btn
+                          color="primary"
+                          :loading="loading"
+                          :disabled="loading"
+                          block
+                          large
+                          @click.native="getStatsCommune"
+                          style="margin-top:30px"
+                        >Valider</v-btn>
+                      </v-flex>
+                    </v-layout>
+                  </v-container>
+                </v-card>
               </v-dialog>
             </v-layout>
           </template>
-
-
-
-        </v-layout>
-      </v-container>
-    </v-slide-y-transition>
-  </v-container>
+        </v-container>
+      </v-slide-y-transition>
+    </v-container>
 
     <v-snackbar
       v-model="snackbar"
@@ -715,17 +863,10 @@
       :top="y === 'top'"
       :vertical="mode === 'vertical'"
     >
-      {{ text }} 
-      <v-btn
-        color="pink"
-        flat
-        @click="snackbar = false"
-      >
-        Close
-      </v-btn>
+      {{ text }}
+      <v-btn color="pink" flat @click="snackbar = false">Close</v-btn>
     </v-snackbar>
-
-</div>
+  </div>
 </template>
 
 
@@ -752,6 +893,10 @@ export default {
       validerResultatCandidat: false,
       dejaValiderStatsBureau: false,
       dejaValiderResultatCandidat: false,
+      getTypeStats: false,
+      typeStatsSelected: "",
+      departementSelected: "",
+      celSelected: "",
       getCumulVoix: 0,
       pvSend: null,
       pvInfo: [],
@@ -1393,8 +1538,38 @@ export default {
         });
     },
     getStatsCommune() {
+      this.getTypeStats = false;
       this.snackbar = false;
       this.loadingPage = true;
+
+      // Vérifions le type de statistiques choisis
+      if (this.typeStatsSelected === "Région") {
+        this.getStatsRegion();
+      }
+      if (
+        this.typeStatsSelected === "Département" &&
+        this.departementSelected !== ""
+      ) {
+        this.getStatsDepartement();
+      }
+      if (
+        this.typeStatsSelected === "Département" &&
+        this.departementSelected === ""
+      ) {
+        this.loadingPage = false;
+        this.text = "Veuillez sélectionner un département svp...";
+        this.snackbar = true;
+      }
+      if (this.typeStatsSelected === "CEL" && this.celSelected !== "") {
+        this.getStatsCel();
+      }
+      if (this.typeStatsSelected === "CEL" && this.celSelected === "") {
+        this.loadingPage = false;
+        this.text = "Veuillez sélectionner une CEL SVP...";
+        this.snackbar = true;
+      }
+    },
+    getStatsRegion() {
       this.axios
         .get(
           apiConfig.baseURL + "print/stats/commune/" + this.user.idCandidat,
@@ -1423,7 +1598,84 @@ export default {
           }
         })
         .catch(response => {
+          this.loadingPage = false;
+          this.text =
+            "Une érreur est survenu lors du chargement des données... ";
+          this.snackbar = true;
+        });
+    },
+    getStatsDepartement() {
+      this.axios
+        .get(
+          apiConfig.baseURL +
+            "print/stats/departement/" +
+            this.departementSelected +
+            "/" +
+            this.user.idCandidat,
+          {
+            headers: {
+              "Content-type": "multipart/form-data"
+            }
+          }
+        )
+        .then(response => {
           let data = response.data;
+
+          if (data.statusRequete == 100) {
+            // Récupérons les infos sur le pv
+            // Vérifions si le pv à été envoyé
+            let url = data.urlStatsCommune;
+            this.loadingPage = false;
+            let win = window.open(url, "_blank");
+            win.focus();
+          }
+          if (data.statusRequete == 200) {
+            // Récupérons les infos sur le pv
+            this.loadingPage = false;
+            this.text = "Aucune statistique disponible pour ce candidat... ";
+            this.snackbar = true;
+          }
+        })
+        .catch(response => {
+          this.loadingPage = false;
+          this.text =
+            "Une érreur est survenu lors du chargement des données... ";
+          this.snackbar = true;
+        });
+    },
+    getStatsCel() {
+      this.axios
+        .get(
+          apiConfig.baseURL +
+            "print/stats/cel/" +
+            this.celSelected +
+            "/" +
+            this.user.idCandidat,
+          {
+            headers: {
+              "Content-type": "multipart/form-data"
+            }
+          }
+        )
+        .then(response => {
+          let data = response.data;
+
+          if (data.statusRequete == 100) {
+            // Récupérons les infos sur le pv
+            // Vérifions si le pv à été envoyé
+            let url = data.urlStatsCommune;
+            this.loadingPage = false;
+            let win = window.open(url, "_blank");
+            win.focus();
+          }
+          if (data.statusRequete == 200) {
+            // Récupérons les infos sur le pv
+            this.loadingPage = false;
+            this.text = "Aucune statistique disponible pour ce candidat... ";
+            this.snackbar = true;
+          }
+        })
+        .catch(response => {
           this.loadingPage = false;
           this.text =
             "Une érreur est survenu lors du chargement des données... ";

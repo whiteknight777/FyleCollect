@@ -1,78 +1,63 @@
 <template>
-<div>
-  <div class="loading" v-if="loadingPage === true">
-    <v-progress-circular
-      :size="70"
-      :width="7"
-      color="primary"
-      indeterminate
-      style="position:fixed; margin-left:540px; margin-top:270px"
-    ></v-progress-circular>
-  </div>
-  <v-container fluid grid-list-md>
-    <v-slide-y-transition mode="out-in">
-      <v-container grid-list-md text-xs-center>
-        <v-layout row wrap>
-          <!--  Stat bar -->
-          <v-flex xs12 md12 lg12>
-            <v-breadcrumbs divider="/" style="margin-bottom:20px">
-              <v-breadcrumbs-item
-                :disabled="true"
-              >
-                Tableau de bord
-              </v-breadcrumbs-item>
-              <v-breadcrumbs-item
-                :disabled="false"
-              >
-                Liste candidats
-              </v-breadcrumbs-item>
-              
-            </v-breadcrumbs>
+  <div>
+    <div class="loading" v-if="loadingPage === true">
+      <v-progress-circular
+        :size="70"
+        :width="7"
+        color="primary"
+        indeterminate
+        style="position:fixed; margin-left:540px; margin-top:270px"
+      ></v-progress-circular>
+    </div>
+    <v-container fluid grid-list-md>
+      <v-slide-y-transition mode="out-in">
+        <v-container grid-list-md text-xs-center>
+          <v-layout row wrap>
+            <!--  Stat bar -->
+            <v-flex xs12 md12 lg12>
+              <v-breadcrumbs divider="/" style="margin-bottom:20px">
+                <v-breadcrumbs-item :disabled="true">Tableau de bord</v-breadcrumbs-item>
+                <v-breadcrumbs-item :disabled="false">Liste candidats</v-breadcrumbs-item>
+              </v-breadcrumbs>
 
-            <template>
-              <v-tabs
-                centered
-                color="blue-grey lighten-4"
-                dark
-                icons-and-text
-              >
-                <v-tabs-slider color="teal darken-4"></v-tabs-slider>
+              <template>
+                <v-tabs centered color="blue-grey lighten-4" dark icons-and-text>
+                  <v-tabs-slider color="teal darken-4"></v-tabs-slider>
 
-                <v-tab href="#tab-1">
-                  Candidats de la commune
-                  <v-icon>group</v-icon>
-                </v-tab>
+                  <v-tab href="#tab-1">Candidats de la commune
+                    <v-icon>group</v-icon>
+                  </v-tab>
 
-                <v-tab href="#tab-2" light>
-                  Candidats Suivis
-                  <v-icon>stars</v-icon>
-                </v-tab>
+                  <v-tab href="#tab-2" light>Candidats Suivis
+                    <v-icon>stars</v-icon>
+                  </v-tab>
 
-                <v-tab href="#tab-3" dark>
-                  Classement Candidats
-                  <v-icon>account_box</v-icon>
-                </v-tab>
+                  <v-tab href="#tab-3" dark>Classement Candidats
+                    <v-icon>account_box</v-icon>
+                  </v-tab>
 
-                <v-tab-item id="tab-1">
-                  <v-card >
-
-                    <table class="v-datatable v-table">
-                      <thead>
-                        <tr>
-                          <th class="text-xs-left">#</th>
-                          <th class="text-xs-left">Nom & prénoms</th>
-                          <th class="text-xs-left">Partis</th>
-                          <th class="text-xs-left">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="item of listeCandidat">
-                          <td class="text-xs-left">
-                            <v-icon large>person_pin</v-icon>
-                          </td>
-                          <td class="text-xs-left" style="padding-top: 25px;padding-bottom: 25px;">{{ item.nomprenom }}</td>
-                          <td class="text-xs-left">{{ item.parti }}</td>
-                          <td class="text-xs-left">
+                  <v-tab-item id="tab-1">
+                    <v-card>
+                      <table class="v-datatable v-table">
+                        <thead>
+                          <tr>
+                            <th class="text-xs-left">#</th>
+                            <th class="text-xs-left">Nom & prénoms</th>
+                            <th class="text-xs-left">Partis</th>
+                            <!-- <th class="text-xs-left">Action</th> -->
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(item, i) of listeCandidat" :key="i">
+                            <td class="text-xs-left">
+                              <v-icon large>person_pin</v-icon>
+                            </td>
+                            <td
+                              class="text-xs-left"
+                              style="padding-top: 25px;padding-bottom: 25px;"
+                            >{{ item.nomprenom }}</td>
+                            <td class="text-xs-left">{{ item.parti }}</td>
+                            <!-- <td class="text-xs-left">
                           <v-btn 
                             small
                             ripple
@@ -99,55 +84,56 @@
                               grade
                             </v-icon>
                             </v-btn>
-                        </td>
-                        </tr>
-                      </tbody>
-                    </table>
-
-
-                  </v-card>
-
-                </v-tab-item>
-
-                <v-tab-item id="tab-2">
-                  <v-card >
-                    <v-card-title>
-                      <v-spacer></v-spacer>
-                      <v-btn 
-                      small
-                      ripple
-                      color="green lighten-1"
-                      dark
-                      v-if="changeOrder === true"
-                      @click="changeOrderCandidat">
-                      <v-icon
-                      >
-                        save
-                      </v-icon>
-                     Enregistrer le nouvel ordre
-                      </v-btn>
-                    </v-card-title>
-
-                    <form id="changeOrder">
-                      <table class="v-datatable v-table">
-                        <thead>
-                          <tr>
-                            <th class="text-xs-left">#</th>
-                            <th class="text-xs-left">Nom & prénoms</th>
-                            <th class="text-xs-left">Partis</th>
-                            <th class="text-xs-left">Ordre</th>
-                            <!-- <th class="text-xs-left" width="180px">Modifier ordre</th> -->
+                            </td>-->
                           </tr>
-                        </thead>
-                        <tbody>
-                          <tr :key="i" v-for="(item, i) of CandidatSuivis" @mouseover="updateRank = i">
-                            <td class="text-xs-left">
-                              <v-icon large>person_pin</v-icon>
-                            </td>
-                            <td class="text-xs-left" style="padding-top: 25px;padding-bottom: 25px;">{{ item.nomprenom }}</td>
-                            <td class="text-xs-left">{{ item.parti }}</td>
-                            <td class="text-xs-left">{{ item.ordre }}</td>
-                            <!-- <td class="text-xs-left"> -->
+                        </tbody>
+                      </table>
+                    </v-card>
+                  </v-tab-item>
+
+                  <v-tab-item id="tab-2">
+                    <v-card>
+                      <v-card-title>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          small
+                          ripple
+                          color="green lighten-1"
+                          dark
+                          v-if="changeOrder === true"
+                          @click="changeOrderCandidat"
+                        >
+                          <v-icon>save</v-icon>Enregistrer le nouvel ordre
+                        </v-btn>
+                      </v-card-title>
+
+                      <form id="changeOrder">
+                        <table class="v-datatable v-table">
+                          <thead>
+                            <tr>
+                              <th class="text-xs-left">#</th>
+                              <th class="text-xs-left">Nom & prénoms</th>
+                              <th class="text-xs-left">Partis</th>
+                              <th class="text-xs-left">Ordre</th>
+                              <!-- <th class="text-xs-left" width="180px">Modifier ordre</th> -->
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              :key="i"
+                              v-for="(item, i) of CandidatSuivis"
+                              @mouseover="updateRank = i"
+                            >
+                              <td class="text-xs-left">
+                                <v-icon large>person_pin</v-icon>
+                              </td>
+                              <td
+                                class="text-xs-left"
+                                style="padding-top: 25px;padding-bottom: 25px;"
+                              >{{ item.nomprenom }}</td>
+                              <td class="text-xs-left">{{ item.parti }}</td>
+                              <td class="text-xs-left">{{ item.ordre }}</td>
+                              <!-- <td class="text-xs-left"> -->
                               <!-- <v-btn 
                               small
                               ripple
@@ -173,199 +159,184 @@
                               <v-icon
                               >
                                 expand_more
-                              </v-icon> -->
+                              </v-icon>-->
                               <!-- </v-btn> -->
-                            <!-- </td> -->
+                              <!-- </td> -->
+                            </tr>
+                          </tbody>
+                        </table>
+                      </form>
+                    </v-card>
+                  </v-tab-item>
+
+                  <v-tab-item id="tab-3">
+                    <v-card>
+                      <v-card-title>
+                        <v-spacer></v-spacer>
+                        <v-menu offset-y style="position: relative;right: 15px;top: 5px;">
+                          <v-btn slot="activator" color="primary" dark>Filtres</v-btn>
+                          <v-list>
+                            <v-list-tile @click="checkTypeData(false)">
+                              <v-list-tile-title>Données brutes</v-list-tile-title>
+                            </v-list-tile>
+                            <v-list-tile @click="checkTypeData(true)">
+                              <v-list-tile-title>Données validées</v-list-tile-title>
+                            </v-list-tile>
+                          </v-list>
+                        </v-menu>
+                      </v-card-title>
+
+                      <table class="v-datatable v-table" v-if="ClassementCandidat.length > 0">
+                        <thead>
+                          <tr>
+                            <th class="text-xs-left">#</th>
+                            <th class="text-xs-left">Nom & prénoms</th>
+                            <th class="text-xs-left">Partis</th>
+                            <th class="text-xs-left">Pourcentage voix</th>
+                            <th class="text-xs-left">Classement</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(item, i) of ClassementCandidat" :key="i">
+                            <td class="text-xs-left">
+                              <v-icon large>person_pin</v-icon>
+                            </td>
+                            <td
+                              class="text-xs-left"
+                              style="padding-top: 25px;padding-bottom: 25px;"
+                            >{{ item.nomprenom }}</td>
+                            <td class="text-xs-left">{{ item.partis }}</td>
+                            <td class="text-xs-left">
+                              <span>
+                                <v-spacer></v-spacer>
+                                {{item.voix}} %
+                                <v-spacer></v-spacer>
+                              </span>
+                              <v-progress-linear
+                                :aria-label="item.voix+'%'"
+                                v-model="item.voix"
+                                color="green"
+                                v-if="item.classement === 1"
+                              ></v-progress-linear>
+                              <v-progress-linear
+                                :aria-label="item.voix+'%'"
+                                v-model="item.voix"
+                                color="amber"
+                                v-else-if="item.classement === 2"
+                              ></v-progress-linear>
+                              <v-progress-linear
+                                :aria-label="item.voix+'%'"
+                                v-model="item.voix"
+                                color="red"
+                                v-else
+                              ></v-progress-linear>
+                            </td>
+                            <td class="text-xs-left">
+                              <!-- {{ item.classement }} -->
+                              <b
+                                v-if="item.classement === 1"
+                                style="font-size: 14px;float:left;margin-left: -5px;color:green"
+                              >{{item.classement}}</b>
+                              <b
+                                v-else-if="item.classement === 2"
+                                style="font-size: 14px;float: left;margin-left: -4px;color:orange"
+                              >{{item.classement}}</b>
+                              <b
+                                v-else
+                                style="font-size: 14px;float: left;margin-left: -4px;color:red"
+                              >{{item.classement}}</b>
+                              <small
+                                v-if="item.classement === 1"
+                                style="font-size: 10px;text-transform: lowercase;position: absolute;color:green"
+                              >er</small>
+                              <small
+                                v-else-if="item.classement === 2"
+                                style="font-size: 10px;text-transform: lowercase;position: absolute;margin-top: 1px;color:orange"
+                              >ème</small>
+                              <small
+                                v-else
+                                style="font-size: 10px;text-transform: lowercase;position: absolute;margin-top: 1px;color:red"
+                              >ème</small>
+                            </td>
                           </tr>
                         </tbody>
                       </table>
-                    </form>
-                  </v-card>
 
-                </v-tab-item>
+                      <v-card-text v-else>
+                        <v-card-media class="text-xs-center">
+                          <v-spacer></v-spacer>
+                          <v-icon
+                            style="font-size: 90px;padding-bottom: 21px;padding-top: 20px;"
+                          >autorenew</v-icon>
+                          <v-spacer></v-spacer>
+                        </v-card-media>Aucunes données disponible
+                      </v-card-text>
+                    </v-card>
+                  </v-tab-item>
+                </v-tabs>
+              </template>
+            </v-flex>
 
-                <v-tab-item id="tab-3">
-                  <v-card >
-                    <v-card-title>
+            <!-- SUIVRE CANDIDAT  -->
+            <template>
+              <v-layout row justify-center>
+                <v-dialog v-model="suivre" max-width="290">
+                  <v-card>
+                    <v-card-title
+                      class="headline"
+                      style="text-align:center"
+                    >Voulez-vous vraiment suivre ce candidat ?</v-card-title>
+
+                    <v-card-text
+                      style="text-align:center"
+                    >En acceptant de suivre ce candidat vous acceptez d'enregistrer ses données de votes ?</v-card-text>
+
+                    <v-card-actions style="padding-bottom:20px">
                       <v-spacer></v-spacer>
-                      <v-menu offset-y style="position: relative;right: 15px;top: 5px;">
-                        <v-btn
-                          slot="activator"
-                          color="primary"
-                          dark
-                        >
-                          Filtres
-                        </v-btn>
-                        <v-list>
-                          <v-list-tile
-                            @click="checkTypeData(false)"
-                          >
-                            <v-list-tile-title>Données brutes</v-list-tile-title>
-                          </v-list-tile>
-                          <v-list-tile
-                            @click="checkTypeData(true)"
-                          >
-                            <v-list-tile-title>Données validées</v-list-tile-title>
-                          </v-list-tile>
-                        </v-list>
-                      </v-menu>
-                    </v-card-title>
-                    
-                    <table class="v-datatable v-table" v-if="ClassementCandidat.length > 0">
-                      <thead>
-                        <tr>
-                          <th class="text-xs-left">#</th>
-                          <th class="text-xs-left">Nom & prénoms</th>
-                          <th class="text-xs-left">Partis</th>
-                          <th class="text-xs-left">Pourcentage voix</th>
-                          <th class="text-xs-left">Classement</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="(item, i) of ClassementCandidat" :key="i">
-                          <td class="text-xs-left">
-                            <v-icon large>person_pin</v-icon>
-                          </td>
-                          <td class="text-xs-left" style="padding-top: 25px;padding-bottom: 25px;">{{ item.nomprenom }}</td>
-                          <td class="text-xs-left">{{ item.partis }}</td>
-                          <td class="text-xs-left">
-                            <span>
-                            <v-spacer></v-spacer>
-                            {{item.voix}} %
-                            <v-spacer></v-spacer>
-                            </span>
-                            <v-progress-linear :aria-label="item.voix+'%'" v-model="item.voix" color="green" v-if="item.classement === 1"></v-progress-linear>
-                            <v-progress-linear :aria-label="item.voix+'%'" v-model="item.voix" color="amber" v-else-if="item.classement === 2"></v-progress-linear>
-                            <v-progress-linear :aria-label="item.voix+'%'" v-model="item.voix" color="red" v-else></v-progress-linear>
-                          </td>
-                          <td class="text-xs-left">
-                            <!-- {{ item.classement }} -->
-                            <b v-if="item.classement === 1" style="font-size: 14px;float:left;margin-left: -5px;color:green">{{item.classement}}</b>
-                            <b v-else-if="item.classement === 2" style="font-size: 14px;float: left;margin-left: -4px;color:orange">{{item.classement}}</b>
-                            <b v-else style="font-size: 14px;float: left;margin-left: -4px;color:red">{{item.classement}}</b>
-                            <small v-if="item.classement === 1" style="font-size: 10px;text-transform: lowercase;position: absolute;color:green">er</small>
-                            <small v-else-if="item.classement === 2" style="font-size: 10px;text-transform: lowercase;position: absolute;margin-top: 1px;color:orange">ème</small>
-                            <small v-else style="font-size: 10px;text-transform: lowercase;position: absolute;margin-top: 1px;color:red">ème</small>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    
-                    <v-card-text v-else>
-                      <v-card-media class="text-xs-center">
-                        <v-spacer></v-spacer>
-                          <v-icon style="font-size: 90px;padding-bottom: 21px;padding-top: 20px;"> autorenew </v-icon>
-                        <v-spacer></v-spacer>
-                      </v-card-media>
-                          Aucunes données disponible
-                    </v-card-text>
-                    
+
+                      <v-btn color="red ligthen-4" small dark @click="suivre = false">retour</v-btn>
+
+                      <v-btn color="green ligthen-1" small dark @click="confirmerSuivis">Confirmer</v-btn>
+                      <v-spacer></v-spacer>
+                    </v-card-actions>
                   </v-card>
-
-                   
-                </v-tab-item>
-              </v-tabs>
+                </v-dialog>
+              </v-layout>
             </template>
-          </v-flex>
 
+            <!-- ANNULER SUIVIS D'UN CANDIDAT  -->
+            <template>
+              <v-layout row justify-center>
+                <v-dialog v-model="notFollow" max-width="290">
+                  <v-card>
+                    <v-card-title
+                      class="headline"
+                      style="text-align:center"
+                    >Renoncez-vous vraiment à suivre ce candidat ?</v-card-title>
 
-          <!-- SUIVRE CANDIDAT  -->
+                    <v-card-text
+                      style="text-align:center"
+                    >En renonçant à suivre ce candidat vous acceptez de ne plus enregistrer ses données de votes ?</v-card-text>
 
-          <template>
-            <v-layout row justify-center>
-              <v-dialog
-                v-model="suivre"
-                max-width="290"
-              >
-                <v-card>
-                  <v-card-title class="headline" style="text-align:center">Voulez-vous vraiment suivre ce candidat ?</v-card-title>
+                    <v-card-actions style="padding-bottom:20px">
+                      <v-spacer></v-spacer>
 
-                  <v-card-text style="text-align:center">
-                    En acceptant de suivre ce candidat vous acceptez d'enregistrer ses données de votes ?
-                  </v-card-text>
+                      <v-btn color="red ligthen-4" small dark @click="notFollow = false">retour</v-btn>
 
-                  <v-card-actions style="padding-bottom:20px">
-                    <v-spacer></v-spacer>
+                      <v-btn color="green ligthen-1" small dark @click="annulerSuivis">Confirmer</v-btn>
+                      <v-spacer></v-spacer>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </v-layout>
+            </template>
 
-                    <v-btn
-                      color="red ligthen-4"
-                      small
-                      dark
-                      @click="suivre = false"
-                    >
-                      retour
-                    </v-btn>
-
-                    <v-btn
-                      color="green ligthen-1"
-                      small
-                      dark
-                      @click="confirmerSuivis"
-                    >
-                      Confirmer
-                    </v-btn>
-                    <v-spacer></v-spacer>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
-            </v-layout>
-          </template>
-
-          <!-- ANNULER SUIVIS D'UN CANDIDAT  -->
-
-          <template>
-            <v-layout row justify-center>
-              <v-dialog
-                v-model="notFollow"
-                max-width="290"
-              >
-                <v-card>
-                  <v-card-title class="headline" style="text-align:center">Renoncez-vous vraiment à suivre ce candidat ?</v-card-title>
-
-                  <v-card-text style="text-align:center">
-                    En renonçant à suivre ce candidat vous acceptez de ne plus enregistrer ses données de votes ?
-                  </v-card-text>
-
-                  <v-card-actions style="padding-bottom:20px">
-                    <v-spacer></v-spacer>
-
-                    <v-btn
-                      color="red ligthen-4"
-                      small
-                      dark
-                      @click="notFollow = false"
-                    >
-                      retour
-                    </v-btn>
-
-                    <v-btn
-                      color="green ligthen-1"
-                      small
-                      dark
-                      @click="annulerSuivis"
-                    >
-                      Confirmer
-                    </v-btn>
-                    <v-spacer></v-spacer>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
-            </v-layout>
-          </template>
-
-          <snackbar
-          v-if="snackbar" 
-          :text="text"
-          :y="y"
-          :x="x"
-          >
-          </snackbar>
-
-        </v-layout>
-      </v-container>
-    </v-slide-y-transition>
-  </v-container>
-</div>
+            <snackbar v-if="snackbar" :text="text" :y="y" :x="x"></snackbar>
+          </v-layout>
+        </v-container>
+      </v-slide-y-transition>
+    </v-container>
+  </div>
 </template>
 
 

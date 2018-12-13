@@ -5,6 +5,7 @@ import LieuxVotes from './views/Candidat/LieuxVotes/HomeLieux.vue'
 import ListeRepresentant from './views/Candidat/Representant/HomeRepresentant.vue'
 import ListeCandidats from './views/Candidat/ListeCandidats/HomeCandidatsListe.vue'
 import ListeResultats from './views/Candidat/Resultats/HomeResultats.vue'
+import NewResultats from './views/Candidat/NewResultat/HomeNewResultat.vue'
 import Messagerie from './views/Candidat/Messagerie/HomeMessagerie.vue'
 import Parametres from './views/Candidat/Parametres/HomeParametres.vue'
 import HomeRepresentant from './views/Representant/HomeRepresentant.vue'
@@ -55,6 +56,11 @@ export default new Router({
       path: '/liste-resultats',
       name: 'liste-resultats',
       component: ListeResultats
+    },
+    {
+      path: '/nouveau-resultat',
+      name: 'nouveau-resultat',
+      component: NewResultats
     },
     {
       path: '/messagerie',
